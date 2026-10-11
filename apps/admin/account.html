@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>My Account — Dbuggs</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@600;700&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'DM Sans', sans-serif; background: #EFF1F8; min-height: 100vh; }
+.topbar { background: #1C2B6B; padding: 16px 28px; display: flex; align-items: center; justify-content: space-between; }
+.brand { font-family: 'Space Grotesk', sans-serif; font-size: 20px; font-weight: 700; color: #fff; }
+.brand span { color: #F07830; }
+.logout-btn { background: rgba(255,255,255,0.1); color: #fff; border: 1px solid rgba(255,255,255,0.2); padding: 7px 16px; border-radius: 8px; font-size: 13px; cursor: pointer; }
+.container { max-width: 480px; margin: 40px auto; padding: 0 20px; }
+.card { background: #fff; border-radius: 12px; padding: 28px; box-shadow: 0 4px 24px rgba(0,0,0,0.06); }
+.role-badge { display: inline-block; background: #E0E4F5; color: #1C2B6B; font-size: 12px; font-weight: 700; padding: 4px 12px; border-radius: 20px; text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 16px; }
+h2 { font-family: 'Space Grotesk', sans-serif; font-size: 20px; margin-bottom: 4px; }
+.sub { font-size: 13px; color: #6B7280; margin-bottom: 20px; }
+.field { padding: 12px 0; border-bottom: 1px solid #F3F4F6; }
+.field-label { font-size: 11.5px; font-weight: 600; color: #9CA3AF; text-transform: uppercase; letter-spacing: 0.04em; }
+.field-value { font-size: 14.5px; font-weight: 500; margin-top: 3px; }
+.note { margin-top: 20px; font-size: 12.5px; color: #9CA3AF; line-height: 1.6; background: #F9FAFB; padding: 12px 14px; border-radius: 8px; }
+</style>
+</head>
+<body>
+<div class="topbar">
+  <div class="brand">d<span>bugg</span>s</div>
+  <button class="logout-btn" onclick="logout()">Logout</button>
+</div>
+<div class="container">
+  <div class="card">
+    <div class="role-badge" id="role-badge">—</div>
+    <h2 id="name">Loading...</h2>
+    <div class="sub" id="email-sub">—</div>
+
+    <div class="field"><div class="field-label">Phone</div><div class="field-value" id="phone">—</div></div>
+    <div class="field"><div class="field-label">KYC Status</div><div class="field-value" id="kyc">—</div></div>
+    <div class="field"><div class="field-label">Account Created</div><div class="field-value" id="created">—</div></div>
+
+    <div class="note">This is a basic account page for B2C/B2B users. The full customer shopping experience (browse laptops, place orders, track rentals) is a separate storefront that hasn't been built yet — this page just confirms your login and profile data from the backend.</div>
+  </div>
+</div>
+
+<script>
+const API_BASE = 'http://localhost:4000';
+const token = localStorage.getItem('dbugg_admin_token');
+if (!token) window.location.href = '/login.html';
+
+function logout() {
+  localStorage.removeItem('dbugg_admin_token');
+  localStorage.removeItem('dbugg_user_role');
+  localStorage.removeItem('dbugg_user_name');
+  window.location.href = '/login.html';
+}
+
+async function loadProfile() {
+  try {
+    const res = await fetch(`${API_BASE}/users/me`, { headers: { Authorization: `Bearer ${token}` } });
+    if (!res.ok) { logout(); return; }
+    const user = await res.json();
+    document.getElementById('role-badge').textContent = user.role;
+    document.getElementById('name').textContent = user.name || 'Unnamed User';
+    document.getElementById('email-sub').textContent = user.email || '';
+    document.getElementById('phone').textContent = user.phone || '—';
+    document.getElementById('kyc').textContent = user.kycStatus || '—';
+    document.getElementById('created').textContent = new Date(user.createdAt).toLocaleDateString('en-IN');
+  } catch (e) {
+    console.error(e);
+  }
+}
+loadProfile();
+</script>
+</body>
+</html>

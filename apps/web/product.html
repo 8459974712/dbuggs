@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Product — dbuggs</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@600;700&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--navy:#1C2B6B;--accent:#F07830;--accent-hover:#d9631f;--bg:#F7F8FC;--card:#fff;--border:#E5E7EB;--text:#111827;--text-sec:#6B7280;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);}
+h1,h2,h3{font-family:'Space Grotesk',sans-serif;}
+a{text-decoration:none;color:inherit;}
+.topbar{background:var(--navy);padding:14px 28px;display:flex;align-items:center;gap:24px;}
+.brand{font-family:'Space Grotesk',sans-serif;font-size:21px;font-weight:700;color:#fff;}
+.brand span{color:var(--accent);}
+.back-link{color:rgba(255,255,255,0.8);font-size:13px;}
+.container{max-width:860px;margin:30px auto;padding:0 20px;}
+.card{background:var(--card);border-radius:14px;border:1px solid var(--border);padding:28px;}
+.top-row{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:18px;}
+.grade{display:inline-flex;align-items:center;justify-content:center;width:40px;height:40px;border-radius:50%;font-size:13px;font-weight:700;color:#fff;}
+.grade-aplus{background:var(--navy);}.grade-a{background:#10B981;}.grade-b{background:#F59E0B;}.grade-c{background:#EF4444;}
+.title{font-size:24px;}
+.serial{font-size:12px;color:#9CA3AF;font-family:monospace;margin-top:4px;}
+.price{font-size:28px;font-weight:700;color:var(--navy);margin:16px 0;}
+.spec-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:20px 0;}
+.spec{padding:12px;background:var(--bg);border-radius:8px;}
+.spec-label{font-size:11px;font-weight:600;color:var(--text-sec);text-transform:uppercase;letter-spacing:0.04em;}
+.spec-value{font-size:14.5px;font-weight:600;margin-top:3px;}
+.actions{display:flex;gap:12px;margin-top:20px;}
+.btn{padding:12px 24px;border-radius:9px;font-weight:600;font-size:14px;border:none;cursor:pointer;flex:1;text-align:center;}
+.btn-primary{background:var(--accent);color:#fff;}.btn-primary:hover{background:var(--accent-hover);}
+.btn-outline{background:#fff;border:1px solid var(--border);color:var(--text);}
+.msg{font-size:13px;margin-top:10px;color:#065F46;}
+.product-img{width:100%;max-width:360px;border-radius:10px;margin:0 auto 20px;display:block;}
+</style>
+</head>
+<body>
+<div class="topbar">
+  <a href="/index.html" class="brand">d<span>bugg</span>s</a>
+  <a href="/index.html" class="back-link">← Back to shop</a>
+</div>
+<div class="container">
+  <div class="card" id="detail">Loading...</div>
+</div>
+
+<script src="shop-api.js"></script>
+<script>
+const id = new URLSearchParams(location.search).get('id');
+const gradeClass = { 'A+': 'grade-aplus', 'A': 'grade-a', 'B': 'grade-b', 'C': 'grade-c' };
+
+async function loadProduct() {
+  const el = document.getElementById('detail');
+  try {
+    const p = await apiFetch('/products/' + id);
+    if (!p || !p.id) { el.innerHTML = '<p>Product not found.</p>'; return; }
+    el.innerHTML = `
+      <img class="product-img" src="images/laptop-placeholder.svg" alt="${p.brand} ${p.model}">
+      <div class="top-row">
+        <div>
+          <div class="title">${p.brand} ${p.model}</div>
+          <div class="serial">${p.serialNo}</div>
+        </div>
+        ${p.grade ? `<div class="grade ${gradeClass[p.grade] || 'grade-a'}">${p.grade}</div>` : ''}
+      </div>
+      <div class="price">${p.sellingPrice ? money(p.sellingPrice) : 'Price on request'}</div>
+      <div class="spec-grid">
+        <div class="spec"><div class="spec-label">Processor</div><div class="spec-value">${p.processor || '—'}</div></div>
+        <div class="spec"><div class="spec-label">RAM</div><div class="spec-value">${p.ram || '—'}</div></div>
+        <div class="spec"><div class="spec-label">Storage</div><div class="spec-value">${p.storage || '—'}</div></div>
+        <div class="spec"><div class="spec-label">Display</div><div class="spec-value">${p.display || '—'}</div></div>
+        <div class="spec"><div class="spec-label">Warranty</div><div class="spec-value">${p.warrantyMonths ? p.warrantyMonths + ' months' : '—'}</div></div>
+        <div class="spec"><div class="spec-label">Warehouse</div><div class="spec-value">${p.warehouseId || '—'}</div></div>
+      </div>
+      <div class="actions">
+        <button class="btn btn-outline" onclick='addToCart(${JSON.stringify(p)}); updateCartBadge(); showMsg();'>Add to Cart</button>
+        <a href="/cart.html" class="btn btn-primary" onclick='addToCart(${JSON.stringify(p)})'>Buy Now</a>
+      </div>
+      <div class="msg" id="msg" style="display:none;">Added to cart!</div>
+    `;
+  } catch (e) {
+    el.innerHTML = `<p>Error: ${e.message}</p>`;
+  }
+}
+function showMsg() { document.getElementById('msg').style.display = 'block'; }
+
+loadProduct();
+</script>
+</body>
+</html>

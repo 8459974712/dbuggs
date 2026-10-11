@@ -1,0 +1,872 @@
+<title>dbugg Admin</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=DM+Sans:wght@400;500;600&display=swap">
+
+<style>
+  /* ── Token System ───────────────────────────────── */
+  :root {
+    --navy:       #1C2B6B;
+    --navy-deep:  #151F52;
+    --navy-mid:   #2A3D8F;
+    --orange:     #F07830;
+    --orange-lt:  #FEF0E6;
+    --bg:         #EFF1F8;
+    --card:       #FFFFFF;
+    --text:       #1A1A2E;
+    --text-muted: #6B7A99;
+    --border:     #E2E6F0;
+    --success:    #22C55E;
+    --success-bg: #DCFCE7;
+    --warn:       #F59E0B;
+    --warn-bg:    #FEF3C7;
+    --danger:     #EF4444;
+    --danger-bg:  #FEE2E2;
+    --sidebar-w:  220px;
+    color-scheme: light;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg:         #0F1629;
+      --card:       #1A2540;
+      --text:       #E8EBF5;
+      --text-muted: #8A96B8;
+      --border:     #2A3560;
+      --navy:       #1C2B6B;
+      --navy-deep:  #0E1840;
+      color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg:         #0F1629;
+    --card:       #1A2540;
+    --text:       #E8EBF5;
+    --text-muted: #8A96B8;
+    --border:     #2A3560;
+    color-scheme: dark;
+  }
+
+  /* ── Reset / Base ───────────────────────────────── */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; }
+  body {
+    font-family: 'DM Sans', system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    font-size: 14px;
+    line-height: 1.5;
+    overflow: hidden; /* dashboard fills viewport */
+  }
+
+  /* ── Layout Shell ───────────────────────────────── */
+  .shell {
+    display: flex;
+    height: 100%;
+  }
+
+  /* ── Sidebar ───────────────────────────────────── */
+  .sidebar {
+    width: var(--sidebar-w);
+    background: var(--navy);
+    display: flex;
+    flex-direction: column;
+    flex-shrink: 0;
+    overflow-y: auto;
+    padding-block: 24px 16px;
+  }
+  .brand {
+    padding-inline: 20px;
+    margin-bottom: 28px;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+  .brand-name {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 22px;
+    font-weight: 700;
+    color: #FFFFFF;
+    letter-spacing: -0.5px;
+    line-height: 1;
+  }
+  .brand-name span { color: var(--orange); }
+  .brand-sub {
+    font-size: 10px;
+    font-weight: 500;
+    color: rgba(255,255,255,0.45);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  .nav-section {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    margin-bottom: 20px;
+  }
+  .nav-label {
+    font-size: 9.5px;
+    font-weight: 600;
+    letter-spacing: 1.1px;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.35);
+    padding: 6px 20px 4px;
+    margin-top: 8px;
+  }
+  .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 9px 20px;
+    color: rgba(255,255,255,0.65);
+    font-size: 13.5px;
+    font-weight: 500;
+    cursor: pointer;
+    border-radius: 0;
+    transition: background 0.15s, color 0.15s;
+    position: relative;
+    border: none;
+    background: none;
+    width: 100%;
+    text-align: left;
+    font-family: inherit;
+  }
+  .nav-item:hover {
+    background: rgba(255,255,255,0.08);
+    color: #fff;
+  }
+  .nav-item.active {
+    background: rgba(240, 120, 48, 0.18);
+    color: #fff;
+  }
+  .nav-item.active::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 3px;
+    background: var(--orange);
+    border-radius: 0 2px 2px 0;
+  }
+  .nav-icon {
+    width: 17px;
+    text-align: center;
+    font-size: 14px;
+    flex-shrink: 0;
+  }
+  .nav-badge {
+    margin-left: auto;
+    background: var(--orange);
+    color: #fff;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 1px 6px;
+    border-radius: 10px;
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* ── Main ──────────────────────────────────────── */
+  .main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  /* ── Topbar ────────────────────────────────────── */
+  .topbar {
+    background: var(--card);
+    border-bottom: 1px solid var(--border);
+    padding: 0 28px;
+    height: 58px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex-shrink: 0;
+  }
+  .topbar-heading {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 17px;
+    font-weight: 600;
+    color: var(--text);
+    margin-right: auto;
+  }
+  .search-box {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 7px 14px;
+    width: 300px;
+    color: var(--text-muted);
+    font-size: 13px;
+    font-family: inherit;
+    cursor: text;
+  }
+  .search-icon { color: var(--text-muted); font-size: 13px; }
+  .topbar-actions { display: flex; align-items: center; gap: 12px; }
+  .topbar-btn {
+    width: 34px; height: 34px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    background: var(--bg);
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
+    font-size: 15px;
+    color: var(--text-muted);
+    transition: background 0.15s;
+    position: relative;
+  }
+  .topbar-btn:hover { background: var(--border); }
+  .notif-dot {
+    position: absolute; top: 5px; right: 5px;
+    width: 7px; height: 7px;
+    background: var(--orange);
+    border-radius: 50%;
+    border: 1.5px solid var(--card);
+  }
+  .avatar {
+    width: 34px; height: 34px;
+    border-radius: 50%;
+    background: var(--navy);
+    color: #fff;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  .date-chip {
+    font-size: 12px;
+    color: var(--text-muted);
+    font-weight: 500;
+  }
+
+  /* ── Scrollable content ─────────────────────────── */
+  .content {
+    flex: 1;
+    overflow-y: auto;
+    padding: 24px 28px 32px;
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+  }
+
+  /* ── Section header ─────────────────────────────── */
+  .section-head {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    margin-bottom: 14px;
+  }
+  .section-title {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text);
+  }
+  .section-sub {
+    font-size: 12px;
+    color: var(--text-muted);
+    font-weight: 400;
+  }
+
+  /* ── Stat Tiles ─────────────────────────────────── */
+  .stat-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 14px;
+  }
+  .stat-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 18px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    position: relative;
+    overflow: hidden;
+  }
+  .stat-card::after {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    border-radius: 12px 12px 0 0;
+  }
+  .stat-card:nth-child(1)::after { background: var(--navy); }
+  .stat-card:nth-child(2)::after { background: var(--orange); }
+  .stat-card:nth-child(3)::after { background: var(--warn); }
+  .stat-card:nth-child(4)::after { background: var(--success); }
+
+  .stat-label {
+    font-size: 10.5px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: var(--text-muted);
+  }
+  .stat-num {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 34px;
+    font-weight: 700;
+    line-height: 1.1;
+    font-variant-numeric: tabular-nums;
+    color: var(--text);
+  }
+  .stat-num.orange { color: var(--orange); }
+  .stat-num.warn   { color: var(--warn);   }
+  .stat-num.green  { color: var(--success); }
+  .stat-detail {
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-top: 2px;
+  }
+  .stat-alert {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 11.5px;
+    font-weight: 500;
+    color: var(--danger);
+    margin-top: 2px;
+  }
+
+  /* ── Two-col grid ───────────────────────────────── */
+  .grid-2 {
+    display: grid;
+    grid-template-columns: 1fr 340px;
+    gap: 16px;
+    align-items: start;
+  }
+
+  /* ── Panel card ─────────────────────────────────── */
+  .panel {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+  }
+  .panel-head {
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .panel-title {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 13.5px;
+    font-weight: 600;
+    color: var(--text);
+  }
+  .count-chip {
+    background: var(--orange-lt);
+    color: var(--orange);
+    font-size: 11px;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 20px;
+    font-variant-numeric: tabular-nums;
+  }
+  .panel-action {
+    margin-left: auto;
+    font-size: 12px;
+    color: var(--orange);
+    font-weight: 500;
+    cursor: pointer;
+    background: none;
+    border: none;
+    font-family: inherit;
+  }
+
+  /* ── KYC Table ──────────────────────────────────── */
+  .table-wrap { overflow-x: auto; }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  thead th {
+    font-size: 10.5px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: var(--text-muted);
+    padding: 10px 16px;
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+    white-space: nowrap;
+  }
+  tbody tr {
+    border-bottom: 1px solid var(--border);
+    transition: background 0.12s;
+  }
+  tbody tr:last-child { border-bottom: none; }
+  tbody tr:hover { background: var(--bg); }
+  td {
+    padding: 13px 16px;
+    font-size: 13px;
+    color: var(--text);
+    vertical-align: middle;
+    white-space: nowrap;
+  }
+  .applicant-name { font-weight: 600; }
+  .applicant-type {
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--text-muted);
+    margin-top: 1px;
+  }
+
+  /* Face match chips */
+  .match-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 11.5px;
+    font-weight: 600;
+    padding: 3px 10px;
+    border-radius: 20px;
+  }
+  .match-ok  { background: var(--success-bg); color: #16A34A; }
+  .match-rev { background: var(--warn-bg);    color: #D97706; }
+
+  /* Action buttons */
+  .action-group { display: flex; gap: 6px; align-items: center; }
+  .btn {
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 5px 12px;
+    border-radius: 7px;
+    border: 1.5px solid transparent;
+    cursor: pointer;
+    transition: opacity 0.15s;
+  }
+  .btn:hover { opacity: 0.85; }
+  .btn-approve {
+    background: var(--success);
+    color: #fff;
+    border-color: var(--success);
+  }
+  .btn-reject {
+    background: transparent;
+    color: var(--danger);
+    border-color: var(--danger);
+  }
+  .btn-reupload {
+    background: transparent;
+    color: var(--warn);
+    border-color: var(--warn);
+  }
+  .btn-primary {
+    background: var(--orange);
+    color: #fff;
+  }
+
+  /* ── Right column panels ────────────────────────── */
+  .right-col { display: flex; flex-direction: column; gap: 16px; }
+
+  /* Stock list */
+  .stock-list { display: flex; flex-direction: column; }
+  .stock-row {
+    display: flex;
+    align-items: center;
+    padding: 13px 20px;
+    gap: 12px;
+    border-bottom: 1px solid var(--border);
+  }
+  .stock-row:last-child { border-bottom: none; }
+  .stock-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .stock-label {
+    font-size: 13px;
+    color: var(--text);
+    flex: 1;
+  }
+  .stock-num {
+    font-variant-numeric: tabular-nums;
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 700;
+    font-size: 15px;
+    color: var(--text);
+  }
+  .stock-bar-wrap {
+    width: 60px;
+    height: 5px;
+    background: var(--bg);
+    border-radius: 3px;
+    overflow: hidden;
+  }
+  .stock-bar { height: 100%; border-radius: 3px; }
+
+  /* Needs attention */
+  .attention-list { display: flex; flex-direction: column; }
+  .attention-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 13px 20px;
+    border-bottom: 1px solid var(--border);
+  }
+  .attention-item:last-child { border-bottom: none; }
+  .attention-dot {
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    margin-top: 5px;
+  }
+  .attention-text {
+    font-size: 13px;
+    color: var(--text);
+    line-height: 1.45;
+  }
+  .attention-tag {
+    margin-left: auto;
+    font-size: 10.5px;
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: 20px;
+    white-space: nowrap;
+    flex-shrink: 0;
+    align-self: flex-start;
+    margin-top: 1px;
+  }
+
+  /* ── Mobile collapse ─────────────────────────────── */
+  .menu-toggle {
+    display: none;
+    background: none;
+    border: none;
+    font-size: 20px;
+    color: var(--text);
+    cursor: pointer;
+    padding: 4px;
+  }
+
+  @media (max-width: 900px) {
+    body { overflow: auto; }
+    .shell { flex-direction: column; height: auto; }
+    .main { overflow: visible; }
+    .content { overflow: visible; }
+    .sidebar {
+      width: 100%;
+      padding-block: 16px;
+      flex-direction: row;
+      flex-wrap: wrap;
+      display: none;
+    }
+    .sidebar.open { display: flex; }
+    .menu-toggle { display: block; }
+    .topbar { position: sticky; top: 0; z-index: 10; }
+    .search-box { width: 100%; }
+    .stat-grid { grid-template-columns: 1fr 1fr; }
+    .grid-2 { grid-template-columns: 1fr; }
+    .right-col { flex-direction: row; flex-wrap: wrap; }
+    .right-col .panel { min-width: 0; flex: 1; }
+  }
+  @media (max-width: 520px) {
+    .stat-grid { grid-template-columns: 1fr; }
+    .topbar { padding-inline: 16px; }
+    .content { padding-inline: 16px; }
+    .date-chip { display: none; }
+    .search-box { display: none; }
+  }
+</style>
+
+<div class="shell">
+
+  <!-- ── Sidebar ── -->
+  <aside class="sidebar" id="sidebar">
+    <div class="brand">
+      <div class="brand-name">dbugg<span>.</span></div>
+      <div class="brand-sub">admin panel</div>
+    </div>
+
+    <nav style="flex:1">
+      <div class="nav-section">
+        <button class="nav-item active" onclick="setActive(this)">
+          <span class="nav-icon">📊</span> Dashboard
+        </button>
+        <button class="nav-item" onclick="setActive(this)">
+          <span class="nav-icon">📦</span> Inventory &amp; QC
+        </button>
+        <button class="nav-item" onclick="setActive(this)">
+          <span class="nav-icon">🛒</span> B2C Orders
+        </button>
+        <button class="nav-item" onclick="setActive(this)">
+          <span class="nav-icon">🏢</span> B2B &amp; Quotations
+        </button>
+        <button class="nav-item" onclick="setActive(this)">
+          <span class="nav-icon">📋</span> Rentals &amp; Deposits
+        </button>
+        <button class="nav-item" onclick="setActive(this)">
+          <span class="nav-icon">✅</span> KYC Queue
+          <span class="nav-badge">3</span>
+        </button>
+        <button class="nav-item" onclick="setActive(this)">
+          <span class="nav-icon">🤝</span> Dealers &amp; Payouts
+        </button>
+        <button class="nav-item" onclick="setActive(this)">
+          <span class="nav-icon">💰</span> Finance &amp; GST
+        </button>
+        <button class="nav-item" onclick="setActive(this)">
+          <span class="nav-icon">📈</span> Reports
+        </button>
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-label">Super Admin</div>
+        <button class="nav-item" onclick="setActive(this)">
+          <span class="nav-icon">👥</span> Admins &amp; Roles
+        </button>
+        <button class="nav-item" onclick="setActive(this)">
+          <span class="nav-icon">⚙️</span> Pricing &amp; Rules
+        </button>
+        <button class="nav-item" onclick="setActive(this)">
+          <span class="nav-icon">🔒</span> Audit Log
+        </button>
+      </div>
+    </nav>
+
+    <div style="padding:16px 20px 0; border-top:1px solid rgba(255,255,255,0.1); margin-top:auto;">
+      <div style="display:flex;align-items:center;gap:10px;">
+        <div style="width:32px;height:32px;border-radius:50%;background:rgba(255,255,255,0.12);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#fff;">A</div>
+        <div>
+          <div style="font-size:13px;font-weight:600;color:#fff;">Aditya G.</div>
+          <div style="font-size:10.5px;color:rgba(255,255,255,0.45);">Super Admin</div>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ── Main ── -->
+  <div class="main">
+
+    <!-- Topbar -->
+    <header class="topbar">
+      <button class="menu-toggle" onclick="toggleSidebar()">☰</button>
+      <div class="topbar-heading">Dashboard</div>
+      <div class="search-box">
+        <span class="search-icon">🔍</span>
+        Search serial, order, customer, dealer…
+      </div>
+      <div class="topbar-actions">
+        <span class="date-chip">Thu, 1 Oct 2026</span>
+        <div class="topbar-btn">
+          🔔
+          <div class="notif-dot"></div>
+        </div>
+        <div class="avatar">AG</div>
+      </div>
+    </header>
+
+    <!-- Content -->
+    <div class="content">
+
+      <!-- Stat tiles -->
+      <div>
+        <div class="section-head">
+          <div class="section-title">Today at a glance</div>
+          <div class="section-sub">All channels · All warehouses</div>
+        </div>
+        <div class="stat-grid">
+          <div class="stat-card">
+            <div class="stat-label">B2C Orders</div>
+            <div class="stat-num">247</div>
+            <div class="stat-detail">to pack today</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">B2B Quotations</div>
+            <div class="stat-num orange">12</div>
+            <div class="stat-detail">awaiting reply</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Laptops on Rent</div>
+            <div class="stat-num warn">89</div>
+            <div class="stat-alert">⚠ 3 rent overdue</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Dealer Orders</div>
+            <div class="stat-num green">34</div>
+            <div class="stat-detail">to dispatch</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- KYC + Stock row -->
+      <div class="grid-2">
+
+        <!-- KYC Queue -->
+        <div class="panel">
+          <div class="panel-head">
+            <div class="panel-title">KYC Approval Queue</div>
+            <span class="count-chip">3 pending</span>
+            <button class="panel-action">View all →</button>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Applicant</th>
+                  <th>Type</th>
+                  <th>Documents</th>
+                  <th>Face Match</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>
+                    <div class="applicant-name">Rahul S.</div>
+                    <div class="applicant-type">Individual</div>
+                  </td>
+                  <td>Renter</td>
+                  <td>Aadhaar + bill</td>
+                  <td><span class="match-chip match-ok">✓ Match</span></td>
+                  <td>
+                    <div class="action-group">
+                      <button class="btn btn-approve" onclick="handleKYC(this,'approved')">Approve</button>
+                      <button class="btn btn-reject" onclick="handleKYC(this,'rejected')">Reject</button>
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <div class="applicant-name">Priya M.</div>
+                    <div class="applicant-type">Individual</div>
+                  </td>
+                  <td>Renter</td>
+                  <td>PAN + rent deed</td>
+                  <td><span class="match-chip match-rev">⚠ Review</span></td>
+                  <td>
+                    <div class="action-group">
+                      <button class="btn btn-approve" onclick="handleKYC(this,'approved')">Approve</button>
+                      <button class="btn btn-reupload" onclick="handleKYC(this,'reupload')">Re-upload</button>
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <div class="applicant-name">TechZone</div>
+                    <div class="applicant-type">Business</div>
+                  </td>
+                  <td>Dealer</td>
+                  <td>GSTIN + bank</td>
+                  <td><span class="match-chip match-ok">✓ Match</span></td>
+                  <td>
+                    <div class="action-group">
+                      <button class="btn btn-approve" onclick="handleKYC(this,'approved')">Approve</button>
+                      <button class="btn btn-reject" onclick="handleKYC(this,'rejected')">Reject</button>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Right column -->
+        <div class="right-col">
+
+          <!-- Stock by status -->
+          <div class="panel" style="flex:1">
+            <div class="panel-head">
+              <div class="panel-title">Stock by status</div>
+              <span style="margin-left:auto;font-size:12px;color:var(--text-muted)">315 total</span>
+            </div>
+            <div class="stock-list">
+              <div class="stock-row">
+                <div class="stock-dot" style="background:#F07830"></div>
+                <div class="stock-label">In QC / refurbishing</div>
+                <div class="stock-bar-wrap"><div class="stock-bar" style="background:#F07830;width:7%"></div></div>
+                <div class="stock-num">23</div>
+              </div>
+              <div class="stock-row">
+                <div class="stock-dot" style="background:#1C2B6B"></div>
+                <div class="stock-label">Listed for sale</div>
+                <div class="stock-bar-wrap"><div class="stock-bar" style="background:#1C2B6B;width:49%"></div></div>
+                <div class="stock-num">156</div>
+              </div>
+              <div class="stock-row">
+                <div class="stock-dot" style="background:#F59E0B"></div>
+                <div class="stock-label">In rental pool</div>
+                <div class="stock-bar-wrap"><div class="stock-bar" style="background:#F59E0B;width:28%"></div></div>
+                <div class="stock-num">89</div>
+              </div>
+              <div class="stock-row">
+                <div class="stock-dot" style="background:#22C55E"></div>
+                <div class="stock-label">With dealers</div>
+                <div class="stock-bar-wrap"><div class="stock-bar" style="background:#22C55E;width:15%"></div></div>
+                <div class="stock-num">47</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Needs attention -->
+          <div class="panel" style="flex:1">
+            <div class="panel-head">
+              <div class="panel-title">Needs attention</div>
+              <span class="count-chip" style="background:var(--danger-bg);color:var(--danger)">3</span>
+            </div>
+            <div class="attention-list">
+              <div class="attention-item">
+                <div class="attention-dot" style="background:var(--warn)"></div>
+                <div class="attention-text">Returned rentals waiting for damage check</div>
+                <span class="attention-tag" style="background:var(--warn-bg);color:#D97706">QC</span>
+              </div>
+              <div class="attention-item">
+                <div class="attention-dot" style="background:var(--danger)"></div>
+                <div class="attention-text">Deposit refunds above limit → Super Admin</div>
+                <span class="attention-tag" style="background:var(--danger-bg);color:var(--danger)">Finance</span>
+              </div>
+              <div class="attention-item">
+                <div class="attention-dot" style="background:var(--success)"></div>
+                <div class="attention-text">Dealer payout batch ready to process</div>
+                <span class="attention-tag" style="background:var(--success-bg);color:#16A34A">Payout</span>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+    </div><!-- /content -->
+  </div><!-- /main -->
+</div><!-- /shell -->
+
+<script>
+  function setActive(el) {
+    document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+    el.classList.add('active');
+  }
+
+  function toggleSidebar() {
+    document.getElementById('sidebar').classList.toggle('open');
+  }
+
+  function handleKYC(btn, action) {
+    const row = btn.closest('tr');
+    const name = row.querySelector('.applicant-name').textContent;
+    const actionGroup = btn.closest('.action-group');
+    const labels = { approved: '✓ Approved', rejected: '✗ Rejected', reupload: '↑ Reupload sent' };
+    const colors = { approved: 'var(--success)', rejected: 'var(--danger)', reupload: 'var(--warn)' };
+    actionGroup.innerHTML = `<span style="font-size:12px;font-weight:600;color:${colors[action]}">${labels[action]}</span>`;
+    row.style.opacity = '0.55';
+
+    // Update badge count
+    const badge = document.querySelector('.nav-badge');
+    if (badge) {
+      const cur = parseInt(badge.textContent);
+      if (cur > 1) badge.textContent = cur - 1;
+      else badge.remove();
+    }
+    const countChip = document.querySelector('.count-chip');
+    if (countChip && countChip.textContent.includes('pending')) {
+      const n = parseInt(countChip.textContent);
+      countChip.textContent = (n - 1) + ' pending';
+    }
+  }
+</script>

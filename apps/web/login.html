@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Login — dbuggs</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@600;700&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--navy:#1C2B6B;--accent:#F07830;--accent-hover:#d9631f;--bg:#F7F8FC;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);min-height:100vh;display:flex;align-items:center;justify-content:center;}
+.box{background:#fff;border-radius:14px;padding:32px;width:380px;box-shadow:0 4px 24px rgba(0,0,0,0.08);}
+.brand{font-family:'Space Grotesk',sans-serif;font-size:22px;font-weight:700;color:var(--navy);text-align:center;margin-bottom:4px;}
+.brand span{color:var(--accent);}
+.tabs{display:flex;background:var(--bg);border-radius:9px;padding:3px;margin:18px 0 20px;}
+.tab{flex:1;text-align:center;padding:8px;font-size:13px;font-weight:600;border-radius:7px;cursor:pointer;color:#6B7280;}
+.tab.active{background:#fff;color:var(--navy);box-shadow:0 1px 3px rgba(0,0,0,0.1);}
+label{font-size:12.5px;font-weight:600;color:#374151;display:block;margin-bottom:6px;}
+input,select{width:100%;padding:10px 12px;border:1px solid #E5E7EB;border-radius:8px;font-size:14px;margin-bottom:14px;font-family:inherit;}
+button{width:100%;padding:11px;background:var(--accent);color:#fff;border:none;border-radius:8px;font-weight:600;font-size:14px;cursor:pointer;}
+button:hover{background:var(--accent-hover);}
+.msg{font-size:12.5px;margin-top:4px;color:#991B1B;min-height:16px;}
+.form{display:none;}
+.form.active{display:block;}
+</style>
+</head>
+<body>
+<div class="box">
+  <div class="brand">d<span>bugg</span>s</div>
+  <div class="tabs">
+    <div class="tab active" id="tab-login" onclick="switchTab('login')">Login</div>
+    <div class="tab" id="tab-signup" onclick="switchTab('signup')">Sign Up</div>
+  </div>
+
+  <form class="form active" id="form-login" onsubmit="doLogin(event)">
+    <label>Email</label>
+    <input type="email" id="login-email" placeholder="you@example.com" required>
+    <label>Password</label>
+    <input type="password" id="login-password" required>
+    <button type="submit">Login</button>
+  </form>
+
+  <form class="form" id="form-signup" onsubmit="doSignup(event)">
+    <label>Full Name</label>
+    <input type="text" id="su-name" required>
+    <label>Email</label>
+    <input type="email" id="su-email" required>
+    <label>Phone (+91XXXXXXXXXX)</label>
+    <input type="text" id="su-phone" placeholder="+919876543210" required>
+    <label>Account Type</label>
+    <select id="su-role">
+      <option value="b2c">Individual Customer (B2C)</option>
+      <option value="b2b">Business Buyer (B2B — wholesale)</option>
+      <option value="dealer">Vendor / Dealer (sell on dbuggs)</option>
+    </select>
+    <label>Password</label>
+    <input type="password" id="su-password" required>
+    <button type="submit">Create Account</button>
+  </form>
+
+  <div class="msg" id="msg"></div>
+</div>
+
+<script src="shop-api.js"></script>
+<script>
+function switchTab(tab) {
+  document.getElementById('tab-login').classList.toggle('active', tab === 'login');
+  document.getElementById('tab-signup').classList.toggle('active', tab === 'signup');
+  document.getElementById('form-login').classList.toggle('active', tab === 'login');
+  document.getElementById('form-signup').classList.toggle('active', tab === 'signup');
+  document.getElementById('msg').textContent = '';
+}
+
+async function doLogin(e) {
+  e.preventDefault();
+  const email = document.getElementById('login-email').value.trim();
+  const password = document.getElementById('login-password').value;
+  const msg = document.getElementById('msg');
+  msg.style.color = '#6B7280'; msg.textContent = 'Logging in...';
+  try {
+    const data = await apiFetch('/auth/login', { method: 'POST', body: { email, password } });
+    setAuth(data.accessToken, data.user);
+    redirectByRole(data.user.role);
+  } catch (e) {
+    msg.style.color = '#991B1B'; msg.textContent = e.message;
+  }
+}
+
+function redirectByRole(role) {
+  if (role === 'admin' || role === 'super_admin') window.location.href = 'http://localhost:3000/login.html';
+  else if (role === 'dealer') window.location.href = '/vendor-panel/dashboard.html';
+  else if (role === 'b2b') window.location.href = '/b2b-panel/dashboard.html';
+  else window.location.href = '/index.html';
+}
+
+async function doSignup(e) {
+  e.preventDefault();
+  const body = {
+    name: document.getElementById('su-name').value.trim(),
+    email: document.getElementById('su-email').value.trim(),
+    phone: document.getElementById('su-phone').value.trim(),
+    role: document.getElementById('su-role').value,
+    password: document.getElementById('su-password').value,
+  };
+  const msg = document.getElementById('msg');
+  msg.style.color = '#6B7280'; msg.textContent = 'Creating account...';
+  try {
+    const data = await apiFetch('/auth/signup', { method: 'POST', body });
+    setAuth(data.accessToken, data.user);
+    redirectByRole(data.user.role);
+  } catch (e) {
+    msg.style.color = '#991B1B'; msg.textContent = e.message;
+  }
+}
+</script>
+</body>
+</html>

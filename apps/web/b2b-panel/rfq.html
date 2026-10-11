@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RFQ — B2B Panel</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@600;700&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../panel-shared.css">
+<style>
+label{font-size:12.5px;font-weight:600;display:block;margin:12px 0 6px;}
+textarea,input{width:100%;padding:10px 12px;border:1px solid var(--border);border-radius:8px;font-size:14px;font-family:inherit;}
+.msg{font-size:13px;margin-top:10px;}
+</style>
+</head>
+<body>
+<aside class="sidebar">
+  <div class="sidebar-logo"><div class="brand">d<span>bugg</span>s</div><div class="tagline">B2B Partner Panel</div></div>
+  <nav class="nav-section">
+    <a href="dashboard.html" class="nav-item"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"/></svg>Dashboard</a>
+    <a href="orders.html" class="nav-item"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M7 4h-2l-3 9v2h18v-2l-3-9h-2l1 4H6L7 4z"/></svg>My Orders</a>
+    <a href="rfq.html" class="nav-item active"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6z"/></svg>RFQ / Quotations</a>
+    <a href="../index.html" class="nav-item"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M20 4H4c-1.11 0-2 .89-2 2v12c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V6c0-1.11-.89-2-2-2z"/></svg>Browse Shop</a>
+  </nav>
+  <div class="sidebar-footer">
+    <div class="user-info"><div class="avatar" id="avatar">B</div><div><div class="user-name" id="uname">Loading</div><div class="logout-link" onclick="logout()">Logout</div></div></div>
+  </div>
+</aside>
+<div class="main-wrapper">
+  <header class="topbar"><div class="topbar-title">RFQ / Quotations</div></header>
+  <main class="page-content">
+    <div class="card">
+      <div class="card-header"><div class="card-title">Wholesale Price Slabs</div></div>
+      <div id="slabs-table"><div class="empty">Loading...</div></div>
+    </div>
+    <div class="card">
+      <div class="card-header"><div class="card-title">Request a Custom Quotation</div></div>
+      <div style="padding:18px;">
+        <div style="font-size:12.5px;color:var(--text-secondary);">For large or custom bulk orders, submit requirements and get a PDF quotation within 24 hours.</div>
+        <form onsubmit="submitRfq(event)">
+          <label>Requirements</label>
+          <textarea id="rfq-details" rows="3" placeholder="e.g. 30x Grade A laptops, i5/8GB preferred, needed by 15 Oct" required></textarea>
+          <button type="submit" class="btn btn-primary" style="margin-top:14px;">Submit RFQ</button>
+        </form>
+        <div class="msg" id="rfq-msg"></div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script src="../shop-api.js"></script>
+<script>
+if (!getToken()) window.location.href = '/login.html';
+const user = getUser();
+if (user) { document.getElementById('uname').textContent = user.name || user.email; document.getElementById('avatar').textContent = (user.name || 'B')[0].toUpperCase(); }
+
+async function loadSlabs() {
+  const el = document.getElementById('slabs-table');
+  try {
+    const slabs = await apiFetch('/b2b/slabs');
+    el.innerHTML = `<table><thead><tr><th>Quantity</th><th>Discount</th></tr></thead>
+      <tbody>${slabs.map(s => `<tr><td>${s.label}</td><td style="font-weight:700;color:#065F46;">${s.discountPercent}% off</td></tr>`).join('')}</tbody></table>`;
+  } catch (e) {
+    el.innerHTML = `<div class="empty">Error: ${e.message}</div>`;
+  }
+}
+
+async function submitRfq(e) {
+  e.preventDefault();
+  const details = document.getElementById('rfq-details').value.trim();
+  const msg = document.getElementById('rfq-msg');
+  msg.style.color = '#6B7280'; msg.textContent = 'Submitting...';
+  try {
+    const res = await apiFetch('/b2b/rfq', { method: 'POST', body: { details } });
+    msg.style.color = '#065F46';
+    msg.textContent = `RFQ submitted (${res.rfqId}). ${res.message}`;
+    document.getElementById('rfq-details').value = '';
+  } catch (e) {
+    msg.style.color = '#991B1B'; msg.textContent = e.message;
+  }
+}
+
+loadSlabs();
+</script>
+</body>
+</html>

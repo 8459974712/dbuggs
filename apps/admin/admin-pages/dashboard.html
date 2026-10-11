@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard — Dbuggs Admin</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --sidebar-bg: #1C2B6B;
+  --accent: #F07830;
+  --accent-hover: #d9631f;
+  --page-bg: #EFF1F8;
+  --card-bg: #FFFFFF;
+  --text-primary: #111827;
+  --text-secondary: #6B7280;
+  --text-muted: #9CA3AF;
+  --border: #E5E7EB;
+  --sidebar-text: rgba(255,255,255,0.75);
+  --sidebar-text-active: #FFFFFF;
+  --sidebar-active-bg: rgba(240,120,48,0.18);
+  --sidebar-hover-bg: rgba(255,255,255,0.07);
+  --green: #10B981; --green-bg: #D1FAE5;
+  --blue: #3B82F6; --blue-bg: #DBEAFE;
+  --orange: #F59E0B; --orange-bg: #FEF3C7;
+  --red: #EF4444; --red-bg: #FEE2E2;
+  --gray: #6B7280; --gray-bg: #F3F4F6;
+  --navy: #1C2B6B; --navy-bg: #E0E4F5;
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.07);
+  --shadow-md: 0 4px 12px rgba(0,0,0,0.08);
+  --radius: 10px;
+  --radius-sm: 6px;
+}
+
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'DM Sans', sans-serif; background: var(--page-bg); color: var(--text-primary); display: flex; min-height: 100vh; font-size: 14px; }
+h1,h2,h3,h4,h5 { font-family: 'Space Grotesk', sans-serif; }
+
+/* SIDEBAR */
+.sidebar {
+  width: 240px; min-width: 220px; background: var(--sidebar-bg);
+  display: flex; flex-direction: column; position: fixed; top: 0; left: 0;
+  height: 100vh; overflow-y: auto; z-index: 100;
+}
+.sidebar::-webkit-scrollbar { width: 4px; }
+.sidebar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 4px; }
+.sidebar-logo {
+  padding: 20px 20px 16px;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+.sidebar-logo .brand{
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 20px; font-weight: 700; color: #fff;
+}
+.sidebar-logo .brand span { color: var(--accent); }
+.sidebar-logo .tagline { font-size: 11px; color: var(--sidebar-text); margin-top: 2px; }
+.nav-section { padding: 12px 0; }
+.nav-section-label {
+  font-size: 10px; font-weight: 700; letter-spacing: 0.08em;
+  color: rgba(255,255,255,0.35); text-transform: uppercase;
+  padding: 8px 20px 4px;
+}
+.nav-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 9px 20px; color: var(--sidebar-text);
+  text-decoration: none; font-size: 13.5px; font-weight: 500;
+  transition: background 0.15s, color 0.15s;
+  border-radius: 0;
+}
+.nav-item:hover { background: var(--sidebar-hover-bg); color: var(--sidebar-text-active); }
+.nav-item.active {
+  background: var(--sidebar-active-bg); color: var(--sidebar-text-active);
+  border-right: 3px solid var(--accent);
+}
+.nav-item svg { width: 16px; height: 16px; flex-shrink: 0; opacity: 0.8; }
+.nav-item.active svg { opacity: 1; }
+.sidebar-footer { padding: 16px 20px; border-top: 1px solid rgba(255,255,255,0.08); margin-top: auto; }
+.sidebar-footer .user-info { display: flex; align-items: center; gap: 10px; }
+.sidebar-footer .avatar { width: 34px; height: 34px; border-radius: 50%; background: var(--accent); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 13px; color: #fff; flex-shrink: 0; }
+.sidebar-footer .user-name { font-size: 13px; font-weight: 600; color: #fff; }
+.sidebar-footer .user-role { font-size: 11px; color: var(--sidebar-text); }
+
+/* MAIN */
+.main-wrapper { margin-left: 240px; flex: 1; display: flex; flex-direction: column; min-width: 0; }
+
+/* TOPBAR */
+.topbar {
+  background: var(--card-bg); border-bottom: 1px solid var(--border);
+  padding: 0 28px; height: 60px; display: flex; align-items: center;
+  gap: 16px; position: sticky; top: 0; z-index: 50;
+}
+.topbar-title { font-family: 'Space Grotesk', sans-serif; font-size: 18px; font-weight: 700; color: var(--text-primary); flex: 0 0 auto; }
+.live-badge {
+  background: #D1FAE5; color: #065F46; font-size: 11.5px; font-weight: 600;
+  padding: 3px 10px; border-radius: 20px; display: flex; align-items: center; gap: 5px;
+}
+.live-badge::before { content: ''; width: 7px; height: 7px; border-radius: 50%; background: #10B981; animation: pulse 1.5s infinite; display: inline-block; }
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+.topbar-spacer { flex: 1; }
+.search-box {
+  display: flex; align-items: center; gap: 8px;
+  background: var(--page-bg); border: 1px solid var(--border);
+  border-radius: 8px; padding: 6px 12px; width: 220px;
+}
+.search-box input { background: none; border: none; outline: none; font-family: 'DM Sans', sans-serif; font-size: 13.5px; color: var(--text-primary); width: 100%; }
+.search-box input::placeholder { color: var(--text-muted); }
+.topbar-icon-btn {
+  width: 36px; height: 36px; border-radius: 8px; border: 1px solid var(--border);
+  background: var(--page-bg); display: flex; align-items: center; justify-content: center;
+  cursor: pointer; position: relative; color: var(--text-secondary);
+}
+.topbar-icon-btn:hover { background: var(--border); }
+.notif-dot { position: absolute; top: 6px; right: 6px; width: 7px; height: 7px; border-radius: 50%; background: var(--accent); border: 1.5px solid var(--card-bg); }
+.topbar-avatar { width: 36px; height: 36px; border-radius: 50%; background: var(--accent); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 13px; color: #fff; cursor: pointer; }
+
+/* PAGE CONTENT */
+.page-content { padding: 28px; flex: 1; }
+
+/* STAT TILES */
+.stat-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 24px; }
+.stat-tile {
+  background: var(--card-bg); border-radius: var(--radius);
+  padding: 20px; border: 1px solid var(--border);
+  box-shadow: var(--shadow-sm); display: flex; flex-direction: column; gap: 8px;
+}
+.stat-tile .label { font-size: 12.5px; font-weight: 500; color: var(--text-secondary); display: flex; align-items: center; gap: 6px; }
+.stat-tile .value { font-family: 'Space Grotesk', sans-serif; font-size: 26px; font-weight: 700; color: var(--text-primary); font-variant-numeric: tabular-nums; }
+.stat-tile .sub { font-size: 12px; color: var(--text-muted); font-variant-numeric: tabular-nums; }
+.badge-up { background: #D1FAE5; color: #065F46; font-size: 11px; font-weight: 600; padding: 2px 7px; border-radius: 12px; display: inline-flex; align-items: center; gap: 3px; }
+.badge-down { background: #FEE2E2; color: #991B1B; font-size: 11px; font-weight: 600; padding: 2px 7px; border-radius: 12px; }
+.stat-icon { width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; margin-bottom: 4px; }
+
+/* CARDS */
+.card { background: var(--card-bg); border-radius: var(--radius); border: 1px solid var(--border); box-shadow: var(--shadow-sm); }
+.card-header { padding: 16px 20px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
+.card-title { font-family: 'Space Grotesk', sans-serif; font-size: 15px; font-weight: 600; color: var(--text-primary); }
+
+/* TABLES */
+table { width: 100%; border-collapse: collapse; }
+thead th { padding: 10px 16px; text-align: left; font-size: 11.5px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; color: var(--text-secondary); background: var(--page-bg); border-bottom: 1px solid var(--border); }
+tbody tr { border-bottom: 1px solid var(--border); transition: background 0.12s; }
+tbody tr:last-child { border-bottom: none; }
+tbody tr:hover { background: var(--page-bg); }
+tbody td { padding: 12px 16px; font-size: 13.5px; color: var(--text-primary); font-variant-numeric: tabular-nums; }
+
+/* STATUS CHIPS */
+.chip {
+  display: inline-flex; align-items: center; font-size: 11.5px; font-weight: 600;
+  padding: 3px 9px; border-radius: 20px; white-space: nowrap;
+}
+.chip-delivered { background: var(--green-bg); color: #065F46; }
+.chip-shipped { background: var(--blue-bg); color: #1E40AF; }
+.chip-processing { background: var(--orange-bg); color: #92400E; }
+.chip-cancelled { background: var(--red-bg); color: #991B1B; }
+.chip-available { background: var(--green-bg); color: #065F46; }
+.chip-rented { background: var(--blue-bg); color: #1E40AF; }
+.chip-inqc { background: var(--orange-bg); color: #92400E; }
+.chip-sold { background: var(--gray-bg); color: #374151; }
+.chip-repair { background: var(--red-bg); color: #991B1B; }
+
+/* GRADE BADGES */
+.grade { display: inline-flex; align-items: center; justify-content: center; width: 28px; height: 28px; border-radius: 50%; font-size: 11px; font-weight: 700; }
+.grade-aplus { background: var(--navy); color: #fff; }
+.grade-a { background: var(--green); color: #fff; }
+.grade-b { background: var(--orange); color: #fff; }
+.grade-c { background: var(--red); color: #fff; }
+
+/* BOTTOM GRID */
+.bottom-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+
+/* BUTTON */
+.btn { display: inline-flex; align-items: center; gap: 7px; padding: 8px 16px; border-radius: var(--radius-sm); font-family: 'DM Sans', sans-serif; font-size: 13.5px; font-weight: 600; cursor: pointer; transition: all 0.15s; border: none; text-decoration: none; }
+.btn-primary { background: var(--accent); color: #fff; }
+.btn-primary:hover { background: var(--accent-hover); }
+.btn-outline { background: var(--card-bg); color: var(--text-primary); border: 1px solid var(--border); }
+.btn-outline:hover { background: var(--page-bg); }
+.btn-sm { padding: 5px 12px; font-size: 12.5px; }
+
+/* REVIEW BTN */
+.btn-review { background: none; border: 1.5px solid var(--accent); color: var(--accent); border-radius: var(--radius-sm); padding: 4px 12px; font-size: 12.5px; font-weight: 600; cursor: pointer; transition: all 0.15s; }
+.btn-review:hover { background: var(--accent); color: #fff; }
+
+/* VIEW ALL LINK */
+.view-all { font-size: 13px; color: var(--accent); font-weight: 600; text-decoration: none; }
+.view-all:hover { text-decoration: underline; }
+
+@media (max-width: 1100px) {
+  .stat-grid { grid-template-columns: repeat(2,1fr); }
+  .bottom-grid { grid-template-columns: 1fr; }
+}
+@media (max-width: 768px) {
+  .sidebar { transform: translateX(-100%); }
+  .main-wrapper { margin-left: 0; }
+  .stat-grid { grid-template-columns: 1fr 1fr; }
+}
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <div class="brand">d<span>bugg</span>s</div>
+    <div class="tagline">Admin Panel</div>
+  </div>
+  <nav class="nav-section">
+    <a href="dashboard.html" class="nav-item active">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"/></svg>
+      Dashboard
+    </a>
+    <a href="inventory.html" class="nav-item">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M20 6h-2.18c.07-.44.18-.88.18-1.34C18 2.54 15.46 0 12 0S6 2.54 6 4.66C6 5.12 6.11 5.56 6.18 6H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zM12 2c1.35 0 2 1.03 2 2.66 0 .73-.16 1.47-.44 2.07-.44.95-1.32 1.27-1.56 1.27s-1.12-.32-1.56-1.27C10.16 6.13 10 5.39 10 4.66 10 3.03 10.65 2 12 2zm0 10c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2z"/></svg>
+      Inventory Units
+    </a>
+    <a href="qc-grading.html" class="nav-item">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"/></svg>
+      QC &amp; Grading
+    </a>
+    <a href="b2c-orders.html" class="nav-item">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M7 4h-2l-3 9v2h18v-2l-3-9h-2l1 4H6L7 4zm0 8H5.5l.67-2H7v2zm2 0v-2h.5l-.5 2zm3 0h-1l.5-2h.5v2zm2 0v-2h.5l.5 2h-1zm3 0l-.67-2H18v2h-1zM3 17v2h18v-2H3z"/></svg>
+      B2C Orders
+    </a>
+    <a href="returns.html" class="nav-item">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 5V1L7 6l5 5V7c3.31 0 6 2.69 6 6s-2.69 6-6 6-6-2.69-6-6H4c0 4.42 3.58 8 8 8s8-3.58 8-8-3.58-8-8-8z"/></svg>
+      Returns &amp; Refunds
+    </a>
+    <a href="b2b-approvals.html" class="nav-item">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
+      B2B Approvals
+    </a>
+    <a href="quotations.html" class="nav-item">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg>
+      Quotations &amp; POs
+    </a>
+    <a href="kyc-queue.html" class="nav-item">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+      KYC Queue
+    </a>
+    <a href="rentals.html" class="nav-item">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M20 4H4c-1.11 0-2 .89-2 2v12c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V6c0-1.11-.89-2-2-2zm0 14H4v-6h16v6zm0-10H4V6h16v2z"/></svg>
+      Rentals &amp; Deposits
+    </a>
+    <a href="dealer-applications.html" class="nav-item">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 14l-5-5 1.41-1.41L12 14.17l7.59-7.59L21 8l-9 9z"/></svg>
+      Dealer Applications
+    </a>
+    <a href="dealers-tiers.html" class="nav-item">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+      Dealers &amp; Tiers
+    </a>
+    <a href="commission.html" class="nav-item">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M11.8 10.9c-2.27-.59-3-1.2-3-2.15 0-1.09 1.01-1.85 2.7-1.85 1.78 0 2.44.85 2.5 2.1h2.21c-.07-1.72-1.12-3.3-3.21-3.81V3h-3v2.16c-1.94.42-3.5 1.68-3.5 3.61 0 2.31 1.91 3.46 4.7 4.13 2.5.6 3 1.48 3 2.41 0 .69-.49 1.79-2.7 1.79-2.06 0-2.87-.92-2.98-2.1h-2.2c.12 2.19 1.76 3.42 3.68 3.83V21h3v-2.15c1.95-.37 3.5-1.5 3.5-3.55 0-2.84-2.43-3.81-4.7-4.4z"/></svg>
+      Commission &amp; Payouts
+    </a>
+    <a href="warranty.html" class="nav-item">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 4l5 2.18V11c0 3.5-2.33 6.79-5 7.93-2.67-1.14-5-4.43-5-7.93V7.18L12 5z"/></svg>
+      Warranty &amp; Support
+    </a>
+    <a href="marketing.html" class="nav-item">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/></svg>
+      Marketing &amp; CMS
+    </a>
+    <a href="finance.html" class="nav-item">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM7 7h2v2H7V7zm0 4h2v2H7v-2zm0 4h2v2H7v-2zm10 2h-6v-2h6v2zm0-4h-6v-2h6v2zm0-4h-6V7h6v2z"/></svg>
+      Finance &amp; GST
+    </a>
+    <a href="reports.html" class="nav-item">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg>
+      Reports
+    </a>
+  </nav>
+  <div style="padding: 4px 20px;">
+    <div class="nav-section-label">Super Admin</div>
+  </div>
+  <nav class="nav-section" style="padding-top:4px;">
+    <a href="admins-roles.html" class="nav-item">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1s3.1 1.39 3.1 3.1v2z"/></svg>
+      Admins &amp; Roles
+    </a>
+    <a href="pricing-rules.html" class="nav-item">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.63 5.84C17.27 5.33 16.67 5 16 5L5 5.01C3.9 5.01 3 5.9 3 7v10c0 1.1.9 1.99 2 1.99L16 19c.67 0 1.27-.33 1.63-.84L22 12l-4.37-6.16z"/></svg>
+      Pricing &amp; Rules
+    </a>
+    <a href="integrations.html" class="nav-item">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg>
+      Integrations
+    </a>
+    <a href="audit-log.html" class="nav-item">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M13 3c-4.97 0-9 4.03-9 9H1l3.89 3.89.07.14L9 12H6c0-3.87 3.13-7 7-7s7 3.13 7 7-3.13 7-7 7c-1.93 0-3.68-.79-4.94-2.06l-1.42 1.42C8.27 19.99 10.51 21 13 21c4.97 0 9-4.03 9-9s-4.03-9-9-9zm-1 5v5l4.28 2.54.72-1.21-3.5-2.08V8H12z"/></svg>
+      Audit Log
+    </a>
+  </nav>
+  <div class="sidebar-footer">
+    <div class="user-info">
+      <div class="avatar">SA</div>
+      <div>
+        <div class="user-name">Super Admin</div>
+        <div class="user-role">admin@dbuggs.in</div>
+      </div>
+    </div>
+  </div>
+</aside>
+
+<!-- MAIN WRAPPER -->
+<div class="main-wrapper">
+  <!-- TOPBAR -->
+  <header class="topbar">
+    <div class="topbar-title">Dashboard</div>
+    <div class="live-badge">Today: Oct 1, 2026 Live</div>
+    <div class="topbar-spacer"></div>
+    <div class="search-box">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+      <input type="text" placeholder="Search orders, units…">
+    </div>
+    <div class="topbar-icon-btn">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.9 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"/></svg>
+      <div class="notif-dot"></div>
+    </div>
+    <div class="topbar-avatar">SA</div>
+  </header>
+
+  <!-- PAGE CONTENT -->
+  <main class="page-content">
+
+    <!-- STAT TILES -->
+    <div class="stat-grid">
+      <div class="stat-tile">
+        <div class="stat-icon" style="background:#FEF3C7;"><svg width="20" height="20" viewBox="0 0 24 24" fill="#F59E0B"><path d="M11.8 10.9c-2.27-.59-3-1.2-3-2.15 0-1.09 1.01-1.85 2.7-1.85 1.78 0 2.44.85 2.5 2.1h2.21c-.07-1.72-1.12-3.3-3.21-3.81V3h-3v2.16c-1.94.42-3.5 1.68-3.5 3.61 0 2.31 1.91 3.46 4.7 4.13 2.5.6 3 1.48 3 2.41 0 .69-.49 1.79-2.7 1.79-2.06 0-2.87-.92-2.98-2.1h-2.2c.12 2.19 1.76 3.42 3.68 3.83V21h3v-2.15c1.95-.37 3.5-1.5 3.5-3.55 0-2.84-2.43-3.81-4.7-4.4z"/></svg></div>
+        <div class="label">Total Orders</div>
+        <div class="value" id="stat-orders">—</div>
+        <div class="sub" id="stat-orders-sub">&nbsp;</div>
+      </div>
+      <div class="stat-tile">
+        <div class="stat-icon" style="background:#DBEAFE;"><svg width="20" height="20" viewBox="0 0 24 24" fill="#3B82F6"><path d="M20 4H4c-1.11 0-2 .89-2 2v12c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V6c0-1.11-.89-2-2-2zm0 14H4v-6h16v6zm0-10H4V6h16v2z"/></svg></div>
+        <div class="label">Active Rentals</div>
+        <div class="value" id="stat-rentals">—</div>
+        <div class="sub" id="stat-rentals-sub">&nbsp;</div>
+      </div>
+      <div class="stat-tile">
+        <div class="stat-icon" style="background:#E0E4F5;"><svg width="20" height="20" viewBox="0 0 24 24" fill="#1C2B6B"><path d="M20 6h-2.18c.07-.44.18-.88.18-1.34C18 2.54 15.46 0 12 0S6 2.54 6 4.66C6 5.12 6.11 5.56 6.18 6H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2z"/></svg></div>
+        <div class="label">Inventory Units</div>
+        <div class="value" id="stat-inventory">—</div>
+        <div class="sub" id="stat-inventory-sub">&nbsp;</div>
+      </div>
+      <div class="stat-tile">
+        <div class="stat-icon" style="background:#FEE2E2;"><svg width="20" height="20" viewBox="0 0 24 24" fill="#EF4444"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg></div>
+        <div class="label">Pending KYC</div>
+        <div class="value" id="stat-kyc">—</div>
+        <div class="sub">&nbsp;</div>
+      </div>
+    </div>
+
+    <!-- BOTTOM GRID -->
+    <div class="bottom-grid">
+      <!-- RECENT B2C ORDERS -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">Recent B2C Orders</div>
+          <a href="b2c-orders.html" class="view-all">View All →</a>
+        </div>
+        <div style="overflow-x:auto;">
+          <table>
+            <thead>
+              <tr>
+                <th>Order ID</th>
+                <th>Customer</th>
+                <th>Laptop</th>
+                <th>Amount</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td style="font-weight:600;color:var(--accent);">#ORD-4821</td>
+                <td>Rahul Sharma</td>
+                <td>Dell i5 <span class="grade grade-a" style="font-size:10px;width:22px;height:22px;">A</span></td>
+                <td>₹32,000</td>
+                <td><span class="chip chip-delivered">Delivered</span></td>
+              </tr>
+              <tr>
+                <td style="font-weight:600;color:var(--accent);">#ORD-4820</td>
+                <td>Priya Singh</td>
+                <td>HP 840 G8 <span class="grade grade-aplus" style="font-size:10px;width:22px;height:22px;">A+</span></td>
+                <td>₹48,500</td>
+                <td><span class="chip chip-shipped">Shipped</span></td>
+              </tr>
+              <tr>
+                <td style="font-weight:600;color:var(--accent);">#ORD-4819</td>
+                <td>Amit Verma</td>
+                <td>Lenovo T14 <span class="grade grade-a" style="font-size:10px;width:22px;height:22px;">A</span></td>
+                <td>₹38,000</td>
+                <td><span class="chip chip-processing">Processing</span></td>
+              </tr>
+              <tr>
+                <td style="font-weight:600;color:var(--accent);">#ORD-4818</td>
+                <td>Sunita Patel</td>
+                <td>Asus ZenBook <span class="grade grade-b" style="font-size:10px;width:22px;height:22px;">B</span></td>
+                <td>₹22,000</td>
+                <td><span class="chip chip-delivered">Delivered</span></td>
+              </tr>
+              <tr>
+                <td style="font-weight:600;color:var(--accent);">#ORD-4817</td>
+                <td>Kiran Mehta</td>
+                <td>MacBook Air <span class="grade grade-aplus" style="font-size:10px;width:22px;height:22px;">A+</span></td>
+                <td>₹68,000</td>
+                <td><span class="chip chip-shipped">Shipped</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- KYC PENDING APPROVALS -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">KYC Pending Approvals</div>
+          <a href="kyc-queue.html" class="view-all">View All →</a>
+        </div>
+        <div style="overflow-x:auto;">
+          <table>
+            <thead>
+              <tr>
+                <th>Applicant</th>
+                <th>Type</th>
+                <th>Submitted</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td style="font-weight:500;">Neha Gupta</td>
+                <td><span class="chip chip-rented">Rental</span></td>
+                <td style="color:var(--text-secondary);">2h ago</td>
+                <td><button class="btn-review">Review</button></td>
+              </tr>
+              <tr>
+                <td style="font-weight:500;">Vikram Shah</td>
+                <td><span class="chip chip-processing" style="background:#E0E4F5;color:#1C2B6B;">Dealer</span></td>
+                <td style="color:var(--text-secondary);">3h ago</td>
+                <td><button class="btn-review">Review</button></td>
+              </tr>
+              <tr>
+                <td style="font-weight:500;">Ananya Joshi</td>
+                <td><span class="chip chip-rented">Rental</span></td>
+                <td style="color:var(--text-secondary);">5h ago</td>
+                <td><button class="btn-review">Review</button></td>
+              </tr>
+              <tr>
+                <td style="font-weight:500;">Rajesh Kumar</td>
+                <td><span class="chip chip-sold" style="background:#FEF3C7;color:#92400E;">B2B</span></td>
+                <td style="color:var(--text-secondary);">6h ago</td>
+                <td><button class="btn-review">Review</button></td>
+              </tr>
+              <tr>
+                <td style="font-weight:500;">Meena Rao</td>
+                <td><span class="chip chip-rented">Rental</span></td>
+                <td style="color:var(--text-secondary);">8h ago</td>
+                <td><button class="btn-review">Review</button></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<script src="../admin-api.js"></script>
+<script>
+async function loadDashboard() {
+  try {
+    const stats = await apiFetch('/admin/dashboard');
+    if (!stats) return;
+    document.getElementById('stat-orders').textContent = stats.orders.total;
+    document.getElementById('stat-orders-sub').textContent = stats.orders.pending + ' pending';
+    document.getElementById('stat-rentals').textContent = stats.rentals.active;
+    document.getElementById('stat-rentals-sub').textContent = stats.rentals.overdue + ' overdue';
+    document.getElementById('stat-inventory').textContent = stats.inventory.total;
+    document.getElementById('stat-inventory-sub').innerHTML = 'Available: <strong>' + stats.inventory.available + '</strong>';
+    document.getElementById('stat-kyc').textContent = stats.kyc.pending;
+  } catch (e) {
+    console.error('Failed to load dashboard stats:', e);
+  }
+}
+loadDashboard();
+</script>
+</body>
+</html>

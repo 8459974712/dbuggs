@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Commissions — Vendor Panel</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@600;700&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../panel-shared.css">
+<style>.msg{font-size:13px;margin-top:10px;}</style>
+</head>
+<body>
+<aside class="sidebar">
+  <div class="sidebar-logo"><div class="brand">d<span>bugg</span>s</div><div class="tagline">Vendor Panel</div></div>
+  <nav class="nav-section">
+    <a href="dashboard.html" class="nav-item"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"/></svg>Dashboard</a>
+    <a href="commissions.html" class="nav-item active"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M11.8 10.9c-2.27-.59-3-1.2-3-2.15 0-1.09 1.01-1.85 2.7-1.85 1.78 0 2.44.85 2.5 2.1h2.21c-.07-1.72-1.12-3.3-3.21-3.81V3h-3v2.16c-1.94.42-3.5 1.68-3.5 3.61 0 2.31 1.91 3.46 4.7 4.13 2.5.6 3 1.48 3 2.41 0 .69-.49 1.79-2.7 1.79-2.06 0-2.87-.92-2.98-2.1h-2.2c.12 2.19 1.76 3.42 3.68 3.83V21h3v-2.15c1.95-.37 3.5-1.5 3.5-3.55 0-2.84-2.43-3.81-4.7-4.4z"/></svg>Commissions &amp; Payouts</a>
+    <a href="../index.html" class="nav-item"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M20 4H4c-1.11 0-2 .89-2 2v12c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V6c0-1.11-.89-2-2-2z"/></svg>Browse Shop</a>
+  </nav>
+  <div class="sidebar-footer">
+    <div class="user-info"><div class="avatar" id="avatar">V</div><div><div class="user-name" id="uname">Loading</div><div class="logout-link" onclick="logout()">Logout</div></div></div>
+  </div>
+</aside>
+<div class="main-wrapper">
+  <header class="topbar"><div class="topbar-title">Commissions &amp; Payouts</div></header>
+  <main class="page-content">
+    <div class="card">
+      <div class="card-header"><div class="card-title">Wallet</div></div>
+      <div style="padding:18px;" id="wallet-box">Loading...</div>
+    </div>
+    <div class="card">
+      <div class="card-header"><div class="card-title">Commission History</div></div>
+      <div id="commissions-table"><div class="empty">Loading...</div></div>
+    </div>
+  </main>
+</div>
+
+<script src="../shop-api.js"></script>
+<script>
+if (!getToken()) window.location.href = '/login.html';
+const user = getUser();
+if (user) { document.getElementById('uname').textContent = user.name || user.email; document.getElementById('avatar').textContent = (user.name || 'V')[0].toUpperCase(); }
+
+let dealerId = null;
+
+async function load() {
+  const walletEl = document.getElementById('wallet-box');
+  const tableEl = document.getElementById('commissions-table');
+  try {
+    const dealer = await apiFetch('/dealer/my');
+    if (!dealer || !dealer.id || dealer.status !== 'active') { window.location.href = '/dealer-register.html'; return; }
+    dealerId = dealer.id;
+    walletEl.innerHTML = `
+      <div style="font-size:26px;font-weight:700;color:var(--sidebar-bg);font-family:'Space Grotesk',sans-serif;">${money(dealer.walletBalance)}</div>
+      <button class="btn btn-primary" style="margin-top:12px;" onclick="requestPayout()">Request Payout</button>
+      <div class="msg" id="payout-msg"></div>
+    `;
+    const commissions = await apiFetch(`/dealer/${dealer.id}/commission`);
+    if (commissions.length === 0) { tableEl.innerHTML = '<div class="empty">No commissions earned yet.</div>'; return; }
+    tableEl.innerHTML = `<table><thead><tr><th>Date</th><th>Sale Amount</th><th>Rate</th><th>TDS</th><th>Net Commission</th><th>Status</th></tr></thead>
+      <tbody>${commissions.map(c => `<tr><td>${new Date(c.createdAt).toLocaleDateString('en-IN')}</td><td>${money(c.saleAmount)}</td><td>${c.commissionRate}%</td><td>${money(c.tdsAmount)}</td><td style="font-weight:700;color:#065F46;">${money(c.netAmount)}</td><td><span class="chip" style="background:var(--green-bg);color:#065F46;">${c.status}</span></td></tr>`).join('')}</tbody></table>`;
+  } catch (e) {
+    tableEl.innerHTML = `<div class="empty">Error: ${e.message}</div>`;
+  }
+}
+
+async function requestPayout() {
+  const amount = Number(prompt('Payout amount (₹):'));
+  if (!amount) return;
+  const msg = document.getElementById('payout-msg');
+  msg.style.color = '#6B7280'; msg.textContent = 'Requesting...';
+  try {
+    const res = await apiFetch(`/dealer/${dealerId}/payout`, { method: 'POST', body: { amount } });
+    msg.style.color = '#065F46'; msg.textContent = res.message;
+  } catch (e) {
+    msg.style.color = '#991B1B'; msg.textContent = e.message;
+  }
+}
+
+load();
+</script>
+</body>
+</html>

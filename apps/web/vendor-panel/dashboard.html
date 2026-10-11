@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vendor Panel — dbuggs</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@600;700&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../panel-shared.css">
+</head>
+<body>
+<aside class="sidebar">
+  <div class="sidebar-logo"><div class="brand">d<span>bugg</span>s</div><div class="tagline">Vendor Panel</div></div>
+  <nav class="nav-section">
+    <a href="dashboard.html" class="nav-item active"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"/></svg>Dashboard</a>
+    <a href="commissions.html" class="nav-item"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M11.8 10.9c-2.27-.59-3-1.2-3-2.15 0-1.09 1.01-1.85 2.7-1.85 1.78 0 2.44.85 2.5 2.1h2.21c-.07-1.72-1.12-3.3-3.21-3.81V3h-3v2.16c-1.94.42-3.5 1.68-3.5 3.61 0 2.31 1.91 3.46 4.7 4.13 2.5.6 3 1.48 3 2.41 0 .69-.49 1.79-2.7 1.79-2.06 0-2.87-.92-2.98-2.1h-2.2c.12 2.19 1.76 3.42 3.68 3.83V21h3v-2.15c1.95-.37 3.5-1.5 3.5-3.55 0-2.84-2.43-3.81-4.7-4.4z"/></svg>Commissions &amp; Payouts</a>
+    <a href="../index.html" class="nav-item"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M20 4H4c-1.11 0-2 .89-2 2v12c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V6c0-1.11-.89-2-2-2z"/></svg>Browse Shop</a>
+  </nav>
+  <div class="sidebar-footer">
+    <div class="user-info"><div class="avatar" id="avatar">V</div><div><div class="user-name" id="uname">Loading</div><div class="logout-link" onclick="logout()">Logout</div></div></div>
+  </div>
+</aside>
+<div class="main-wrapper">
+  <header class="topbar"><div class="topbar-title">Dashboard</div></header>
+  <main class="page-content" id="content">Loading...</main>
+</div>
+
+<script src="../shop-api.js"></script>
+<script>
+if (!getToken()) window.location.href = '/login.html';
+const user = getUser();
+if (user) { document.getElementById('uname').textContent = user.name || user.email; document.getElementById('avatar').textContent = (user.name || 'V')[0].toUpperCase(); }
+
+const tierInfo = { silver: 'Silver — 6% commission', gold: 'Gold — 8% commission', platinum: 'Platinum — 10% commission' };
+
+async function load() {
+  const el = document.getElementById('content');
+  try {
+    const dealer = await apiFetch('/dealer/my');
+    if (!dealer || !dealer.id) { window.location.href = '/dealer-register.html'; return; }
+    if (dealer.status !== 'active') {
+      el.innerHTML = `<div class="status-banner status-pending">⏳ Your dealer application is ${dealer.status === 'rejected' ? 'rejected' : 'awaiting admin approval'}.</div>`;
+      return;
+    }
+    const commissions = await apiFetch(`/dealer/${dealer.id}/commission`);
+    const totalEarned = commissions.reduce((s, c) => s + Number(c.netAmount || 0), 0);
+
+    el.innerHTML = `
+      <div class="status-banner status-approved">✓ Active Dealer — ${tierInfo[dealer.tier] || dealer.tier} — Territory: ${dealer.territory || '—'}</div>
+      <div class="stat-grid">
+        <div class="stat-tile"><div class="label">Wallet Balance</div><div class="value">${money(dealer.walletBalance)}</div><div class="sub">Available for payout</div></div>
+        <div class="stat-tile"><div class="label">Total Earned</div><div class="value">${money(totalEarned)}</div><div class="sub">All-time commission</div></div>
+        <div class="stat-tile"><div class="label">Commission Rate</div><div class="value">${dealer.commissionRate}%</div><div class="sub">${dealer.tier} tier</div></div>
+        <div class="stat-tile"><div class="label">Total Sales</div><div class="value">${commissions.length}</div><div class="sub">Referred orders</div></div>
+      </div>
+      <div class="card">
+        <div class="card-header"><div class="card-title">Recent Commissions</div><a href="commissions.html" style="font-size:12.5px;color:var(--accent);font-weight:600;">View All →</a></div>
+        ${commissions.length === 0 ? '<div class="empty">No commissions earned yet.</div>' : `
+        <table><thead><tr><th>Date</th><th>Sale Amount</th><th>Net Commission</th><th>Status</th></tr></thead>
+        <tbody>${commissions.slice(0,5).map(c => `<tr><td>${new Date(c.createdAt).toLocaleDateString('en-IN')}</td><td>${money(c.saleAmount)}</td><td style="font-weight:700;color:#065F46;">${money(c.netAmount)}</td><td><span class="chip" style="background:var(--green-bg);color:#065F46;">${c.status}</span></td></tr>`).join('')}</tbody></table>`}
+      </div>
+    `;
+  } catch (e) {
+    el.innerHTML = `<div class="empty">Error: ${e.message}</div>`;
+  }
+}
+load();
+</script>
+</body>
+</html>

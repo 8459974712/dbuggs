@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" width="400" height="300">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#EFF1F8"/>
+      <stop offset="100%" stop-color="#E0E4F5"/>
+    </linearGradient>
+    <linearGradient id="screen" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#2a3d8f"/>
+      <stop offset="100%" stop-color="#1C2B6B"/>
+    </linearGradient>
+  </defs>
+  <rect width="400" height="300" fill="url(#bg)"/>
+  <!-- laptop base -->
+  <path d="M110 215 L290 215 L310 235 L90 235 Z" fill="#9CA3AF"/>
+  <rect x="90" y="235" width="220" height="8" rx="2" fill="#6B7280"/>
+  <!-- screen -->
+  <rect x="120" y="90" width="160" height="125" rx="6" fill="#374151"/>
+  <rect x="128" y="98" width="144" height="109" rx="2" fill="url(#screen)"/>
+  <!-- screen glare -->
+  <path d="M128 98 L190 98 L128 180 Z" fill="#ffffff" opacity="0.06"/>
+  <!-- brand mark on screen -->
+  <text x="200" y="158" font-family="Arial, sans-serif" font-size="20" font-weight="700" fill="#F07830" text-anchor="middle">d<tspan fill="#ffffff">bugg</tspan>s</text>
+  <circle cx="200" cy="208" r="2.5" fill="#9CA3AF"/>
+</svg>

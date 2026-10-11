@@ -1,0 +1,68 @@
+version: "3.9"
+
+services:
+  dbugg-postgres:
+    image: postgres:16-alpine
+    container_name: dbugg-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: ${DB_USERNAME}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - dbugg-pgdata:/var/lib/postgresql/data
+    networks:
+      - dbugg-net
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USERNAME} -d ${DB_NAME}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  dbugg-api:
+    build:
+      context: ./apps/api
+      dockerfile: Dockerfile
+    container_name: dbugg-api
+    restart: unless-stopped
+    ports:
+      - "4000:4000"
+    env_file:
+      - ./apps/api/.env
+    environment:
+      - NODE_ENV=production
+      - DB_HOST=dbugg-postgres
+    depends_on:
+      dbugg-postgres:
+        condition: service_healthy
+    networks:
+      - dbugg-net
+
+  dbugg-admin:
+    build:
+      context: ./apps/admin
+      dockerfile: Dockerfile
+    container_name: dbugg-admin
+    restart: unless-stopped
+    ports:
+      - "5000:80"
+    networks:
+      - dbugg-net
+
+  dbugg-web:
+    build:
+      context: ./apps/web
+      dockerfile: Dockerfile
+    container_name: dbugg-web
+    restart: unless-stopped
+    ports:
+      - "5001:80"
+    networks:
+      - dbugg-net
+
+volumes:
+  dbugg-pgdata:
+
+networks:
+  dbugg-net:
+    driver: bridge

@@ -1,0 +1,6 @@
+Checked 20 files
+
+ISSUE: audit-log.html
+   - footer still shows Aryan Mehta/AM instead of Super Admin/SA
+ISSUE: integrations.html
+   - footer still shows Aryan Mehta/AM instead of Super Admin/SA

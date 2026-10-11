@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dealer Registration — dbuggs</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@600;700&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--navy:#1C2B6B;--accent:#F07830;--accent-hover:#d9631f;--bg:#F7F8FC;--card:#fff;--border:#E5E7EB;--text:#111827;--text-sec:#6B7280;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);}
+h1,h2,h3{font-family:'Space Grotesk',sans-serif;}
+a{text-decoration:none;color:inherit;}
+.topbar{background:var(--navy);padding:14px 28px;display:flex;align-items:center;gap:24px;}
+.brand{font-family:'Space Grotesk',sans-serif;font-size:21px;font-weight:700;color:#fff;}
+.brand span{color:var(--accent);}
+.back-link{color:rgba(255,255,255,0.8);font-size:13px;}
+.container{max-width:520px;margin:30px auto;padding:0 20px;}
+.card{background:var(--card);border-radius:14px;border:1px solid var(--border);padding:28px;}
+h2{margin-bottom:6px;}
+.sub{font-size:13px;color:var(--text-sec);margin-bottom:20px;}
+label{font-size:12.5px;font-weight:600;display:block;margin-bottom:6px;margin-top:14px;}
+input{width:100%;padding:10px 12px;border:1px solid var(--border);border-radius:8px;font-size:14px;font-family:inherit;}
+.btn{width:100%;padding:12px;border-radius:9px;font-weight:700;font-size:14.5px;border:none;cursor:pointer;margin-top:20px;background:var(--accent);color:#fff;}
+.btn:hover{background:var(--accent-hover);}
+.msg{font-size:13px;margin-top:10px;text-align:center;}
+.status-box{padding:16px;border-radius:10px;text-align:center;}
+.status-pending{background:#FEF3C7;color:#92400E;}
+.status-approved{background:#D1FAE5;color:#065F46;}
+.status-rejected{background:#FEE2E2;color:#991B1B;}
+</style>
+</head>
+<body>
+<div class="topbar">
+  <a href="/index.html" class="brand">d<span>bugg</span>s</a>
+  <a href="/account.html" class="back-link">← My Account</a>
+</div>
+<div class="container">
+  <div class="card" id="content">Loading...</div>
+</div>
+
+<script src="shop-api.js"></script>
+<script>
+if (!getToken()) window.location.href = '/login.html';
+
+const tierInfo = {
+  silver: 'Silver — 6% commission',
+  gold: 'Gold — 8% commission',
+  platinum: 'Platinum — 10% commission',
+};
+
+async function load() {
+  const el = document.getElementById('content');
+  try {
+    const dealer = await apiFetch('/dealer/my');
+    if (dealer && dealer.id) {
+      const statusClass = dealer.status === 'active' ? 'status-approved' : dealer.status === 'rejected' ? 'status-rejected' : 'status-pending';
+      el.innerHTML = `
+        <h2>Dealer Account Status</h2>
+        <div class="status-box ${statusClass}" style="margin-top:16px;">
+          ${dealer.status === 'active' ? `✓ Active Dealer — ${tierInfo[dealer.tier] || dealer.tier}` :
+            dealer.status === 'rejected' ? '✗ Application rejected' :
+            '⏳ Application submitted — awaiting admin approval'}
+        </div>
+        <div style="margin-top:18px;font-size:13.5px;color:var(--text-sec);">
+          <div><strong>GSTIN:</strong> ${dealer.gstin}</div>
+          <div style="margin-top:6px;"><strong>Territory:</strong> ${dealer.territory || '—'}</div>
+          ${dealer.status === 'active' ? `<div style="margin-top:6px;"><strong>Wallet Balance:</strong> ${money(dealer.walletBalance)}</div>` : ''}
+        </div>
+        ${dealer.status === 'active' ? `<a href="/vendor-panel/dashboard.html" class="btn" style="display:block;text-align:center;">Go to Dealer Dashboard</a>` : ''}
+      `;
+      return;
+    }
+  } catch (e) { /* not registered yet */ }
+
+  el.innerHTML = `
+    <h2>Become a dbuggs Vendor</h2>
+    <div class="sub">Sell refurbished laptops through dbuggs and earn commission on every sale.</div>
+    <form id="form" onsubmit="submitForm(event)">
+      <label>GSTIN</label>
+      <input type="text" id="gstin" placeholder="22AAAAA0000A1Z5" required maxlength="15">
+      <label>Territory / City</label>
+      <input type="text" id="territory" placeholder="e.g. Mumbai (West Zone)" required>
+      <button type="submit" class="btn">Submit Application</button>
+    </form>
+    <div class="msg" id="msg"></div>
+  `;
+}
+
+async function submitForm(e) {
+  e.preventDefault();
+  const gstin = document.getElementById('gstin').value.trim().toUpperCase();
+  const territory = document.getElementById('territory').value.trim();
+  const msg = document.getElementById('msg');
+  msg.style.color = '#6B7280'; msg.textContent = 'Submitting...';
+  try {
+    await apiFetch('/dealer/register', { method: 'POST', body: { gstin, territory } });
+    msg.style.color = '#065F46';
+    msg.textContent = 'Application submitted! Reloading...';
+    setTimeout(load, 1000);
+  } catch (e) {
+    msg.style.color = '#991B1B'; msg.textContent = e.message;
+  }
+}
+
+load();
+</script>
+</body>
+</html>
