@@ -2,7 +2,7 @@ import { Injectable, NotFoundException, BadRequestException } from '@nestjs/comm
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Rental, RentalStatus } from '../../database/entities/rental.entity';
-import { KycDocument, KycDocStatus } from '../../database/entities/kyc-document.entity';
+import { KycDocument, KycDocStatus, KycDocType } from '../../database/entities/kyc-document.entity';
 import { Laptop, LaptopStatus } from '../../database/entities/laptop.entity';
 
 @Injectable()
@@ -47,17 +47,25 @@ export class RentalService {
 
   async createFromCheckout(userId: string, data: any): Promise<Rental> {
     if (data.documents) {
-      const kycData: any = {
-        userId,
-        aadhaarNumber: data.aadhaar,
-        panNumber: data.pan,
-        status: KycDocStatus.PENDING,
-      };
-      if (data.documents.aadhaarFront) kycData.aadhaarFrontUrl = 'uploaded';
-      if (data.documents.aadhaarBack) kycData.aadhaarBackUrl = 'uploaded';
-      if (data.documents.panCard) kycData.panCardUrl = 'uploaded';
-      if (data.documents.selfie) kycData.selfieUrl = 'uploaded';
-      try { await this.kycRepo.save(this.kycRepo.create(kycData)); } catch(e) { /* columns may not exist yet */ }
+      const docMap: { key: string; type: KycDocType }[] = [
+        { key: 'aadhaarFront', type: KycDocType.AADHAAR },
+        { key: 'aadhaarBack', type: KycDocType.AADHAAR },
+        { key: 'panCard', type: KycDocType.PAN },
+        { key: 'selfie', type: KycDocType.PAN },
+      ];
+      for (const { key, type } of docMap) {
+        if (data.documents[key]) {
+          try {
+            await this.kycRepo.save(this.kycRepo.create({
+              userId,
+              type,
+              docUrlEncrypted: data.documents[key].substring(0, 500000),
+              selfieUrl: key === 'selfie' ? data.documents[key].substring(0, 500000) : null,
+              status: KycDocStatus.PENDING,
+            }));
+          } catch (e) { /* skip duplicates */ }
+        }
+      }
     }
 
     const rental = this.rentalRepo.create({
