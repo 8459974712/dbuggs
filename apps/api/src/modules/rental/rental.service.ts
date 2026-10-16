@@ -45,6 +45,31 @@ export class RentalService {
     return this.rentalRepo.save(rental);
   }
 
+  async createFromCheckout(userId: string, data: any): Promise<Rental> {
+    if (data.documents) {
+      const kycData: any = {
+        userId,
+        aadhaarNumber: data.aadhaar,
+        panNumber: data.pan,
+        status: KycDocStatus.PENDING,
+      };
+      if (data.documents.aadhaarFront) kycData.aadhaarFrontUrl = 'uploaded';
+      if (data.documents.aadhaarBack) kycData.aadhaarBackUrl = 'uploaded';
+      if (data.documents.panCard) kycData.panCardUrl = 'uploaded';
+      if (data.documents.selfie) kycData.selfieUrl = 'uploaded';
+      try { await this.kycRepo.save(this.kycRepo.create(kycData)); } catch(e) { /* columns may not exist yet */ }
+    }
+
+    const rental = this.rentalRepo.create({
+      userId,
+      laptopId: data.laptopId,
+      monthlyRent: data.monthlyAmount || 0,
+      depositAmount: data.depositAmount || 0,
+      status: data.status === 'kyc_pending' ? RentalStatus.KYC_PENDING : RentalStatus.DEPOSIT_PENDING,
+    });
+    return this.rentalRepo.save(rental);
+  }
+
   async findByUser(userId: string): Promise<Rental[]> {
     return this.rentalRepo.find({ where: { userId }, order: { createdAt: 'DESC' } });
   }

@@ -1,71 +1,1150 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>My Account — dbuggs</title>
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@600;700&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>My Account - dbugg</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
 <style>
-:root{--navy:#1C2B6B;--accent:#F07830;--bg:#F7F8FC;--card:#fff;--border:#E5E7EB;--text:#111827;--text-sec:#6B7280;}
-*{box-sizing:border-box;margin:0;padding:0;}
-body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);}
-h1,h2,h3{font-family:'Space Grotesk',sans-serif;}
-a{text-decoration:none;color:inherit;}
-.topbar{background:var(--navy);padding:14px 28px;display:flex;align-items:center;gap:24px;justify-content:space-between;}
-.brand{font-family:'Space Grotesk',sans-serif;font-size:21px;font-weight:700;color:#fff;}
-.brand span{color:var(--accent);}
-.logout-btn{background:rgba(255,255,255,0.1);color:#fff;border:1px solid rgba(255,255,255,0.2);padding:7px 16px;border-radius:8px;font-size:13px;cursor:pointer;}
-.container{max-width:480px;margin:40px auto;padding:0 20px;}
-.card{background:var(--card);border-radius:12px;padding:28px;box-shadow:0 4px 24px rgba(0,0,0,0.06);}
-.role-badge{display:inline-block;background:#E0E4F5;color:var(--navy);font-size:12px;font-weight:700;padding:4px 12px;border-radius:20px;text-transform:uppercase;letter-spacing:0.04em;margin-bottom:16px;}
-.field{padding:12px 0;border-bottom:1px solid #F3F4F6;}
-.field-label{font-size:11.5px;font-weight:600;color:#9CA3AF;text-transform:uppercase;letter-spacing:0.04em;}
-.field-value{font-size:14.5px;font-weight:500;margin-top:3px;}
-.links{margin-top:20px;display:flex;gap:10px;}
-.links a{flex:1;text-align:center;padding:10px;border-radius:8px;border:1px solid var(--border);font-size:13.5px;font-weight:600;}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Inter',system-ui,sans-serif;background:#f1f3f6;color:#212121;line-height:1.5;min-height:100vh}
+
+/* ── Header ─────────────────────────────────── */
+.header{background:#2874f0;padding:10px 24px;display:flex;align-items:center;gap:16px;position:sticky;top:0;z-index:100}
+.header .logo{color:#fff;font-size:20px;font-weight:800;letter-spacing:-.3px;text-decoration:none}
+.header .logo span{color:#ffe500}
+.header .tagline{color:#fff;font-size:11px;opacity:.8;font-style:italic}
+.header .spacer{flex:1}
+.header .user-info{color:#fff;font-size:13px;font-weight:500;display:flex;align-items:center;gap:8px}
+.header .user-info .avatar{width:28px;height:28px;border-radius:50%;background:#fff;display:flex;align-items:center;justify-content:center;color:#2874f0;font-weight:700;font-size:13px}
+.header .logout-btn{background:none;border:1px solid rgba(255,255,255,.4);color:#fff;padding:5px 14px;border-radius:4px;font-size:12px;cursor:pointer;font-family:inherit}
+.header .logout-btn:hover{background:rgba(255,255,255,.15)}
+
+/* ── Layout ─────────────────────────────────── */
+.account-wrap{max-width:1180px;margin:16px auto;padding:0 16px;display:flex;gap:16px;align-items:flex-start}
+
+/* ── Sidebar ────────────────────────────────── */
+.sidebar{width:260px;flex-shrink:0;background:#fff;border-radius:4px;box-shadow:0 1px 2px rgba(0,0,0,.08);overflow:hidden;position:sticky;top:60px}
+.sidebar-profile{padding:16px;display:flex;align-items:center;gap:12px;border-bottom:1px solid #f0f0f0}
+.sidebar-profile .prof-avatar{width:48px;height:48px;border-radius:50%;background:#f0f0f0;display:flex;align-items:center;justify-content:center;font-size:20px;color:#878787}
+.sidebar-profile .prof-text{font-size:12px;color:#878787}
+.sidebar-profile .prof-name{font-size:15px;font-weight:600;color:#212121}
+
+.nav-section{border-bottom:1px solid #f0f0f0}
+.nav-section-head{display:flex;align-items:center;gap:10px;padding:14px 16px 6px;cursor:default}
+.nav-section-icon{width:22px;height:22px;display:flex;align-items:center;justify-content:center}
+.nav-section-icon svg{width:20px;height:20px}
+.nav-section-title{font-size:12px;font-weight:700;color:#878787;text-transform:uppercase;letter-spacing:.5px}
+
+.nav-link{padding:10px 16px 10px 48px;font-size:13px;color:#212121;cursor:pointer;display:flex;align-items:center;transition:background .15s}
+.nav-link:hover{background:#f5f5f5}
+.nav-link.active{background:#f0f5ff;color:#2874f0;font-weight:600}
+.nav-link .chevron{margin-left:auto;color:#bbb;font-size:16px}
+
+/* ── Main panel ─────────────────────────────── */
+.main-panel{flex:1;min-width:0}
+.panel{display:none;background:#fff;border-radius:4px;box-shadow:0 1px 2px rgba(0,0,0,.08);padding:24px}
+.panel.active-panel{display:block}
+.panel-title{font-size:18px;font-weight:700;color:#212121;margin-bottom:20px;padding-bottom:12px;border-bottom:1px solid #f0f0f0}
+.panel-subtitle{font-size:13px;color:#878787;margin-bottom:16px}
+
+/* ── Form styles ────────────────────────────── */
+.form-row{display:flex;gap:16px;margin-bottom:16px}
+.form-row .field{flex:1}
+.field label{display:block;font-size:12px;font-weight:600;color:#878787;margin-bottom:6px;text-transform:uppercase;letter-spacing:.3px}
+.field-input{width:100%;padding:10px 12px;border:1px solid #e0e0e0;border-radius:4px;font-size:14px;font-family:inherit;color:#212121;background:#fff;transition:border-color .2s}
+.field-input:focus{outline:none;border-color:#2874f0}
+.field-input:disabled{background:#f5f5f5;color:#999}
+textarea.field-input{resize:vertical;min-height:80px}
+select.field-input{cursor:pointer}
+
+.save-btn{background:#2874f0;color:#fff;border:none;padding:10px 32px;border-radius:4px;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;transition:background .2s}
+.save-btn:hover{background:#1a5dc8}
+.save-btn:disabled{background:#ccc;cursor:not-allowed}
+
+.save-btn-orange{background:#F07830;color:#fff;border:none;padding:10px 32px;border-radius:4px;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;transition:background .2s}
+.save-btn-orange:hover{background:#d8682a}
+.save-btn-orange:disabled{background:#ccc;cursor:not-allowed}
+
+/* ── Cards list ─────────────────────────────── */
+.card-item{border:1px solid #f0f0f0;border-radius:6px;padding:14px;margin-bottom:12px;display:flex;align-items:center;gap:14px;transition:border-color .15s}
+.card-item:hover{border-color:#ddd}
+.card-item .card-icon{width:40px;height:40px;border-radius:8px;background:#f5f5f5;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.card-item .card-body{flex:1;min-width:0}
+.card-item .card-body h4{font-size:14px;font-weight:600;color:#212121}
+.card-item .card-body p{font-size:12px;color:#878787;margin-top:2px}
+.card-item .card-action{font-size:12px;color:#2874f0;cursor:pointer;font-weight:600;white-space:nowrap}
+
+.empty-state{text-align:center;padding:48px 20px;color:#878787}
+.empty-state svg{width:64px;height:64px;margin-bottom:12px;opacity:.4}
+.empty-state h3{font-size:16px;font-weight:600;color:#212121;margin-bottom:4px}
+.empty-state p{font-size:13px}
+
+/* ── Order card ─────────────────────────────── */
+.order-card{border:1px solid #f0f0f0;border-radius:6px;padding:16px;margin-bottom:12px}
+.order-card .order-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;flex-wrap:wrap;gap:8px}
+.order-card .order-id{font-size:13px;color:#878787}
+.order-card .order-date{font-size:12px;color:#878787}
+.order-card .order-items{font-size:14px;font-weight:500}
+.order-card .order-total{font-size:15px;font-weight:700;color:#212121}
+.order-card .order-status{display:inline-block;padding:3px 10px;border-radius:12px;font-size:11px;font-weight:600;text-transform:capitalize}
+
+.status-delivered{background:#e8f5e9;color:#2e7d32}
+.status-shipped{background:#e3f2fd;color:#1565c0}
+.status-processing{background:#fff3e0;color:#e65100}
+.status-cancelled{background:#ffebee;color:#c62828}
+.status-pending{background:#f5f5f5;color:#757575}
+
+/* ── Rental card styles ─────────────────────── */
+.rental-card{border:1px solid #f0f0f0;border-radius:8px;padding:20px;margin-bottom:14px;background:#fff;transition:box-shadow .2s}
+.rental-card:hover{box-shadow:0 2px 8px rgba(0,0,0,.08)}
+.rental-card-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:14px;gap:12px;flex-wrap:wrap}
+.rental-card-title{font-size:16px;font-weight:700;color:#212121}
+.rental-card-serial{font-size:12px;color:#878787;margin-top:2px}
+.rental-status{display:inline-block;padding:4px 12px;border-radius:12px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.3px}
+.rental-status.status-kyc_pending{background:#fff3e0;color:#e65100}
+.rental-status.status-active{background:#e8f5e9;color:#2e7d32}
+.rental-status.status-overdue{background:#ffebee;color:#c62828}
+.rental-status.status-completed{background:#e3f2fd;color:#1565c0}
+.rental-status.status-returned{background:#f3e5f5;color:#7b1fa2}
+.rental-status.status-rejected{background:#ffebee;color:#c62828}
+.rental-status.status-pending{background:#fff8e1;color:#f9a825}
+.rental-status.status-approved{background:#e8f5e9;color:#2e7d32}
+
+.rental-card-details{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
+.rental-detail{font-size:13px}
+.rental-detail .rd-label{color:#878787;font-size:11px;text-transform:uppercase;letter-spacing:.3px;font-weight:600}
+.rental-detail .rd-value{color:#212121;font-weight:600;margin-top:2px}
+.rental-detail .rd-value.amount{color:#F07830;font-weight:700}
+
+.rental-card-footer{display:flex;justify-content:space-between;align-items:center;padding-top:12px;border-top:1px solid #f0f0f0}
+.rental-card-footer .dates{font-size:12px;color:#878787}
+.rental-card-footer .dates span{margin-right:16px}
+.view-details-btn{background:none;border:1px solid #F07830;color:#F07830;padding:6px 16px;border-radius:4px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;transition:all .2s}
+.view-details-btn:hover{background:#F07830;color:#fff}
+
+/* ── EMI Timeline ───────────────────────────── */
+.emi-timeline{margin-top:16px;padding:16px;background:#fafafa;border-radius:6px}
+.emi-timeline h4{font-size:14px;font-weight:700;margin-bottom:12px;color:#212121}
+.emi-item{display:flex;align-items:flex-start;gap:12px;padding:8px 0;position:relative}
+.emi-item:not(:last-child){border-left:2px solid #e0e0e0;margin-left:7px;padding-left:22px}
+.emi-item:last-child{margin-left:7px;padding-left:22px}
+.emi-dot{width:14px;height:14px;border-radius:50%;position:absolute;left:0;top:10px;border:2px solid #e0e0e0;background:#fff}
+.emi-item.paid .emi-dot{background:#2e7d32;border-color:#2e7d32}
+.emi-item.due .emi-dot{background:#F07830;border-color:#F07830}
+.emi-item.upcoming .emi-dot{background:#fff;border-color:#bbb}
+.emi-item .emi-info{flex:1}
+.emi-item .emi-info .emi-month{font-size:13px;font-weight:600;color:#212121}
+.emi-item .emi-info .emi-date{font-size:11px;color:#878787}
+.emi-item .emi-amount{font-size:14px;font-weight:700;color:#212121}
+.emi-item.paid .emi-amount{color:#2e7d32}
+.emi-item.due .emi-amount{color:#c62828}
+
+/* ── KYC step styles ────────────────────────── */
+.kyc-steps{display:flex;gap:0;margin-bottom:24px}
+.kyc-step{flex:1;text-align:center;position:relative;padding:16px 8px}
+.kyc-step::after{content:'';position:absolute;top:28px;right:-50%;width:100%;height:2px;background:#e0e0e0;z-index:0}
+.kyc-step:last-child::after{display:none}
+.kyc-step.completed::after{background:#2e7d32}
+.kyc-step.active::after{background:linear-gradient(90deg,#F07830 50%,#e0e0e0 50%)}
+.kyc-step-num{width:32px;height:32px;border-radius:50%;background:#e0e0e0;color:#878787;font-size:14px;font-weight:700;display:inline-flex;align-items:center;justify-content:center;position:relative;z-index:1;margin-bottom:8px}
+.kyc-step.active .kyc-step-num{background:#F07830;color:#fff}
+.kyc-step.completed .kyc-step-num{background:#2e7d32;color:#fff}
+.kyc-step-label{font-size:11px;font-weight:600;color:#878787;text-transform:uppercase;letter-spacing:.3px}
+.kyc-step.active .kyc-step-label{color:#F07830}
+.kyc-step.completed .kyc-step-label{color:#2e7d32}
+
+.kyc-status-badge{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:8px;font-size:13px;font-weight:600;margin-bottom:20px}
+.kyc-status-badge.badge-pending{background:#fff3e0;color:#e65100}
+.kyc-status-badge.badge-approved{background:#e8f5e9;color:#2e7d32}
+.kyc-status-badge.badge-rejected{background:#ffebee;color:#c62828}
+.kyc-status-badge.badge-not_submitted{background:#f5f5f5;color:#757575}
+.kyc-status-badge .status-dot{width:8px;height:8px;border-radius:50%;display:inline-block}
+.kyc-status-badge.badge-pending .status-dot{background:#e65100}
+.kyc-status-badge.badge-approved .status-dot{background:#2e7d32}
+.kyc-status-badge.badge-rejected .status-dot{background:#c62828}
+.kyc-status-badge.badge-not_submitted .status-dot{background:#757575}
+
+.kyc-section{margin-bottom:24px;padding:20px;background:#fafafa;border-radius:8px;border:1px solid #f0f0f0}
+.kyc-section h3{font-size:14px;font-weight:700;color:#212121;margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.kyc-section h3 .step-num{width:24px;height:24px;border-radius:50%;background:#F07830;color:#fff;font-size:12px;font-weight:700;display:inline-flex;align-items:center;justify-content:center}
+
+.file-upload-area{border:2px dashed #d0d0d0;border-radius:8px;padding:20px;text-align:center;cursor:pointer;transition:border-color .2s;margin-bottom:10px;position:relative}
+.file-upload-area:hover{border-color:#F07830}
+.file-upload-area input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer}
+.file-upload-area .upload-icon{font-size:24px;color:#bbb;margin-bottom:4px}
+.file-upload-area .upload-text{font-size:12px;color:#878787}
+.file-upload-area .upload-text strong{color:#F07830}
+.file-upload-area.has-file{border-color:#2e7d32;background:#f1f8f1}
+.file-upload-area.has-file .upload-text{color:#2e7d32}
+
+.upload-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+
+/* ── Toast ──────────────────────────────────── */
+.toast{position:fixed;bottom:20px;right:20px;padding:12px 20px;border-radius:6px;font-size:13px;font-weight:500;color:#fff;z-index:9999;transform:translateY(80px);opacity:0;transition:all .3s}
+.toast.show{transform:translateY(0);opacity:1}
+.toast.success{background:#2e7d32}
+.toast.error{background:#c62828}
+.toast.info{background:#1565c0}
+
+/* ── Loader ─────────────────────────────────── */
+.loader{display:flex;justify-content:center;padding:40px}
+.loader .spinner{width:32px;height:32px;border:3px solid #f0f0f0;border-top-color:#2874f0;border-radius:50%;animation:spin .6s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* ── Responsive ─────────────────────────────── */
+@media(max-width:768px){
+  .account-wrap{flex-direction:column;padding:0 8px;margin-top:8px}
+  .sidebar{width:100%;position:static}
+  .form-row{flex-direction:column;gap:10px}
+  .rental-card-details{grid-template-columns:1fr}
+  .upload-grid{grid-template-columns:1fr}
+  .kyc-steps{flex-direction:column}
+  .kyc-step::after{display:none}
+}
 </style>
 </head>
 <body>
-<div class="topbar">
-  <a href="/index.html" class="brand">d<span>bugg</span>s</a>
-  <button class="logout-btn" onclick="logout()">Logout</button>
+
+<!-- ════════════ HEADER ════════════ -->
+<div class="header">
+  <a class="logo" href="/">d<span>bugg</span></a>
+  <span class="tagline">Explore Plus</span>
+  <span class="spacer"></span>
+  <div class="user-info">
+    <div class="avatar" id="headerAvatar">U</div>
+    <span id="headerName">User</span>
+  </div>
+  <button class="logout-btn" onclick="doLogout()">Logout</button>
 </div>
-<div class="container">
-  <div class="card">
-    <div class="role-badge" id="role-badge">—</div>
-    <h2 id="name">Loading...</h2>
-    <div style="font-size:13px;color:var(--text-sec);margin-bottom:16px;" id="email-sub">—</div>
-    <div class="field"><div class="field-label">Phone</div><div class="field-value" id="phone">—</div></div>
-    <div class="field"><div class="field-label">KYC Status</div><div class="field-value" id="kyc">—</div></div>
-    <div class="links" id="role-links">
-      <a href="/orders.html">My Orders</a>
-      <a href="/index.html">Shop</a>
+
+<!-- ════════════ BODY ════════════ -->
+<div class="account-wrap">
+
+  <!-- ─── Sidebar ─── -->
+  <div class="sidebar">
+    <div class="sidebar-profile">
+      <div class="prof-avatar" id="sideAvatar">
+        <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 4-7 8-7s8 3 8 7"/></svg>
+      </div>
+      <div>
+        <div class="prof-text">Hello,</div>
+        <div class="prof-name" id="sideName">User</div>
+      </div>
+    </div>
+
+    <!-- MY ORDERS -->
+    <div class="nav-section">
+      <div class="nav-section-head">
+        <div class="nav-section-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#2874f0" stroke-width="2"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M16 7V5a4 4 0 00-8 0v2"/></svg>
+        </div>
+        <span class="nav-section-title">MY ORDERS</span>
+      </div>
+      <div class="nav-link" onclick="setPanel('orders',this)">Orders <span class="chevron">&rsaquo;</span></div>
+    </div>
+
+    <!-- DBUGG EMI -->
+    <div class="nav-section">
+      <div class="nav-section-head">
+        <div class="nav-section-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#F07830" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M2 10h20"/><path d="M6 16h4"/><path d="M14 16h4"/></svg>
+        </div>
+        <span class="nav-section-title">DBUGG EMI</span>
+      </div>
+      <div class="nav-link" onclick="setPanel('emi',this)">My Rentals <span class="chevron">&rsaquo;</span></div>
+      <div class="nav-link" onclick="setPanel('kyc',this)">KYC Verification <span class="chevron">&rsaquo;</span></div>
+    </div>
+
+    <!-- ACCOUNT SETTINGS -->
+    <div class="nav-section">
+      <div class="nav-section-head">
+        <div class="nav-section-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#2874f0" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 4-7 8-7s8 3 8 7"/></svg>
+        </div>
+        <span class="nav-section-title">ACCOUNT SETTINGS</span>
+      </div>
+      <div class="nav-link active" onclick="setPanel('profile',this)">Profile Information <span class="chevron">&rsaquo;</span></div>
+      <div class="nav-link" onclick="setPanel('addresses',this)">Manage Addresses <span class="chevron">&rsaquo;</span></div>
+      <div class="nav-link" onclick="setPanel('pan',this)">PAN Card Information <span class="chevron">&rsaquo;</span></div>
+    </div>
+
+    <!-- PAYMENTS -->
+    <div class="nav-section">
+      <div class="nav-section-head">
+        <div class="nav-section-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#2874f0" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg>
+        </div>
+        <span class="nav-section-title">PAYMENTS</span>
+      </div>
+      <div class="nav-link" onclick="setPanel('gift',this)">Gift Cards <span class="chevron">&rsaquo;</span></div>
+      <div class="nav-link" onclick="setPanel('upi',this)">Saved UPI <span class="chevron">&rsaquo;</span></div>
+      <div class="nav-link" onclick="setPanel('cards',this)">Saved Cards <span class="chevron">&rsaquo;</span></div>
+    </div>
+
+    <!-- MY STUFF -->
+    <div class="nav-section">
+      <div class="nav-section-head">
+        <div class="nav-section-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#2874f0" stroke-width="2"><path d="M12 20l-7-7a5 5 0 117.07-7.07L12 6.93l-.07-.07a5 5 0 117.07 7.07L12 20z"/></svg>
+        </div>
+        <span class="nav-section-title">MY STUFF</span>
+      </div>
+      <div class="nav-link" onclick="setPanel('coupons',this)">My Coupons <span class="chevron">&rsaquo;</span></div>
+      <div class="nav-link" onclick="setPanel('reviews',this)">My Reviews &amp; Ratings <span class="chevron">&rsaquo;</span></div>
+      <div class="nav-link" onclick="setPanel('notifications',this)">All Notifications <span class="chevron">&rsaquo;</span></div>
     </div>
   </div>
-</div>
 
+  <!-- ─── Main Panel Area ─── -->
+  <div class="main-panel">
+
+    <!-- ═══ PROFILE ═══ -->
+    <div class="panel active-panel" id="panel-profile">
+      <div class="panel-title">Personal Information</div>
+      <div class="form-row">
+        <div class="field">
+          <label>First Name</label>
+          <input class="field-input" id="profFirstName" placeholder="First Name"/>
+        </div>
+        <div class="field">
+          <label>Last Name</label>
+          <input class="field-input" id="profLastName" placeholder="Last Name"/>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="field">
+          <label>Email Address</label>
+          <input class="field-input" id="profEmail" type="email" placeholder="Email"/>
+        </div>
+        <div class="field">
+          <label>Mobile Number</label>
+          <input class="field-input" id="profPhone" type="tel" placeholder="Mobile Number"/>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="field">
+          <label>Gender</label>
+          <select class="field-input" id="profGender">
+            <option value="">Select Gender</option>
+            <option value="male">Male</option>
+            <option value="female">Female</option>
+            <option value="other">Other</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Date of Birth</label>
+          <input class="field-input" id="profDob" type="date"/>
+        </div>
+      </div>
+      <button class="save-btn" onclick="saveProfile()">Save Changes</button>
+    </div>
+
+    <!-- ═══ ORDERS ═══ -->
+    <div class="panel" id="panel-orders">
+      <div class="panel-title">My Orders</div>
+      <div id="ordersContainer">
+        <div class="loader"><div class="spinner"></div></div>
+      </div>
+    </div>
+
+    <!-- ═══ ADDRESSES ═══ -->
+    <div class="panel" id="panel-addresses">
+      <div class="panel-title">Manage Addresses</div>
+      <button class="save-btn" onclick="showAddressForm()" style="margin-bottom:16px">+ Add New Address</button>
+      <div id="addressForm" style="display:none;margin-bottom:20px;padding:20px;background:#fafafa;border-radius:8px;border:1px solid #f0f0f0">
+        <div class="form-row">
+          <div class="field">
+            <label>Full Name</label>
+            <input class="field-input" id="addrName" placeholder="Full Name"/>
+          </div>
+          <div class="field">
+            <label>Phone</label>
+            <input class="field-input" id="addrPhone" placeholder="10-digit mobile"/>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="field">
+            <label>Pincode</label>
+            <input class="field-input" id="addrPincode" placeholder="Pincode"/>
+          </div>
+          <div class="field">
+            <label>City</label>
+            <input class="field-input" id="addrCity" placeholder="City"/>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="field">
+            <label>Address (House No, Street)</label>
+            <textarea class="field-input" id="addrLine" placeholder="Address"></textarea>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="field">
+            <label>State</label>
+            <input class="field-input" id="addrState" placeholder="State"/>
+          </div>
+          <div class="field">
+            <label>Landmark (Optional)</label>
+            <input class="field-input" id="addrLandmark" placeholder="Landmark"/>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="field">
+            <label>Address Type</label>
+            <select class="field-input" id="addrType">
+              <option value="home">Home</option>
+              <option value="work">Work</option>
+            </select>
+          </div>
+          <div class="field"></div>
+        </div>
+        <button class="save-btn" onclick="saveAddress()">Save Address</button>
+        <button style="background:none;border:1px solid #ddd;padding:10px 24px;border-radius:4px;font-size:14px;cursor:pointer;margin-left:8px;font-family:inherit" onclick="document.getElementById('addressForm').style.display='none'">Cancel</button>
+      </div>
+      <div id="addressList"></div>
+    </div>
+
+    <!-- ═══ PAN ═══ -->
+    <div class="panel" id="panel-pan">
+      <div class="panel-title">PAN Card Information</div>
+      <div class="panel-subtitle">PAN Card details are required for transactions above Rs 5000. Your PAN info is safe with us.</div>
+      <div class="form-row">
+        <div class="field">
+          <label>PAN Number</label>
+          <input class="field-input" id="panNumber" placeholder="ABCDE1234F" maxlength="10" style="text-transform:uppercase"/>
+        </div>
+        <div class="field">
+          <label>Full Name (as on PAN)</label>
+          <input class="field-input" id="panName" placeholder="Full Name"/>
+        </div>
+      </div>
+      <button class="save-btn" onclick="savePan()">Save PAN Details</button>
+    </div>
+
+    <!-- ═══ GIFT CARDS ═══ -->
+    <div class="panel" id="panel-gift">
+      <div class="panel-title">Gift Cards</div>
+      <div class="empty-state">
+        <svg viewBox="0 0 64 64" fill="none" stroke="#bbb" stroke-width="2"><rect x="8" y="20" width="48" height="36" rx="4"/><path d="M8 30h48"/><path d="M32 20v36"/><path d="M32 20c-6-8-18-6-14 2s14 6 14-2z"/><path d="M32 20c6-8 18-6 14 2s-14 6-14-2z"/></svg>
+        <h3>No Gift Cards</h3>
+        <p>You haven't added any gift cards yet.</p>
+      </div>
+    </div>
+
+    <!-- ═══ UPI ═══ -->
+    <div class="panel" id="panel-upi">
+      <div class="panel-title">Saved UPI</div>
+      <div id="upiList">
+        <div class="empty-state">
+          <svg viewBox="0 0 64 64" fill="none" stroke="#bbb" stroke-width="2"><rect x="12" y="8" width="40" height="48" rx="4"/><path d="M24 44h16"/><circle cx="32" cy="28" r="8"/></svg>
+          <h3>No Saved UPI IDs</h3>
+          <p>Your saved UPI IDs will appear here.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ SAVED CARDS ═══ -->
+    <div class="panel" id="panel-cards">
+      <div class="panel-title">Saved Cards</div>
+      <div id="cardsList">
+        <div class="empty-state">
+          <svg viewBox="0 0 64 64" fill="none" stroke="#bbb" stroke-width="2"><rect x="6" y="14" width="52" height="36" rx="4"/><path d="M6 26h52"/><path d="M14 36h12"/><path d="M14 42h8"/></svg>
+          <h3>No Saved Cards</h3>
+          <p>Your saved debit/credit cards will appear here.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ COUPONS ═══ -->
+    <div class="panel" id="panel-coupons">
+      <div class="panel-title">My Coupons</div>
+      <div id="couponsList">
+        <div class="empty-state">
+          <svg viewBox="0 0 64 64" fill="none" stroke="#bbb" stroke-width="2"><path d="M8 20h48v24H8z"/><circle cx="8" cy="32" r="4"/><circle cx="56" cy="32" r="4"/><path d="M28 24v16" stroke-dasharray="2 3"/></svg>
+          <h3>No Coupons Available</h3>
+          <p>Check back later for exciting offers!</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ REVIEWS ═══ -->
+    <div class="panel" id="panel-reviews">
+      <div class="panel-title">My Reviews &amp; Ratings</div>
+      <div id="reviewsList">
+        <div class="empty-state">
+          <svg viewBox="0 0 64 64" fill="none" stroke="#bbb" stroke-width="2"><polygon points="32,8 38,24 56,24 42,34 46,50 32,40 18,50 22,34 8,24 26,24"/></svg>
+          <h3>No Reviews Yet</h3>
+          <p>Products you've reviewed will appear here.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ NOTIFICATIONS ═══ -->
+    <div class="panel" id="panel-notifications">
+      <div class="panel-title">All Notifications</div>
+      <div id="notifList">
+        <div class="empty-state">
+          <svg viewBox="0 0 64 64" fill="none" stroke="#bbb" stroke-width="2"><path d="M26 50a6 6 0 0012 0"/><path d="M16 30c0-8.8 7.2-16 16-16s16 7.2 16 16v10l4 6H12l4-6V30z"/></svg>
+          <h3>No Notifications</h3>
+          <p>You're all caught up!</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════ -->
+    <!-- ═══ MY RENTALS (EMI) ═══ -->
+    <!-- ═══════════════════════════════════════════ -->
+    <div class="panel" id="panel-emi">
+      <div class="panel-title" style="display:flex;align-items:center;gap:10px">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#F07830" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M2 10h20"/><path d="M6 16h4"/><path d="M14 16h4"/></svg>
+        My Rentals
+      </div>
+      <div class="panel-subtitle">View and manage your DBUGG laptop rental plans and EMI payments.</div>
+      <div id="rentalsContainer">
+        <div class="loader"><div class="spinner"></div></div>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════ -->
+    <!-- ═══ KYC VERIFICATION ═══ -->
+    <!-- ═══════════════════════════════════════════ -->
+    <div class="panel" id="panel-kyc">
+      <div class="panel-title" style="display:flex;align-items:center;gap:10px">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#F07830" stroke-width="2"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="10"/></svg>
+        KYC Verification
+      </div>
+      <div class="panel-subtitle">Complete your KYC to avail DBUGG EMI rental plans. Your documents are securely stored.</div>
+
+      <!-- KYC Status Banner -->
+      <div id="kycStatusBanner"></div>
+
+      <!-- KYC Steps Progress -->
+      <div class="kyc-steps" id="kycSteps">
+        <div class="kyc-step active" data-step="1">
+          <div class="kyc-step-num">1</div>
+          <div class="kyc-step-label">Personal Details</div>
+        </div>
+        <div class="kyc-step" data-step="2">
+          <div class="kyc-step-num">2</div>
+          <div class="kyc-step-label">Documents</div>
+        </div>
+        <div class="kyc-step" data-step="3">
+          <div class="kyc-step-num">3</div>
+          <div class="kyc-step-label">Verification</div>
+        </div>
+      </div>
+
+      <!-- KYC Form -->
+      <div id="kycFormArea">
+
+        <!-- Step 1: Personal Details -->
+        <div class="kyc-section" id="kycStep1">
+          <h3><span class="step-num">1</span> Personal Details</h3>
+          <div class="form-row">
+            <div class="field">
+              <label>Full Name</label>
+              <input class="field-input" id="kycFullName" placeholder="As per Aadhaar"/>
+            </div>
+            <div class="field">
+              <label>Phone Number</label>
+              <input class="field-input" id="kycPhone" type="tel" placeholder="10-digit mobile"/>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="field">
+              <label>Aadhaar Number</label>
+              <input class="field-input" id="kycAadhaar" placeholder="XXXX XXXX XXXX" maxlength="14"/>
+            </div>
+            <div class="field">
+              <label>PAN Number</label>
+              <input class="field-input" id="kycPan" placeholder="ABCDE1234F" maxlength="10" style="text-transform:uppercase"/>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="field">
+              <label>Date of Birth</label>
+              <input class="field-input" id="kycDob" type="date"/>
+            </div>
+            <div class="field">
+              <label>Current Address</label>
+              <input class="field-input" id="kycAddress" placeholder="Full address"/>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 2: Document Upload -->
+        <div class="kyc-section" id="kycStep2">
+          <h3><span class="step-num">2</span> Document Upload</h3>
+          <div class="upload-grid">
+            <div>
+              <label style="display:block;font-size:12px;font-weight:600;color:#878787;margin-bottom:6px;text-transform:uppercase;letter-spacing:.3px">Aadhaar Front</label>
+              <div class="file-upload-area" id="uploadAadhaarFront">
+                <div class="upload-icon">&#128196;</div>
+                <div class="upload-text">Click to upload or drag &amp; drop<br/><strong>PNG, JPG</strong> up to 5MB</div>
+                <input type="file" accept="image/*,.pdf" onchange="handleFileSelect(this,'aadhaarFront')"/>
+              </div>
+            </div>
+            <div>
+              <label style="display:block;font-size:12px;font-weight:600;color:#878787;margin-bottom:6px;text-transform:uppercase;letter-spacing:.3px">Aadhaar Back</label>
+              <div class="file-upload-area" id="uploadAadhaarBack">
+                <div class="upload-icon">&#128196;</div>
+                <div class="upload-text">Click to upload or drag &amp; drop<br/><strong>PNG, JPG</strong> up to 5MB</div>
+                <input type="file" accept="image/*,.pdf" onchange="handleFileSelect(this,'aadhaarBack')"/>
+              </div>
+            </div>
+            <div>
+              <label style="display:block;font-size:12px;font-weight:600;color:#878787;margin-bottom:6px;text-transform:uppercase;letter-spacing:.3px">PAN Card</label>
+              <div class="file-upload-area" id="uploadPanCard">
+                <div class="upload-icon">&#128196;</div>
+                <div class="upload-text">Click to upload or drag &amp; drop<br/><strong>PNG, JPG</strong> up to 5MB</div>
+                <input type="file" accept="image/*,.pdf" onchange="handleFileSelect(this,'panCard')"/>
+              </div>
+            </div>
+            <div>
+              <label style="display:block;font-size:12px;font-weight:600;color:#878787;margin-bottom:6px;text-transform:uppercase;letter-spacing:.3px">Selfie Photo</label>
+              <div class="file-upload-area" id="uploadSelfie">
+                <div class="upload-icon">&#129489;</div>
+                <div class="upload-text">Click to upload or drag &amp; drop<br/><strong>PNG, JPG</strong> up to 5MB</div>
+                <input type="file" accept="image/*" onchange="handleFileSelect(this,'selfie')"/>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 3: Verification Status -->
+        <div class="kyc-section" id="kycStep3">
+          <h3><span class="step-num">3</span> Verification Status</h3>
+          <div id="kycVerificationStatus">
+            <p style="font-size:13px;color:#878787">Submit your details and documents above. Our team will verify your KYC within 24-48 hours.</p>
+          </div>
+        </div>
+
+        <button class="save-btn-orange" id="kycSubmitBtn" onclick="submitKyc()">Submit KYC for Verification</button>
+      </div>
+
+      <!-- Shown when KYC already submitted -->
+      <div id="kycSubmittedArea" style="display:none"></div>
+    </div>
+
+  </div><!-- /main-panel -->
+</div><!-- /account-wrap -->
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<!-- ════════════ SCRIPTS ════════════ -->
 <script src="shop-api.js"></script>
 <script>
-if (!getToken()) window.location.href = '/login.html';
+/* ── Panels ───────────────────────────────────── */
+const panels = ['profile','orders','addresses','pan','gift','upi','cards','coupons','reviews','notifications','emi','kyc'];
 
-async function loadProfile() {
+function setPanel(name, el) {
+  panels.forEach(p => {
+    const panel = document.getElementById('panel-' + p);
+    if (panel) {
+      panel.style.display = 'none';
+      panel.classList.remove('active-panel');
+    }
+  });
+  const target = document.getElementById('panel-' + name);
+  if (target) {
+    target.style.display = '';
+    target.classList.add('active-panel');
+  }
+  document.querySelectorAll('.nav-link').forEach(n => n.classList.remove('active'));
+  if (el) el.classList.add('active');
+
+  // Load data for specific panels
+  if (name === 'orders') loadRecentOrders();
+  if (name === 'emi') loadMyRentals();
+  if (name === 'kyc') loadKycStatus();
+}
+
+/* ── Toast ────────────────────────────────────── */
+function showToast(msg, type) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast ' + (type || 'info') + ' show';
+  setTimeout(() => t.classList.remove('show'), 3500);
+}
+
+/* ── Auth guard ───────────────────────────────── */
+function requireAuth() {
+  const token = getToken();
+  if (!token) {
+    window.location.href = '/login.html';
+    return false;
+  }
+  return true;
+}
+
+/* ── Init ─────────────────────────────────────── */
+async function initAccount() {
+  if (!requireAuth()) return;
+
   try {
-    const user = await apiFetch('/users/me');
-    document.getElementById('role-badge').textContent = user.role;
-    document.getElementById('name').textContent = user.name || 'Unnamed User';
-    document.getElementById('email-sub').textContent = user.email || '';
-    document.getElementById('phone').textContent = user.phone || '—';
-    document.getElementById('kyc').textContent = user.kycStatus || '—';
-    if (user.role === 'b2b') {
-      document.getElementById('role-links').innerHTML += '<a href="/b2b-register.html">B2B Status</a>';
-    } else if (user.role === 'dealer') {
-      document.getElementById('role-links').innerHTML += '<a href="/dealer-register.html">Dealer Status</a>';
+    const user = getUser();
+    if (user) {
+      const name = (user.firstName || '') + ' ' + (user.lastName || '');
+      const initial = (user.firstName || 'U').charAt(0).toUpperCase();
+      document.getElementById('headerAvatar').textContent = initial;
+      document.getElementById('headerName').textContent = name.trim() || user.email || 'User';
+      document.getElementById('sideName').textContent = name.trim() || 'User';
+
+      // Pre-fill profile
+      document.getElementById('profFirstName').value = user.firstName || '';
+      document.getElementById('profLastName').value = user.lastName || '';
+      document.getElementById('profEmail').value = user.email || '';
+      document.getElementById('profPhone').value = user.phone || '';
+      document.getElementById('profGender').value = user.gender || '';
+      document.getElementById('profDob').value = user.dob || '';
     }
   } catch (e) {
-    logout();
+    console.error('Init error:', e);
   }
 }
-loadProfile();
+
+/* ── Profile ──────────────────────────────────── */
+async function saveProfile() {
+  try {
+    const body = {
+      firstName: document.getElementById('profFirstName').value.trim(),
+      lastName: document.getElementById('profLastName').value.trim(),
+      phone: document.getElementById('profPhone').value.trim(),
+      gender: document.getElementById('profGender').value,
+      dob: document.getElementById('profDob').value
+    };
+    await apiFetch('/user/profile', { method: 'PUT', body: JSON.stringify(body) });
+    showToast('Profile updated successfully!', 'success');
+  } catch (e) {
+    showToast(e.message || 'Failed to update profile', 'error');
+  }
+}
+
+/* ── Orders ───────────────────────────────────── */
+async function loadRecentOrders() {
+  const container = document.getElementById('ordersContainer');
+  container.innerHTML = '<div class="loader"><div class="spinner"></div></div>';
+  try {
+    const res = await apiFetch('/orders/my');
+    const orders = res.orders || res || [];
+    if (!orders.length) {
+      container.innerHTML = '<div class="empty-state"><svg viewBox="0 0 64 64" fill="none" stroke="#bbb" stroke-width="2"><rect x="10" y="10" width="44" height="44" rx="4"/><path d="M22 28h20"/><path d="M22 36h12"/></svg><h3>No Orders Yet</h3><p>Your order history will appear here.</p></div>';
+      return;
+    }
+    container.innerHTML = orders.map(o => {
+      const statusCls = 'status-' + (o.status || 'pending').toLowerCase().replace(/\s+/g, '-');
+      const items = (o.items || []).map(i => i.name || i.title || 'Item').join(', ');
+      const date = o.createdAt ? new Date(o.createdAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }) : '';
+      return '<div class="order-card">' +
+        '<div class="order-header">' +
+          '<div><div class="order-id">Order #' + (o.orderId || o._id || '') + '</div><div class="order-date">' + date + '</div></div>' +
+          '<span class="order-status ' + statusCls + '">' + (o.status || 'Pending') + '</span>' +
+        '</div>' +
+        '<div class="order-items">' + (items || 'Order items') + '</div>' +
+        '<div class="order-total" style="margin-top:6px">' + money(o.total || o.amount || 0) + '</div>' +
+      '</div>';
+    }).join('');
+  } catch (e) {
+    container.innerHTML = '<div class="empty-state"><h3>Could not load orders</h3><p>' + (e.message || '') + '</p></div>';
+  }
+}
+
+/* ── Addresses ────────────────────────────────── */
+function showAddressForm() {
+  document.getElementById('addressForm').style.display = '';
+  ['addrName','addrPhone','addrPincode','addrCity','addrLine','addrState','addrLandmark'].forEach(id => {
+    document.getElementById(id).value = '';
+  });
+}
+
+async function saveAddress() {
+  try {
+    const body = {
+      name: document.getElementById('addrName').value.trim(),
+      phone: document.getElementById('addrPhone').value.trim(),
+      pincode: document.getElementById('addrPincode').value.trim(),
+      city: document.getElementById('addrCity').value.trim(),
+      address: document.getElementById('addrLine').value.trim(),
+      state: document.getElementById('addrState').value.trim(),
+      landmark: document.getElementById('addrLandmark').value.trim(),
+      type: document.getElementById('addrType').value
+    };
+    await apiFetch('/user/address', { method: 'POST', body: JSON.stringify(body) });
+    document.getElementById('addressForm').style.display = 'none';
+    showToast('Address saved!', 'success');
+    loadAddresses();
+  } catch (e) {
+    showToast(e.message || 'Failed to save address', 'error');
+  }
+}
+
+async function loadAddresses() {
+  try {
+    const res = await apiFetch('/user/addresses');
+    const list = res.addresses || res || [];
+    const container = document.getElementById('addressList');
+    if (!list.length) {
+      container.innerHTML = '<div class="empty-state"><h3>No Saved Addresses</h3><p>Add an address to get started.</p></div>';
+      return;
+    }
+    container.innerHTML = list.map(a =>
+      '<div class="card-item">' +
+        '<div class="card-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#2874f0" stroke-width="2"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/><circle cx="12" cy="9" r="2.5"/></svg></div>' +
+        '<div class="card-body"><h4>' + (a.name || '') + ' <span style="font-size:11px;color:#878787;font-weight:400;background:#f0f0f0;padding:2px 8px;border-radius:3px;margin-left:6px">' + (a.type || 'Home') + '</span></h4>' +
+        '<p>' + (a.address || '') + ', ' + (a.city || '') + ' - ' + (a.pincode || '') + '</p>' +
+        '<p>Phone: ' + (a.phone || '') + '</p></div>' +
+        '<div class="card-action" onclick="deleteAddress(\'' + (a._id || '') + '\')">Remove</div>' +
+      '</div>'
+    ).join('');
+  } catch (e) {
+    console.error('Load addresses:', e);
+  }
+}
+
+async function deleteAddress(id) {
+  if (!confirm('Remove this address?')) return;
+  try {
+    await apiFetch('/user/address/' + id, { method: 'DELETE' });
+    showToast('Address removed', 'success');
+    loadAddresses();
+  } catch (e) {
+    showToast(e.message || 'Failed to remove', 'error');
+  }
+}
+
+/* ── PAN ──────────────────────────────────────── */
+async function savePan() {
+  try {
+    const body = {
+      panNumber: document.getElementById('panNumber').value.trim().toUpperCase(),
+      panName: document.getElementById('panName').value.trim()
+    };
+    if (!/^[A-Z]{5}[0-9]{4}[A-Z]$/.test(body.panNumber)) {
+      showToast('Invalid PAN format', 'error');
+      return;
+    }
+    await apiFetch('/user/pan', { method: 'PUT', body: JSON.stringify(body) });
+    showToast('PAN details saved!', 'success');
+  } catch (e) {
+    showToast(e.message || 'Failed to save PAN', 'error');
+  }
+}
+
+/* ── Logout ───────────────────────────────────── */
+function doLogout() {
+  localStorage.removeItem('token');
+  localStorage.removeItem('user');
+  window.location.href = '/login.html';
+}
+
+/* ═══════════════════════════════════════════════ */
+/* ═══ DBUGG EMI — MY RENTALS ═══ */
+/* ═══════════════════════════════════════════════ */
+
+async function loadMyRentals() {
+  const container = document.getElementById('rentalsContainer');
+  container.innerHTML = '<div class="loader"><div class="spinner"></div></div>';
+
+  try {
+    const res = await apiFetch('/rental/my');
+    const rentals = res.rentals || res || [];
+
+    if (!rentals.length) {
+      container.innerHTML =
+        '<div class="empty-state">' +
+          '<svg viewBox="0 0 64 64" fill="none" stroke="#bbb" stroke-width="2"><rect x="8" y="12" width="48" height="32" rx="3"/><path d="M16 48h32"/><path d="M24 44h16v4H24z"/><circle cx="32" cy="28" r="0.5" fill="#bbb"/></svg>' +
+          '<h3>No Active Rentals</h3>' +
+          '<p>You don\'t have any laptop rentals yet. Browse our collection to get started!</p>' +
+          '<a href="/laptops.html" style="display:inline-block;margin-top:12px;color:#F07830;font-weight:600;font-size:13px;text-decoration:none">Browse Laptops &rarr;</a>' +
+        '</div>';
+      return;
+    }
+
+    container.innerHTML = rentals.map(r => {
+      const statusLabel = formatRentalStatus(r.status);
+      const statusClass = 'status-' + (r.status || 'pending');
+      const startDate = r.startDate ? new Date(r.startDate).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }) : 'N/A';
+      const nextDue = r.nextDueDate ? new Date(r.nextDueDate).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }) : 'N/A';
+
+      return '<div class="rental-card">' +
+        '<div class="rental-card-header">' +
+          '<div>' +
+            '<div class="rental-card-title">' + escHtml(r.laptopName || r.laptop?.name || 'Laptop') + '</div>' +
+            '<div class="rental-card-serial">Serial: ' + escHtml(r.serialNumber || r.laptop?.serialNumber || 'N/A') + '</div>' +
+          '</div>' +
+          '<span class="rental-status ' + statusClass + '">' + statusLabel + '</span>' +
+        '</div>' +
+        '<div class="rental-card-details">' +
+          '<div class="rental-detail"><div class="rd-label">Monthly Rent</div><div class="rd-value amount">' + money(r.monthlyRent || r.emiAmount || 0) + '/mo</div></div>' +
+          '<div class="rental-detail"><div class="rd-label">Deposit</div><div class="rd-value">' + money(r.deposit || r.depositAmount || 0) + '</div></div>' +
+          '<div class="rental-detail"><div class="rd-label">Tenure</div><div class="rd-value">' + (r.tenure || r.months || 'N/A') + ' months</div></div>' +
+          '<div class="rental-detail"><div class="rd-label">Total Paid</div><div class="rd-value">' + money(r.totalPaid || 0) + '</div></div>' +
+        '</div>' +
+        '<div class="rental-card-footer">' +
+          '<div class="dates"><span>Start: ' + startDate + '</span><span>Next Due: ' + nextDue + '</span></div>' +
+          '<button class="view-details-btn" onclick="viewRentalDetails(\'' + (r._id || r.id || '') + '\')">View Details</button>' +
+        '</div>' +
+      '</div>';
+    }).join('');
+  } catch (e) {
+    container.innerHTML = '<div class="empty-state"><h3>Could not load rentals</h3><p>' + escHtml(e.message || 'Something went wrong') + '</p></div>';
+  }
+}
+
+function formatRentalStatus(status) {
+  const map = {
+    kyc_pending: 'KYC Pending',
+    active: 'Active',
+    overdue: 'Overdue',
+    completed: 'Completed',
+    returned: 'Returned',
+    rejected: 'Rejected',
+    pending: 'Pending'
+  };
+  return map[status] || (status || 'Unknown');
+}
+
+async function viewRentalDetails(rentalId) {
+  if (!rentalId) return;
+  try {
+    const res = await apiFetch('/rental/' + rentalId);
+    const r = res.rental || res;
+    const container = document.getElementById('rentalsContainer');
+
+    let timelineHtml = '';
+    if (r.payments && r.payments.length) {
+      timelineHtml = '<div class="emi-timeline"><h4>EMI Payment Timeline</h4>';
+      r.payments.forEach((p, i) => {
+        const cls = p.status === 'paid' ? 'paid' : (p.status === 'due' ? 'due' : 'upcoming');
+        const date = p.dueDate ? new Date(p.dueDate).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }) : '';
+        const paidDate = p.paidDate ? ' (Paid: ' + new Date(p.paidDate).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }) + ')' : '';
+        timelineHtml += '<div class="emi-item ' + cls + '">' +
+          '<div class="emi-dot"></div>' +
+          '<div class="emi-info"><div class="emi-month">EMI ' + (i + 1) + ' - ' + (p.month || '') + '</div><div class="emi-date">' + date + paidDate + '</div></div>' +
+          '<div class="emi-amount">' + money(p.amount || 0) + '</div>' +
+        '</div>';
+      });
+      timelineHtml += '</div>';
+    }
+
+    container.innerHTML =
+      '<div style="margin-bottom:16px"><button class="view-details-btn" onclick="loadMyRentals()" style="border-color:#2874f0;color:#2874f0">&larr; Back to Rentals</button></div>' +
+      '<div class="rental-card" style="border-color:#F07830">' +
+        '<div class="rental-card-header">' +
+          '<div>' +
+            '<div class="rental-card-title">' + escHtml(r.laptopName || r.laptop?.name || 'Laptop') + '</div>' +
+            '<div class="rental-card-serial">Serial: ' + escHtml(r.serialNumber || r.laptop?.serialNumber || 'N/A') + '</div>' +
+          '</div>' +
+          '<span class="rental-status status-' + (r.status || 'pending') + '">' + formatRentalStatus(r.status) + '</span>' +
+        '</div>' +
+        '<div class="rental-card-details" style="grid-template-columns:1fr 1fr 1fr">' +
+          '<div class="rental-detail"><div class="rd-label">Monthly Rent</div><div class="rd-value amount">' + money(r.monthlyRent || r.emiAmount || 0) + '/mo</div></div>' +
+          '<div class="rental-detail"><div class="rd-label">Deposit</div><div class="rd-value">' + money(r.deposit || r.depositAmount || 0) + '</div></div>' +
+          '<div class="rental-detail"><div class="rd-label">Tenure</div><div class="rd-value">' + (r.tenure || r.months || 'N/A') + ' months</div></div>' +
+          '<div class="rental-detail"><div class="rd-label">Total Paid</div><div class="rd-value">' + money(r.totalPaid || 0) + '</div></div>' +
+          '<div class="rental-detail"><div class="rd-label">Remaining</div><div class="rd-value">' + money(r.remaining || 0) + '</div></div>' +
+          '<div class="rental-detail"><div class="rd-label">Next Due</div><div class="rd-value">' + (r.nextDueDate ? new Date(r.nextDueDate).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }) : 'N/A') + '</div></div>' +
+        '</div>' +
+        timelineHtml +
+      '</div>';
+  } catch (e) {
+    showToast(e.message || 'Failed to load rental details', 'error');
+  }
+}
+
+/* ═══════════════════════════════════════════════ */
+/* ═══ KYC VERIFICATION ═══ */
+/* ═══════════════════════════════════════════════ */
+
+const kycFiles = { aadhaarFront: null, aadhaarBack: null, panCard: null, selfie: null };
+
+function handleFileSelect(input, key) {
+  const file = input.files[0];
+  if (!file) return;
+  if (file.size > 5 * 1024 * 1024) {
+    showToast('File size must be under 5MB', 'error');
+    input.value = '';
+    return;
+  }
+  kycFiles[key] = file;
+  const area = input.closest('.file-upload-area');
+  area.classList.add('has-file');
+  area.querySelector('.upload-text').innerHTML = '<strong>' + escHtml(file.name) + '</strong><br/>Ready to upload';
+}
+
+async function loadKycStatus() {
+  const banner = document.getElementById('kycStatusBanner');
+  const formArea = document.getElementById('kycFormArea');
+  const submittedArea = document.getElementById('kycSubmittedArea');
+
+  try {
+    const res = await apiFetch('/rental/kyc/status');
+    const kyc = res.kyc || res;
+    const status = kyc.status || 'not_submitted';
+
+    // Status banner
+    const statusLabels = {
+      not_submitted: 'Not Submitted',
+      pending: 'Under Review',
+      approved: 'Approved',
+      rejected: 'Rejected'
+    };
+    banner.innerHTML = '<div class="kyc-status-badge badge-' + status + '"><span class="status-dot"></span> KYC Status: ' + (statusLabels[status] || status) + '</div>';
+
+    // Update step indicators
+    const steps = document.querySelectorAll('.kyc-step');
+    if (status === 'approved') {
+      steps.forEach(s => { s.classList.remove('active'); s.classList.add('completed'); });
+    } else if (status === 'pending') {
+      steps[0].classList.remove('active'); steps[0].classList.add('completed');
+      steps[1].classList.remove('active'); steps[1].classList.add('completed');
+      steps[2].classList.add('active');
+    } else if (status === 'rejected') {
+      steps.forEach(s => { s.classList.remove('active', 'completed'); });
+      steps[0].classList.add('active');
+    } else {
+      steps.forEach(s => s.classList.remove('active', 'completed'));
+      steps[0].classList.add('active');
+    }
+
+    if (status === 'approved') {
+      formArea.style.display = 'none';
+      submittedArea.style.display = '';
+      submittedArea.innerHTML =
+        '<div style="text-align:center;padding:40px 20px">' +
+          '<svg width="64" height="64" viewBox="0 0 64 64" fill="none"><circle cx="32" cy="32" r="30" stroke="#2e7d32" stroke-width="3"/><path d="M20 32l8 8 16-16" stroke="#2e7d32" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>' +
+          '<h3 style="margin-top:16px;color:#2e7d32;font-size:18px">KYC Verified</h3>' +
+          '<p style="color:#878787;font-size:13px;margin-top:4px">Your KYC has been approved. You can now avail DBUGG EMI rental plans.</p>' +
+          (kyc.approvedAt ? '<p style="font-size:12px;color:#bbb;margin-top:8px">Approved on: ' + new Date(kyc.approvedAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }) + '</p>' : '') +
+        '</div>';
+    } else if (status === 'pending') {
+      formArea.style.display = 'none';
+      submittedArea.style.display = '';
+      submittedArea.innerHTML =
+        '<div style="text-align:center;padding:40px 20px">' +
+          '<svg width="64" height="64" viewBox="0 0 64 64" fill="none"><circle cx="32" cy="32" r="30" stroke="#e65100" stroke-width="3"/><path d="M32 18v16" stroke="#e65100" stroke-width="3" stroke-linecap="round"/><circle cx="32" cy="42" r="2" fill="#e65100"/></svg>' +
+          '<h3 style="margin-top:16px;color:#e65100;font-size:18px">KYC Under Review</h3>' +
+          '<p style="color:#878787;font-size:13px;margin-top:4px">Your KYC documents are being verified. This usually takes 24-48 hours.</p>' +
+          (kyc.submittedAt ? '<p style="font-size:12px;color:#bbb;margin-top:8px">Submitted on: ' + new Date(kyc.submittedAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }) + '</p>' : '') +
+        '</div>';
+    } else if (status === 'rejected') {
+      formArea.style.display = '';
+      submittedArea.style.display = 'none';
+      const reason = kyc.rejectionReason || 'Please re-submit your documents.';
+      document.getElementById('kycVerificationStatus').innerHTML =
+        '<div style="background:#ffebee;padding:12px;border-radius:6px;border-left:4px solid #c62828">' +
+          '<div style="font-size:14px;font-weight:600;color:#c62828;margin-bottom:4px">KYC Rejected</div>' +
+          '<p style="font-size:13px;color:#666">' + escHtml(reason) + '</p>' +
+        '</div>';
+      // Pre-fill from previous submission
+      if (kyc.fullName) document.getElementById('kycFullName').value = kyc.fullName;
+      if (kyc.phone) document.getElementById('kycPhone').value = kyc.phone;
+      if (kyc.aadhaar) document.getElementById('kycAadhaar').value = kyc.aadhaar;
+      if (kyc.pan) document.getElementById('kycPan').value = kyc.pan;
+      if (kyc.dob) document.getElementById('kycDob').value = kyc.dob;
+      if (kyc.address) document.getElementById('kycAddress').value = kyc.address;
+    } else {
+      // not_submitted
+      formArea.style.display = '';
+      submittedArea.style.display = 'none';
+      // Pre-fill from user profile
+      const user = getUser();
+      if (user) {
+        if (!document.getElementById('kycFullName').value) {
+          document.getElementById('kycFullName').value = ((user.firstName || '') + ' ' + (user.lastName || '')).trim();
+        }
+        if (!document.getElementById('kycPhone').value) {
+          document.getElementById('kycPhone').value = user.phone || '';
+        }
+      }
+    }
+  } catch (e) {
+    // If API 404 / no KYC exists, treat as not_submitted
+    banner.innerHTML = '<div class="kyc-status-badge badge-not_submitted"><span class="status-dot"></span> KYC Status: Not Submitted</div>';
+    formArea.style.display = '';
+    submittedArea.style.display = 'none';
+
+    const user = getUser();
+    if (user) {
+      if (!document.getElementById('kycFullName').value) {
+        document.getElementById('kycFullName').value = ((user.firstName || '') + ' ' + (user.lastName || '')).trim();
+      }
+      if (!document.getElementById('kycPhone').value) {
+        document.getElementById('kycPhone').value = user.phone || '';
+      }
+    }
+  }
+}
+
+async function submitKyc() {
+  const fullName = document.getElementById('kycFullName').value.trim();
+  const phone = document.getElementById('kycPhone').value.trim();
+  const aadhaar = document.getElementById('kycAadhaar').value.trim().replace(/\s/g, '');
+  const pan = document.getElementById('kycPan').value.trim().toUpperCase();
+  const dob = document.getElementById('kycDob').value;
+  const address = document.getElementById('kycAddress').value.trim();
+
+  // Validation
+  if (!fullName) { showToast('Please enter your full name', 'error'); return; }
+  if (!phone || phone.length < 10) { showToast('Please enter a valid phone number', 'error'); return; }
+  if (!aadhaar || aadhaar.length !== 12) { showToast('Please enter a valid 12-digit Aadhaar number', 'error'); return; }
+  if (!/^[A-Z]{5}[0-9]{4}[A-Z]$/.test(pan)) { showToast('Please enter a valid PAN number', 'error'); return; }
+  if (!dob) { showToast('Please enter your date of birth', 'error'); return; }
+  if (!address) { showToast('Please enter your address', 'error'); return; }
+  if (!kycFiles.aadhaarFront) { showToast('Please upload Aadhaar front', 'error'); return; }
+  if (!kycFiles.aadhaarBack) { showToast('Please upload Aadhaar back', 'error'); return; }
+  if (!kycFiles.panCard) { showToast('Please upload PAN card', 'error'); return; }
+  if (!kycFiles.selfie) { showToast('Please upload a selfie', 'error'); return; }
+
+  const btn = document.getElementById('kycSubmitBtn');
+  btn.disabled = true;
+  btn.textContent = 'Submitting...';
+
+  try {
+    const formData = new FormData();
+    formData.append('fullName', fullName);
+    formData.append('phone', phone);
+    formData.append('aadhaar', aadhaar);
+    formData.append('pan', pan);
+    formData.append('dob', dob);
+    formData.append('address', address);
+    formData.append('aadhaarFront', kycFiles.aadhaarFront);
+    formData.append('aadhaarBack', kycFiles.aadhaarBack);
+    formData.append('panCard', kycFiles.panCard);
+    formData.append('selfie', kycFiles.selfie);
+
+    const token = getToken();
+    const res = await fetch('http://200.234.39.146:4000/rental/kyc/submit', {
+      method: 'POST',
+      headers: { 'Authorization': 'Bearer ' + token },
+      body: formData
+    });
+
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.message || 'KYC submission failed');
+    }
+
+    showToast('KYC submitted successfully! Verification takes 24-48 hours.', 'success');
+    loadKycStatus();
+  } catch (e) {
+    showToast(e.message || 'Failed to submit KYC', 'error');
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Submit KYC for Verification';
+  }
+}
+
+/* ── Utility ──────────────────────────────────── */
+function escHtml(s) {
+  return (s || '').replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+}
+
+/* ── Boot ─────────────────────────────────────── */
+initAccount();
 </script>
 </body>
 </html>
