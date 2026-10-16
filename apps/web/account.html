@@ -1,1150 +1,709 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>My Account - dbugg</title>
-<link rel="preconnect" href="https://fonts.googleapis.com"/>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>My Account — dbuggs</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-body{font-family:'Inter',system-ui,sans-serif;background:#f1f3f6;color:#212121;line-height:1.5;min-height:100vh}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Inter',sans-serif;background:#f1f3f6;color:#212121;font-size:14px;}
+a{text-decoration:none;color:inherit;}
 
-/* ── Header ─────────────────────────────────── */
-.header{background:#2874f0;padding:10px 24px;display:flex;align-items:center;gap:16px;position:sticky;top:0;z-index:100}
-.header .logo{color:#fff;font-size:20px;font-weight:800;letter-spacing:-.3px;text-decoration:none}
-.header .logo span{color:#ffe500}
-.header .tagline{color:#fff;font-size:11px;opacity:.8;font-style:italic}
-.header .spacer{flex:1}
-.header .user-info{color:#fff;font-size:13px;font-weight:500;display:flex;align-items:center;gap:8px}
-.header .user-info .avatar{width:28px;height:28px;border-radius:50%;background:#fff;display:flex;align-items:center;justify-content:center;color:#2874f0;font-weight:700;font-size:13px}
-.header .logout-btn{background:none;border:1px solid rgba(255,255,255,.4);color:#fff;padding:5px 14px;border-radius:4px;font-size:12px;cursor:pointer;font-family:inherit}
-.header .logout-btn:hover{background:rgba(255,255,255,.15)}
+/* ── HEADER ── */
+.header{background:#2874f0;padding:10px 20px;position:sticky;top:0;z-index:100;box-shadow:0 2px 4px rgba(0,0,0,.2);}
+.header-inner{max-width:1280px;margin:0 auto;display:flex;align-items:center;gap:16px;}
+.logo{font-size:20px;font-weight:700;color:#fff;white-space:nowrap;}
+.logo span{color:#ffe500;}
+.header-actions{display:flex;align-items:center;gap:10px;margin-left:auto;}
+.hbtn{padding:8px 16px;border-radius:3px;font-size:13px;font-weight:600;cursor:pointer;border:none;font-family:inherit;}
+.hbtn-outline{background:rgba(255,255,255,.15);color:#fff;border:1px solid rgba(255,255,255,.4);}
+.hbtn-outline:hover{background:rgba(255,255,255,.25);}
 
-/* ── Layout ─────────────────────────────────── */
-.account-wrap{max-width:1180px;margin:16px auto;padding:0 16px;display:flex;gap:16px;align-items:flex-start}
+/* ── BREADCRUMB ── */
+.breadcrumb{max-width:1280px;margin:14px auto 0;padding:0 20px;font-size:12.5px;color:#878787;}
+.breadcrumb a{color:#878787;}.breadcrumb a:hover{color:#2874f0;}
+.breadcrumb span{margin:0 6px;color:#ccc;}
 
-/* ── Sidebar ────────────────────────────────── */
-.sidebar{width:260px;flex-shrink:0;background:#fff;border-radius:4px;box-shadow:0 1px 2px rgba(0,0,0,.08);overflow:hidden;position:sticky;top:60px}
-.sidebar-profile{padding:16px;display:flex;align-items:center;gap:12px;border-bottom:1px solid #f0f0f0}
-.sidebar-profile .prof-avatar{width:48px;height:48px;border-radius:50%;background:#f0f0f0;display:flex;align-items:center;justify-content:center;font-size:20px;color:#878787}
-.sidebar-profile .prof-text{font-size:12px;color:#878787}
-.sidebar-profile .prof-name{font-size:15px;font-weight:600;color:#212121}
+/* ── LAYOUT ── */
+.layout{max-width:1280px;margin:12px auto 40px;padding:0 20px;display:flex;gap:14px;align-items:flex-start;}
 
-.nav-section{border-bottom:1px solid #f0f0f0}
-.nav-section-head{display:flex;align-items:center;gap:10px;padding:14px 16px 6px;cursor:default}
-.nav-section-icon{width:22px;height:22px;display:flex;align-items:center;justify-content:center}
-.nav-section-icon svg{width:20px;height:20px}
-.nav-section-title{font-size:12px;font-weight:700;color:#878787;text-transform:uppercase;letter-spacing:.5px}
+/* ── LEFT SIDEBAR ── */
+.acct-sidebar{width:250px;flex-shrink:0;}
+.user-card{background:#2874f0;border-radius:4px;padding:16px;display:flex;align-items:center;gap:12px;margin-bottom:8px;}
+.user-avatar{width:44px;height:44px;border-radius:50%;background:rgba(255,255,255,.3);display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:700;color:#fff;flex-shrink:0;border:2px solid rgba(255,255,255,.6);}
+.user-greet{font-size:12px;color:rgba(255,255,255,.8);}
+.user-name{font-size:14px;font-weight:700;color:#fff;}
+.sidebar-nav{background:#fff;border-radius:4px;overflow:hidden;}
+.nav-section{border-bottom:1px solid #f0f0f0;}
+.nav-section:last-child{border-bottom:none;}
+.nav-section-head{display:flex;align-items:center;gap:10px;padding:14px 16px;background:#fff;}
+.nav-section-icon{width:28px;height:28px;border-radius:4px;background:#e8f0fe;display:flex;align-items:center;justify-content:center;color:#2874f0;flex-shrink:0;}
+.nav-section-icon svg{width:15px;height:15px;}
+.nav-section-title{font-size:11.5px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#878787;}
+.nav-link{display:flex;align-items:center;justify-content:space-between;padding:11px 16px 11px 54px;font-size:13.5px;color:#212121;cursor:pointer;transition:background .1s;}
+.nav-link:hover{background:#f5f5f5;color:#2874f0;}
+.nav-link.active{color:#2874f0;font-weight:600;background:#f0f4ff;}
+.nav-link .chevron{color:#ccc;font-size:16px;line-height:1;}
+.nav-logout{display:flex;align-items:center;gap:10px;padding:14px 16px;color:#c62828;cursor:pointer;font-size:13.5px;font-weight:500;}
+.nav-logout:hover{background:#fff5f5;}
+.nav-logout svg{width:16px;height:16px;color:#c62828;}
+.freq-visited{padding:12px 16px;border-top:1px solid #f0f0f0;}
+.freq-title{font-size:11px;font-weight:600;color:#878787;text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px;}
+.freq-links{display:flex;flex-wrap:wrap;gap:8px;}
+.freq-link{font-size:12px;color:#2874f0;cursor:pointer;}
+.freq-link:hover{text-decoration:underline;}
 
-.nav-link{padding:10px 16px 10px 48px;font-size:13px;color:#212121;cursor:pointer;display:flex;align-items:center;transition:background .15s}
-.nav-link:hover{background:#f5f5f5}
-.nav-link.active{background:#f0f5ff;color:#2874f0;font-weight:600}
-.nav-link .chevron{margin-left:auto;color:#bbb;font-size:16px}
+/* ── MAIN CONTENT ── */
+.acct-main{flex:1;min-width:0;}
+.content-panel{background:#fff;border-radius:4px;padding:24px 28px;margin-bottom:12px;}
+.panel-title{font-size:18px;font-weight:700;color:#212121;margin-bottom:22px;}
 
-/* ── Main panel ─────────────────────────────── */
-.main-panel{flex:1;min-width:0}
-.panel{display:none;background:#fff;border-radius:4px;box-shadow:0 1px 2px rgba(0,0,0,.08);padding:24px}
-.panel.active-panel{display:block}
-.panel-title{font-size:18px;font-weight:700;color:#212121;margin-bottom:20px;padding-bottom:12px;border-bottom:1px solid #f0f0f0}
-.panel-subtitle{font-size:13px;color:#878787;margin-bottom:16px}
+/* ── FORM FIELDS ── */
+.field-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;}
+.field-group{display:flex;flex-direction:column;gap:6px;}
+.field-label{font-size:11px;font-weight:600;color:#878787;text-transform:uppercase;letter-spacing:.05em;}
+.field-input{border:1px solid #e0e0e0;border-radius:3px;padding:10px 13px;font-size:14px;font-family:inherit;outline:none;background:#fafafa;color:#212121;}
+.field-input:focus{border-color:#2874f0;background:#fff;}
+.field-input:disabled{background:#f5f5f5;color:#555;cursor:default;}
+.section-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
+.section-head h3{font-size:16px;font-weight:700;}
+.edit-link{font-size:13px;color:#2874f0;cursor:pointer;font-weight:600;}
+.edit-link:hover{text-decoration:underline;}
+.section-divider{height:1px;background:#f0f0f0;margin:20px 0;}
+.gender-row{display:flex;align-items:center;gap:20px;margin-bottom:16px;}
+.gender-option{display:flex;align-items:center;gap:7px;cursor:pointer;font-size:14px;}
+.gender-option input{accent-color:#2874f0;width:16px;height:16px;cursor:pointer;}
+.save-btn{background:#F07830;color:#fff;border:none;border-radius:3px;padding:11px 28px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;}
+.save-btn:hover{background:#d9631f;}
+.save-msg{font-size:13px;margin-left:14px;}
+.save-msg.ok{color:#388e3c;}.save-msg.err{color:#c62828;}
 
-/* ── Form styles ────────────────────────────── */
-.form-row{display:flex;gap:16px;margin-bottom:16px}
-.form-row .field{flex:1}
-.field label{display:block;font-size:12px;font-weight:600;color:#878787;margin-bottom:6px;text-transform:uppercase;letter-spacing:.3px}
-.field-input{width:100%;padding:10px 12px;border:1px solid #e0e0e0;border-radius:4px;font-size:14px;font-family:inherit;color:#212121;background:#fff;transition:border-color .2s}
-.field-input:focus{outline:none;border-color:#2874f0}
-.field-input:disabled{background:#f5f5f5;color:#999}
-textarea.field-input{resize:vertical;min-height:80px}
-select.field-input{cursor:pointer}
+/* ── FAQ SECTION ── */
+.faq-section{margin-top:24px;}
+.faq-title{font-size:16px;font-weight:700;margin-bottom:16px;}
+.faq-item{margin-bottom:16px;}
+.faq-q{font-size:14px;font-weight:700;margin-bottom:5px;}
+.faq-a{font-size:13px;color:#555;line-height:1.6;}
+.faq-a a{color:#2874f0;}
 
-.save-btn{background:#2874f0;color:#fff;border:none;padding:10px 32px;border-radius:4px;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;transition:background .2s}
-.save-btn:hover{background:#1a5dc8}
-.save-btn:disabled{background:#ccc;cursor:not-allowed}
+/* ── DANGER ZONE ── */
+.danger-zone{margin-top:20px;padding-top:20px;border-top:1px solid #f0f0f0;display:flex;gap:20px;}
+.deact-link{font-size:13px;color:#2874f0;cursor:pointer;font-weight:600;}
+.deact-link:hover{text-decoration:underline;}
+.deact-link.danger{color:#c62828;}
 
-.save-btn-orange{background:#F07830;color:#fff;border:none;padding:10px 32px;border-radius:4px;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;transition:background .2s}
-.save-btn-orange:hover{background:#d8682a}
-.save-btn-orange:disabled{background:#ccc;cursor:not-allowed}
+/* ── ORDERS PREVIEW ── */
+.orders-preview-item{display:flex;align-items:center;justify-content:space-between;padding:12px 0;border-bottom:1px solid #f5f5f5;}
+.orders-preview-item:last-child{border-bottom:none;}
+.op-num{font-size:13px;font-weight:700;color:#F07830;}
+.op-date{font-size:12px;color:#878787;margin-top:2px;}
+.op-amount{font-size:14px;font-weight:700;}
+.op-status{font-size:12px;font-weight:600;padding:4px 10px;border-radius:20px;}
+.s-delivered{background:#e8f5e9;color:#2e7d32;}
+.s-pending,.s-confirmed,.s-processing{background:#fff8e1;color:#e65100;}
+.s-shipped,.s-out_for_delivery{background:#e3f2fd;color:#0d47a1;}
+.s-cancelled,.s-returned{background:#ffebee;color:#c62828;}
+.s-return_requested{background:#fff8e1;color:#e65100;}
+.view-all-link{display:block;text-align:center;padding:12px;color:#2874f0;font-weight:600;font-size:13.5px;border-top:1px solid #f0f0f0;margin-top:6px;}
+.view-all-link:hover{background:#f0f4ff;}
 
-/* ── Cards list ─────────────────────────────── */
-.card-item{border:1px solid #f0f0f0;border-radius:6px;padding:14px;margin-bottom:12px;display:flex;align-items:center;gap:14px;transition:border-color .15s}
-.card-item:hover{border-color:#ddd}
-.card-item .card-icon{width:40px;height:40px;border-radius:8px;background:#f5f5f5;display:flex;align-items:center;justify-content:center;flex-shrink:0}
-.card-item .card-body{flex:1;min-width:0}
-.card-item .card-body h4{font-size:14px;font-weight:600;color:#212121}
-.card-item .card-body p{font-size:12px;color:#878787;margin-top:2px}
-.card-item .card-action{font-size:12px;color:#2874f0;cursor:pointer;font-weight:600;white-space:nowrap}
 
-.empty-state{text-align:center;padding:48px 20px;color:#878787}
-.empty-state svg{width:64px;height:64px;margin-bottom:12px;opacity:.4}
-.empty-state h3{font-size:16px;font-weight:600;color:#212121;margin-bottom:4px}
-.empty-state p{font-size:13px}
+/* -- DBUGG EMI -- */
+.emi-card{background:#fff;border:1px solid #e0e0e0;border-radius:6px;padding:16px;margin-bottom:12px;}
+.emi-card-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;}
+.emi-card-title{font-size:14px;font-weight:700;}
+.emi-badge{font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px;}
+.emi-badge.kyc_pending{background:#fff8e1;color:#e65100;}
+.emi-badge.kyc_approved{background:#e8f5e9;color:#2e7d32;}
+.emi-badge.deposit_pending{background:#e3f2fd;color:#0d47a1;}
+.emi-badge.active{background:#e8f5e9;color:#2e7d32;}
+.emi-badge.overdue{background:#ffebee;color:#c62828;}
+.emi-badge.closed,.emi-badge.returned{background:#f5f5f5;color:#757575;}
+.emi-detail{display:flex;justify-content:space-between;font-size:13px;padding:4px 0;color:#555;}
+.emi-detail span:last-child{font-weight:600;color:#212121;}
+.emi-empty{color:#878787;padding:20px 0;text-align:center;}
+.emi-empty a{color:#2874f0;font-weight:600;}
+.kyc-status-box{background:#f8f9fa;border:1px solid #e0e0e0;border-radius:6px;padding:16px;margin-bottom:16px;}
+.kyc-status-row{display:flex;align-items:center;gap:10px;margin-bottom:8px;}
+.kyc-status-row:last-child{margin-bottom:0;}
+.kyc-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;}
+.kyc-dot.pending{background:#F07830;}
+.kyc-dot.approved{background:#388e3c;}
+.kyc-dot.rejected{background:#c62828;}
+.kyc-dot.not_submitted{background:#bdbdbd;}
+.kyc-status-label{font-size:13px;color:#212121;}
+.kyc-status-val{font-size:12px;font-weight:600;margin-left:auto;}
 
-/* ── Order card ─────────────────────────────── */
-.order-card{border:1px solid #f0f0f0;border-radius:6px;padding:16px;margin-bottom:12px}
-.order-card .order-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;flex-wrap:wrap;gap:8px}
-.order-card .order-id{font-size:13px;color:#878787}
-.order-card .order-date{font-size:12px;color:#878787}
-.order-card .order-items{font-size:14px;font-weight:500}
-.order-card .order-total{font-size:15px;font-weight:700;color:#212121}
-.order-card .order-status{display:inline-block;padding:3px 10px;border-radius:12px;font-size:11px;font-weight:600;text-transform:capitalize}
+/* ── TABLET (≤900px) ── */
+@media(max-width:900px){
+  .acct-sidebar{width:210px;}
+  .content-panel{padding:18px 16px;}
+  .field-row{gap:10px;}
+}
 
-.status-delivered{background:#e8f5e9;color:#2e7d32}
-.status-shipped{background:#e3f2fd;color:#1565c0}
-.status-processing{background:#fff3e0;color:#e65100}
-.status-cancelled{background:#ffebee;color:#c62828}
-.status-pending{background:#f5f5f5;color:#757575}
+/* ── MOBILE (≤640px) ── */
+@media(max-width:640px){
+  /* Header */
+  .header{padding:8px 12px;}
+  .header-actions{gap:6px;}
+  .hbtn{padding:7px 10px;font-size:12px;}
 
-/* ── Rental card styles ─────────────────────── */
-.rental-card{border:1px solid #f0f0f0;border-radius:8px;padding:20px;margin-bottom:14px;background:#fff;transition:box-shadow .2s}
-.rental-card:hover{box-shadow:0 2px 8px rgba(0,0,0,.08)}
-.rental-card-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:14px;gap:12px;flex-wrap:wrap}
-.rental-card-title{font-size:16px;font-weight:700;color:#212121}
-.rental-card-serial{font-size:12px;color:#878787;margin-top:2px}
-.rental-status{display:inline-block;padding:4px 12px;border-radius:12px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.3px}
-.rental-status.status-kyc_pending{background:#fff3e0;color:#e65100}
-.rental-status.status-active{background:#e8f5e9;color:#2e7d32}
-.rental-status.status-overdue{background:#ffebee;color:#c62828}
-.rental-status.status-completed{background:#e3f2fd;color:#1565c0}
-.rental-status.status-returned{background:#f3e5f5;color:#7b1fa2}
-.rental-status.status-rejected{background:#ffebee;color:#c62828}
-.rental-status.status-pending{background:#fff8e1;color:#f9a825}
-.rental-status.status-approved{background:#e8f5e9;color:#2e7d32}
+  /* Breadcrumb */
+  .breadcrumb{padding:0 12px;margin-top:10px;}
 
-.rental-card-details{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
-.rental-detail{font-size:13px}
-.rental-detail .rd-label{color:#878787;font-size:11px;text-transform:uppercase;letter-spacing:.3px;font-weight:600}
-.rental-detail .rd-value{color:#212121;font-weight:600;margin-top:2px}
-.rental-detail .rd-value.amount{color:#F07830;font-weight:700}
+  /* Layout — stack vertically */
+  body{overflow-x:hidden;}
+  .layout{flex-direction:column;padding:0 10px;margin-top:10px;gap:10px;}
 
-.rental-card-footer{display:flex;justify-content:space-between;align-items:center;padding-top:12px;border-top:1px solid #f0f0f0}
-.rental-card-footer .dates{font-size:12px;color:#878787}
-.rental-card-footer .dates span{margin-right:16px}
-.view-details-btn{background:none;border:1px solid #F07830;color:#F07830;padding:6px 16px;border-radius:4px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;transition:all .2s}
-.view-details-btn:hover{background:#F07830;color:#fff}
+  /* Sidebar goes to full width on top */
+  .acct-sidebar{width:100%;flex-shrink:initial;}
+  .user-card{padding:12px;}
+  .user-avatar{width:36px;height:36px;font-size:16px;}
 
-/* ── EMI Timeline ───────────────────────────── */
-.emi-timeline{margin-top:16px;padding:16px;background:#fafafa;border-radius:6px}
-.emi-timeline h4{font-size:14px;font-weight:700;margin-bottom:12px;color:#212121}
-.emi-item{display:flex;align-items:flex-start;gap:12px;padding:8px 0;position:relative}
-.emi-item:not(:last-child){border-left:2px solid #e0e0e0;margin-left:7px;padding-left:22px}
-.emi-item:last-child{margin-left:7px;padding-left:22px}
-.emi-dot{width:14px;height:14px;border-radius:50%;position:absolute;left:0;top:10px;border:2px solid #e0e0e0;background:#fff}
-.emi-item.paid .emi-dot{background:#2e7d32;border-color:#2e7d32}
-.emi-item.due .emi-dot{background:#F07830;border-color:#F07830}
-.emi-item.upcoming .emi-dot{background:#fff;border-color:#bbb}
-.emi-item .emi-info{flex:1}
-.emi-item .emi-info .emi-month{font-size:13px;font-weight:600;color:#212121}
-.emi-item .emi-info .emi-date{font-size:11px;color:#878787}
-.emi-item .emi-amount{font-size:14px;font-weight:700;color:#212121}
-.emi-item.paid .emi-amount{color:#2e7d32}
-.emi-item.due .emi-amount{color:#c62828}
+  /* Nav sections become horizontal scrollable tabs */
+  .sidebar-nav{display:flex;overflow-x:auto;border-radius:4px;}
+  .sidebar-nav::-webkit-scrollbar{height:0;}
+  .nav-section{border-bottom:none;border-right:1px solid #f0f0f0;flex-shrink:0;}
+  .nav-section:last-child{border-right:none;}
+  .nav-section-head{padding:10px 14px;gap:6px;}
+  .nav-section-title{display:none;}
+  .nav-link{padding:10px 14px;white-space:nowrap;}
+  .nav-link .chevron{display:none;}
+  .nav-logout{padding:10px 14px;}
+  .freq-visited{display:none;}
 
-/* ── KYC step styles ────────────────────────── */
-.kyc-steps{display:flex;gap:0;margin-bottom:24px}
-.kyc-step{flex:1;text-align:center;position:relative;padding:16px 8px}
-.kyc-step::after{content:'';position:absolute;top:28px;right:-50%;width:100%;height:2px;background:#e0e0e0;z-index:0}
-.kyc-step:last-child::after{display:none}
-.kyc-step.completed::after{background:#2e7d32}
-.kyc-step.active::after{background:linear-gradient(90deg,#F07830 50%,#e0e0e0 50%)}
-.kyc-step-num{width:32px;height:32px;border-radius:50%;background:#e0e0e0;color:#878787;font-size:14px;font-weight:700;display:inline-flex;align-items:center;justify-content:center;position:relative;z-index:1;margin-bottom:8px}
-.kyc-step.active .kyc-step-num{background:#F07830;color:#fff}
-.kyc-step.completed .kyc-step-num{background:#2e7d32;color:#fff}
-.kyc-step-label{font-size:11px;font-weight:600;color:#878787;text-transform:uppercase;letter-spacing:.3px}
-.kyc-step.active .kyc-step-label{color:#F07830}
-.kyc-step.completed .kyc-step-label{color:#2e7d32}
+  /* Content panels */
+  .acct-main{width:100%;}
+  .content-panel{padding:16px 14px;}
+  .panel-title{font-size:16px;margin-bottom:16px;}
 
-.kyc-status-badge{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:8px;font-size:13px;font-weight:600;margin-bottom:20px}
-.kyc-status-badge.badge-pending{background:#fff3e0;color:#e65100}
-.kyc-status-badge.badge-approved{background:#e8f5e9;color:#2e7d32}
-.kyc-status-badge.badge-rejected{background:#ffebee;color:#c62828}
-.kyc-status-badge.badge-not_submitted{background:#f5f5f5;color:#757575}
-.kyc-status-badge .status-dot{width:8px;height:8px;border-radius:50%;display:inline-block}
-.kyc-status-badge.badge-pending .status-dot{background:#e65100}
-.kyc-status-badge.badge-approved .status-dot{background:#2e7d32}
-.kyc-status-badge.badge-rejected .status-dot{background:#c62828}
-.kyc-status-badge.badge-not_submitted .status-dot{background:#757575}
+  /* Form fields — single column */
+  .field-row{grid-template-columns:1fr;}
+  .save-btn{padding:10px 20px;font-size:13.5px;}
+}
 
-.kyc-section{margin-bottom:24px;padding:20px;background:#fafafa;border-radius:8px;border:1px solid #f0f0f0}
-.kyc-section h3{font-size:14px;font-weight:700;color:#212121;margin-bottom:14px;display:flex;align-items:center;gap:8px}
-.kyc-section h3 .step-num{width:24px;height:24px;border-radius:50%;background:#F07830;color:#fff;font-size:12px;font-weight:700;display:inline-flex;align-items:center;justify-content:center}
-
-.file-upload-area{border:2px dashed #d0d0d0;border-radius:8px;padding:20px;text-align:center;cursor:pointer;transition:border-color .2s;margin-bottom:10px;position:relative}
-.file-upload-area:hover{border-color:#F07830}
-.file-upload-area input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer}
-.file-upload-area .upload-icon{font-size:24px;color:#bbb;margin-bottom:4px}
-.file-upload-area .upload-text{font-size:12px;color:#878787}
-.file-upload-area .upload-text strong{color:#F07830}
-.file-upload-area.has-file{border-color:#2e7d32;background:#f1f8f1}
-.file-upload-area.has-file .upload-text{color:#2e7d32}
-
-.upload-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-
-/* ── Toast ──────────────────────────────────── */
-.toast{position:fixed;bottom:20px;right:20px;padding:12px 20px;border-radius:6px;font-size:13px;font-weight:500;color:#fff;z-index:9999;transform:translateY(80px);opacity:0;transition:all .3s}
-.toast.show{transform:translateY(0);opacity:1}
-.toast.success{background:#2e7d32}
-.toast.error{background:#c62828}
-.toast.info{background:#1565c0}
-
-/* ── Loader ─────────────────────────────────── */
-.loader{display:flex;justify-content:center;padding:40px}
-.loader .spinner{width:32px;height:32px;border:3px solid #f0f0f0;border-top-color:#2874f0;border-radius:50%;animation:spin .6s linear infinite}
-@keyframes spin{to{transform:rotate(360deg)}}
-
-/* ── Responsive ─────────────────────────────── */
-@media(max-width:768px){
-  .account-wrap{flex-direction:column;padding:0 8px;margin-top:8px}
-  .sidebar{width:100%;position:static}
-  .form-row{flex-direction:column;gap:10px}
-  .rental-card-details{grid-template-columns:1fr}
-  .upload-grid{grid-template-columns:1fr}
-  .kyc-steps{flex-direction:column}
-  .kyc-step::after{display:none}
+/* ── BOTTOM NAV (mobile only) ── */
+.bottom-nav{display:none;position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid #e0e0e0;z-index:500;}
+.bottom-nav-inner{display:flex;}
+.bn-item{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;font-size:11px;font-weight:600;color:#555;text-decoration:none;padding:8px 4px 10px;cursor:pointer;position:relative;}
+.bn-item.active{color:#2874f0;}
+.bn-item svg{width:24px;height:24px;}
+.bn-pos{position:relative;display:inline-flex;}
+.bn-badge{position:absolute;top:-5px;right:-8px;background:#ff6161;color:#fff;font-size:9px;font-weight:700;min-width:16px;height:16px;border-radius:8px;display:none;align-items:center;justify-content:center;padding:0 3px;}
+@media(max-width:640px){
+  .bottom-nav{display:block;}
+  body{padding-bottom:62px;}
 }
 </style>
 </head>
 <body>
 
-<!-- ════════════ HEADER ════════════ -->
-<div class="header">
-  <a class="logo" href="/">d<span>bugg</span></a>
-  <span class="tagline">Explore Plus</span>
-  <span class="spacer"></span>
-  <div class="user-info">
-    <div class="avatar" id="headerAvatar">U</div>
-    <span id="headerName">User</span>
+<!-- HEADER -->
+<header class="header">
+  <div class="header-inner">
+    <a href="/index.html" class="logo">d<span>bugg</span>s</a>
+    <div class="header-actions">
+      <button class="hbtn hbtn-outline" onclick="window.location='/index.html'">← Shop</button>
+    </div>
   </div>
-  <button class="logout-btn" onclick="doLogout()">Logout</button>
+</header>
+
+<!-- BREADCRUMB -->
+<div class="breadcrumb">
+  <a href="/index.html">Home</a><span>›</span>
+  <span style="color:#212121;" id="breadcrumb-tail">My Account</span>
 </div>
 
-<!-- ════════════ BODY ════════════ -->
-<div class="account-wrap">
+<!-- LAYOUT -->
+<div class="layout">
 
-  <!-- ─── Sidebar ─── -->
-  <div class="sidebar">
-    <div class="sidebar-profile">
-      <div class="prof-avatar" id="sideAvatar">
-        <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 4-7 8-7s8 3 8 7"/></svg>
-      </div>
+  <!-- LEFT SIDEBAR -->
+  <aside class="acct-sidebar">
+    <div class="user-card">
+      <div class="user-avatar" id="sidebar-avatar">U</div>
       <div>
-        <div class="prof-text">Hello,</div>
-        <div class="prof-name" id="sideName">User</div>
+        <div class="user-greet">Hello,</div>
+        <div class="user-name" id="sidebar-name">Loading…</div>
       </div>
     </div>
 
-    <!-- MY ORDERS -->
-    <div class="nav-section">
-      <div class="nav-section-head">
-        <div class="nav-section-icon">
-          <svg viewBox="0 0 24 24" fill="none" stroke="#2874f0" stroke-width="2"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M16 7V5a4 4 0 00-8 0v2"/></svg>
+    <nav class="sidebar-nav">
+      <!-- MY ORDERS -->
+      <div class="nav-section">
+        <div class="nav-section-head">
+          <div class="nav-section-icon"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 3h-4.18C14.4 1.84 13.3 1 12 1c-1.3 0-2.4.84-2.82 2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 0c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zm2 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg></div>
+          <span class="nav-section-title">My Orders</span>
         </div>
-        <span class="nav-section-title">MY ORDERS</span>
+        <a href="/orders.html" class="nav-link" onclick="setPanel('orders',this)">My Orders <span class="chevron">›</span></a>
       </div>
-      <div class="nav-link" onclick="setPanel('orders',this)">Orders <span class="chevron">&rsaquo;</span></div>
-    </div>
 
-    <!-- DBUGG EMI -->
-    <div class="nav-section">
-      <div class="nav-section-head">
-        <div class="nav-section-icon">
-          <svg viewBox="0 0 24 24" fill="none" stroke="#F07830" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M2 10h20"/><path d="M6 16h4"/><path d="M14 16h4"/></svg>
+
+      <!-- DBUGG EMI -->
+      <div class="nav-section">
+        <div class="nav-section-head">
+          <div class="nav-section-icon" style="background:#fff3e0;color:#F07830;"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M20 4H4c-1.11 0-2 .89-2 2v12c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V6c0-1.11-.89-2-2-2zm0 14H4v-6h16v6zm0-10H4V6h16v2z"/></svg></div>
+          <span class="nav-section-title">dbugg EMI</span>
         </div>
-        <span class="nav-section-title">DBUGG EMI</span>
+        <div class="nav-link" id="nav-emi" onclick="setPanel('emi',this)">My Rentals <span class="chevron">›</span></div>
+        <div class="nav-link" id="nav-kyc" onclick="setPanel('kyc',this)">KYC Verification <span class="chevron">›</span></div>
       </div>
-      <div class="nav-link" onclick="setPanel('emi',this)">My Rentals <span class="chevron">&rsaquo;</span></div>
-      <div class="nav-link" onclick="setPanel('kyc',this)">KYC Verification <span class="chevron">&rsaquo;</span></div>
-    </div>
 
-    <!-- ACCOUNT SETTINGS -->
-    <div class="nav-section">
-      <div class="nav-section-head">
-        <div class="nav-section-icon">
-          <svg viewBox="0 0 24 24" fill="none" stroke="#2874f0" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 4-7 8-7s8 3 8 7"/></svg>
+      <!-- ACCOUNT SETTINGS -->
+      <div class="nav-section">
+        <div class="nav-section-head">
+          <div class="nav-section-icon"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.54 0 3 1.46 3 3s-1.46 3-3 3-3-1.46-3-3 1.46-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z"/></svg></div>
+          <span class="nav-section-title">Account Settings</span>
         </div>
-        <span class="nav-section-title">ACCOUNT SETTINGS</span>
+        <div class="nav-link active" id="nav-profile" onclick="setPanel('profile',this)">Profile Information <span class="chevron">›</span></div>
+        <div class="nav-link" id="nav-addresses" onclick="setPanel('addresses',this)">Manage Addresses <span class="chevron">›</span></div>
+        <div class="nav-link" id="nav-pan" onclick="setPanel('pan',this)">PAN Card Information <span class="chevron">›</span></div>
       </div>
-      <div class="nav-link active" onclick="setPanel('profile',this)">Profile Information <span class="chevron">&rsaquo;</span></div>
-      <div class="nav-link" onclick="setPanel('addresses',this)">Manage Addresses <span class="chevron">&rsaquo;</span></div>
-      <div class="nav-link" onclick="setPanel('pan',this)">PAN Card Information <span class="chevron">&rsaquo;</span></div>
-    </div>
 
-    <!-- PAYMENTS -->
-    <div class="nav-section">
-      <div class="nav-section-head">
-        <div class="nav-section-icon">
-          <svg viewBox="0 0 24 24" fill="none" stroke="#2874f0" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg>
+      <!-- PAYMENTS -->
+      <div class="nav-section">
+        <div class="nav-section-head">
+          <div class="nav-section-icon"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M20 4H4c-1.11 0-2 .89-2 2v12c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V6c0-1.11-.89-2-2-2zm0 14H4v-6h16v6zm0-10H4V6h16v2z"/></svg></div>
+          <span class="nav-section-title">Payments</span>
         </div>
-        <span class="nav-section-title">PAYMENTS</span>
+        <div class="nav-link" onclick="setPanel('gift',this)">Gift Cards <span style="color:#388e3c;font-size:12px;font-weight:700;margin-left:auto;margin-right:8px;" id="gift-bal">₹0</span><span class="chevron">›</span></div>
+        <div class="nav-link" onclick="setPanel('upi',this)">Saved UPI <span class="chevron">›</span></div>
+        <div class="nav-link" onclick="setPanel('cards',this)">Saved Cards <span class="chevron">›</span></div>
       </div>
-      <div class="nav-link" onclick="setPanel('gift',this)">Gift Cards <span class="chevron">&rsaquo;</span></div>
-      <div class="nav-link" onclick="setPanel('upi',this)">Saved UPI <span class="chevron">&rsaquo;</span></div>
-      <div class="nav-link" onclick="setPanel('cards',this)">Saved Cards <span class="chevron">&rsaquo;</span></div>
-    </div>
 
-    <!-- MY STUFF -->
-    <div class="nav-section">
-      <div class="nav-section-head">
-        <div class="nav-section-icon">
-          <svg viewBox="0 0 24 24" fill="none" stroke="#2874f0" stroke-width="2"><path d="M12 20l-7-7a5 5 0 117.07-7.07L12 6.93l-.07-.07a5 5 0 117.07 7.07L12 20z"/></svg>
+      <!-- MY STUFF -->
+      <div class="nav-section">
+        <div class="nav-section-head">
+          <div class="nav-section-icon"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg></div>
+          <span class="nav-section-title">My Stuff</span>
         </div>
-        <span class="nav-section-title">MY STUFF</span>
+        <div class="nav-link" onclick="setPanel('coupons',this)">My Coupons <span class="chevron">›</span></div>
+        <div class="nav-link" onclick="setPanel('reviews',this)">My Reviews &amp; Ratings <span class="chevron">›</span></div>
+        <div class="nav-link" onclick="setPanel('notifications',this)">All Notifications <span class="chevron">›</span></div>
+        <div class="nav-link" onclick="window.location='/index.html#wishlist'">My Wishlist <span class="chevron">›</span></div>
       </div>
-      <div class="nav-link" onclick="setPanel('coupons',this)">My Coupons <span class="chevron">&rsaquo;</span></div>
-      <div class="nav-link" onclick="setPanel('reviews',this)">My Reviews &amp; Ratings <span class="chevron">&rsaquo;</span></div>
-      <div class="nav-link" onclick="setPanel('notifications',this)">All Notifications <span class="chevron">&rsaquo;</span></div>
-    </div>
-  </div>
 
-  <!-- ─── Main Panel Area ─── -->
-  <div class="main-panel">
+      <!-- LOGOUT -->
+      <div class="nav-section">
+        <div class="nav-logout" onclick="doLogout()">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17 7l-1.41 1.41L18.17 11H8v2h10.17l-2.58 2.58L17 17l5-5zM4 5h8V3H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h8v-2H4V5z"/></svg>
+          Logout
+        </div>
+      </div>
 
-    <!-- ═══ PROFILE ═══ -->
-    <div class="panel active-panel" id="panel-profile">
+      <!-- FREQUENTLY VISITED -->
+      <div class="freq-visited">
+        <div class="freq-title">Frequently Visited</div>
+        <div class="freq-links">
+          <a href="/orders.html" class="freq-link">Track Order</a>
+          <a href="/index.html" class="freq-link">Help Center</a>
+        </div>
+      </div>
+    </nav>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <div class="acct-main" id="acct-main">
+
+    <!-- PROFILE PANEL -->
+    <div id="panel-profile" class="content-panel">
       <div class="panel-title">Personal Information</div>
-      <div class="form-row">
-        <div class="field">
-          <label>First Name</label>
-          <input class="field-input" id="profFirstName" placeholder="First Name"/>
+
+      <div class="section-head">
+        <h3>Personal Information</h3>
+        <span class="edit-link" id="edit-info-btn" onclick="toggleEdit('info')">Edit</span>
+      </div>
+
+      <div class="field-row">
+        <div class="field-group">
+          <label class="field-label">First Name</label>
+          <input class="field-input" id="field-firstname" disabled>
         </div>
-        <div class="field">
-          <label>Last Name</label>
-          <input class="field-input" id="profLastName" placeholder="Last Name"/>
+        <div class="field-group">
+          <label class="field-label">Last Name</label>
+          <input class="field-input" id="field-lastname" disabled>
         </div>
       </div>
-      <div class="form-row">
-        <div class="field">
-          <label>Email Address</label>
-          <input class="field-input" id="profEmail" type="email" placeholder="Email"/>
+
+      <div class="field-label" style="margin-bottom:8px;">Your Gender</div>
+      <div class="gender-row">
+        <label class="gender-option"><input type="radio" id="gender-m" name="gender" value="male" disabled> Male</label>
+        <label class="gender-option"><input type="radio" id="gender-f" name="gender" value="female" disabled> Female</label>
+        <label class="gender-option"><input type="radio" id="gender-o" name="gender" value="other" disabled> Other</label>
+      </div>
+
+      <div id="info-save-row" style="display:none;margin-bottom:20px;">
+        <button class="save-btn" onclick="savePersonalInfo()">Save</button>
+        <span class="save-msg" id="info-msg"></span>
+      </div>
+
+      <div class="section-divider"></div>
+
+      <div class="section-head">
+        <h3>Email Address</h3>
+        <span class="edit-link" onclick="toggleEdit('email')">Edit</span>
+      </div>
+      <div class="field-group" style="max-width:360px;margin-bottom:20px;">
+        <input class="field-input" id="field-email" disabled placeholder="Email address">
+      </div>
+      <div id="email-save-row" style="display:none;margin-bottom:20px;">
+        <button class="save-btn" onclick="saveEmail()">Save Changes</button>
+        <span class="save-msg" id="email-msg"></span>
+      </div>
+
+      <div class="section-divider"></div>
+
+      <div class="section-head">
+        <h3>Mobile Number</h3>
+        <span class="edit-link" onclick="toggleEdit('phone')">Edit</span>
+      </div>
+      <div class="field-group" style="max-width:360px;margin-bottom:20px;">
+        <input class="field-input" id="field-phone" disabled placeholder="+91 XXXXX XXXXX">
+      </div>
+      <div id="phone-save-row" style="display:none;margin-bottom:20px;">
+        <button class="save-btn" onclick="savePhone()">Save Changes</button>
+        <span class="save-msg" id="phone-msg"></span>
+      </div>
+
+      <!-- FAQs -->
+      <div class="faq-section">
+        <div class="faq-title">FAQs</div>
+        <div class="faq-item">
+          <div class="faq-q">What happens when I update my email address?</div>
+          <div class="faq-a">Your login email changes accordingly. You'll receive all communications on the new email address.</div>
         </div>
-        <div class="field">
-          <label>Mobile Number</label>
-          <input class="field-input" id="profPhone" type="tel" placeholder="Mobile Number"/>
+        <div class="faq-item">
+          <div class="faq-q">Can I add more than one mobile number?</div>
+          <div class="faq-a">Currently, only one mobile number is supported per account. Contact <a href="#">customer care</a> for assistance.</div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q">How do I change my account password?</div>
+          <div class="faq-a">Password reset is available from the <a href="/login.html">login page</a>. Click "Forgot Password" to receive a reset link.</div>
         </div>
       </div>
-      <div class="form-row">
-        <div class="field">
-          <label>Gender</label>
-          <select class="field-input" id="profGender">
-            <option value="">Select Gender</option>
-            <option value="male">Male</option>
-            <option value="female">Female</option>
-            <option value="other">Other</option>
-          </select>
-        </div>
-        <div class="field">
-          <label>Date of Birth</label>
-          <input class="field-input" id="profDob" type="date"/>
-        </div>
+
+      <div class="danger-zone">
+        <span class="deact-link" onclick="if(confirm('Deactivate account?')) alert('Contact support to deactivate.')">Deactivate Account</span>
+        <span class="deact-link danger" onclick="if(confirm('Delete your account permanently? This cannot be undone.')) alert('Contact support to delete.')">Delete Account</span>
       </div>
-      <button class="save-btn" onclick="saveProfile()">Save Changes</button>
     </div>
 
-    <!-- ═══ ORDERS ═══ -->
-    <div class="panel" id="panel-orders">
+    <!-- ORDERS PANEL (hidden by default, shown when nav-orders clicked) -->
+    <div id="panel-orders" class="content-panel" style="display:none;">
       <div class="panel-title">My Orders</div>
-      <div id="ordersContainer">
-        <div class="loader"><div class="spinner"></div></div>
+      <div id="recent-orders-list">Loading…</div>
+      <a href="/orders.html" class="view-all-link">View All Orders →</a>
+    </div>
+
+
+    <!-- DBUGG EMI PANEL -->
+    <div id="panel-emi" class="content-panel" style="display:none;">
+      <div class="panel-title">dbugg EMI — My Rentals</div>
+      <div id="emi-rentals-list">
+        <div style="color:#878787;padding:10px 0;">Loading rentals…</div>
       </div>
     </div>
 
-    <!-- ═══ ADDRESSES ═══ -->
-    <div class="panel" id="panel-addresses">
+    <!-- KYC VERIFICATION PANEL -->
+    <div id="panel-kyc" class="content-panel" style="display:none;">
+      <div class="panel-title">KYC Verification</div>
+      <div id="kyc-status-container">
+        <div style="color:#878787;padding:10px 0;">Loading KYC status…</div>
+      </div>
+    </div>
+
+    <!-- PLACEHOLDER PANELS -->
+    <div id="panel-addresses" class="content-panel" style="display:none;">
       <div class="panel-title">Manage Addresses</div>
-      <button class="save-btn" onclick="showAddressForm()" style="margin-bottom:16px">+ Add New Address</button>
-      <div id="addressForm" style="display:none;margin-bottom:20px;padding:20px;background:#fafafa;border-radius:8px;border:1px solid #f0f0f0">
-        <div class="form-row">
-          <div class="field">
-            <label>Full Name</label>
-            <input class="field-input" id="addrName" placeholder="Full Name"/>
-          </div>
-          <div class="field">
-            <label>Phone</label>
-            <input class="field-input" id="addrPhone" placeholder="10-digit mobile"/>
-          </div>
-        </div>
-        <div class="form-row">
-          <div class="field">
-            <label>Pincode</label>
-            <input class="field-input" id="addrPincode" placeholder="Pincode"/>
-          </div>
-          <div class="field">
-            <label>City</label>
-            <input class="field-input" id="addrCity" placeholder="City"/>
-          </div>
-        </div>
-        <div class="form-row">
-          <div class="field">
-            <label>Address (House No, Street)</label>
-            <textarea class="field-input" id="addrLine" placeholder="Address"></textarea>
-          </div>
-        </div>
-        <div class="form-row">
-          <div class="field">
-            <label>State</label>
-            <input class="field-input" id="addrState" placeholder="State"/>
-          </div>
-          <div class="field">
-            <label>Landmark (Optional)</label>
-            <input class="field-input" id="addrLandmark" placeholder="Landmark"/>
-          </div>
-        </div>
-        <div class="form-row">
-          <div class="field">
-            <label>Address Type</label>
-            <select class="field-input" id="addrType">
-              <option value="home">Home</option>
-              <option value="work">Work</option>
-            </select>
-          </div>
-          <div class="field"></div>
-        </div>
-        <button class="save-btn" onclick="saveAddress()">Save Address</button>
-        <button style="background:none;border:1px solid #ddd;padding:10px 24px;border-radius:4px;font-size:14px;cursor:pointer;margin-left:8px;font-family:inherit" onclick="document.getElementById('addressForm').style.display='none'">Cancel</button>
-      </div>
-      <div id="addressList"></div>
+      <div style="color:#878787;padding:20px 0;">No saved addresses yet. Addresses are saved when you place an order.</div>
     </div>
-
-    <!-- ═══ PAN ═══ -->
-    <div class="panel" id="panel-pan">
+    <div id="panel-pan" class="content-panel" style="display:none;">
       <div class="panel-title">PAN Card Information</div>
-      <div class="panel-subtitle">PAN Card details are required for transactions above Rs 5000. Your PAN info is safe with us.</div>
-      <div class="form-row">
-        <div class="field">
-          <label>PAN Number</label>
-          <input class="field-input" id="panNumber" placeholder="ABCDE1234F" maxlength="10" style="text-transform:uppercase"/>
-        </div>
-        <div class="field">
-          <label>Full Name (as on PAN)</label>
-          <input class="field-input" id="panName" placeholder="Full Name"/>
-        </div>
+      <div style="color:#878787;padding:20px 0;">PAN card information is required for orders above ₹2,00,000 as per government guidelines.</div>
+      <div class="field-group" style="max-width:260px;margin-top:16px;">
+        <label class="field-label">PAN Number</label>
+        <input class="field-input" placeholder="XXXXXXXXXX" maxlength="10" style="text-transform:uppercase;">
       </div>
-      <button class="save-btn" onclick="savePan()">Save PAN Details</button>
     </div>
-
-    <!-- ═══ GIFT CARDS ═══ -->
-    <div class="panel" id="panel-gift">
+    <div id="panel-gift" class="content-panel" style="display:none;">
       <div class="panel-title">Gift Cards</div>
-      <div class="empty-state">
-        <svg viewBox="0 0 64 64" fill="none" stroke="#bbb" stroke-width="2"><rect x="8" y="20" width="48" height="36" rx="4"/><path d="M8 30h48"/><path d="M32 20v36"/><path d="M32 20c-6-8-18-6-14 2s14 6 14-2z"/><path d="M32 20c6-8 18-6 14 2s-14 6-14-2z"/></svg>
-        <h3>No Gift Cards</h3>
-        <p>You haven't added any gift cards yet.</p>
-      </div>
+      <div style="font-size:32px;font-weight:700;color:#388e3c;margin-bottom:6px;">₹0</div>
+      <div style="color:#878787;font-size:13px;">No gift cards in your account.</div>
     </div>
-
-    <!-- ═══ UPI ═══ -->
-    <div class="panel" id="panel-upi">
+    <div id="panel-upi" class="content-panel" style="display:none;">
       <div class="panel-title">Saved UPI</div>
-      <div id="upiList">
-        <div class="empty-state">
-          <svg viewBox="0 0 64 64" fill="none" stroke="#bbb" stroke-width="2"><rect x="12" y="8" width="40" height="48" rx="4"/><path d="M24 44h16"/><circle cx="32" cy="28" r="8"/></svg>
-          <h3>No Saved UPI IDs</h3>
-          <p>Your saved UPI IDs will appear here.</p>
-        </div>
-      </div>
+      <div style="color:#878787;padding:20px 0;">No UPI IDs saved.</div>
     </div>
-
-    <!-- ═══ SAVED CARDS ═══ -->
-    <div class="panel" id="panel-cards">
+    <div id="panel-cards" class="content-panel" style="display:none;">
       <div class="panel-title">Saved Cards</div>
-      <div id="cardsList">
-        <div class="empty-state">
-          <svg viewBox="0 0 64 64" fill="none" stroke="#bbb" stroke-width="2"><rect x="6" y="14" width="52" height="36" rx="4"/><path d="M6 26h52"/><path d="M14 36h12"/><path d="M14 42h8"/></svg>
-          <h3>No Saved Cards</h3>
-          <p>Your saved debit/credit cards will appear here.</p>
-        </div>
-      </div>
+      <div style="color:#878787;padding:20px 0;">No saved cards.</div>
     </div>
-
-    <!-- ═══ COUPONS ═══ -->
-    <div class="panel" id="panel-coupons">
+    <div id="panel-coupons" class="content-panel" style="display:none;">
       <div class="panel-title">My Coupons</div>
-      <div id="couponsList">
-        <div class="empty-state">
-          <svg viewBox="0 0 64 64" fill="none" stroke="#bbb" stroke-width="2"><path d="M8 20h48v24H8z"/><circle cx="8" cy="32" r="4"/><circle cx="56" cy="32" r="4"/><path d="M28 24v16" stroke-dasharray="2 3"/></svg>
-          <h3>No Coupons Available</h3>
-          <p>Check back later for exciting offers!</p>
-        </div>
-      </div>
+      <div style="color:#878787;padding:20px 0;">No active coupons.</div>
     </div>
-
-    <!-- ═══ REVIEWS ═══ -->
-    <div class="panel" id="panel-reviews">
+    <div id="panel-reviews" class="content-panel" style="display:none;">
       <div class="panel-title">My Reviews &amp; Ratings</div>
-      <div id="reviewsList">
-        <div class="empty-state">
-          <svg viewBox="0 0 64 64" fill="none" stroke="#bbb" stroke-width="2"><polygon points="32,8 38,24 56,24 42,34 46,50 32,40 18,50 22,34 8,24 26,24"/></svg>
-          <h3>No Reviews Yet</h3>
-          <p>Products you've reviewed will appear here.</p>
-        </div>
-      </div>
+      <div style="color:#878787;padding:20px 0;">No reviews yet. <a href="/index.html" style="color:#2874f0;font-weight:600;">Buy a laptop and share your experience →</a></div>
     </div>
-
-    <!-- ═══ NOTIFICATIONS ═══ -->
-    <div class="panel" id="panel-notifications">
+    <div id="panel-notifications" class="content-panel" style="display:none;">
       <div class="panel-title">All Notifications</div>
-      <div id="notifList">
-        <div class="empty-state">
-          <svg viewBox="0 0 64 64" fill="none" stroke="#bbb" stroke-width="2"><path d="M26 50a6 6 0 0012 0"/><path d="M16 30c0-8.8 7.2-16 16-16s16 7.2 16 16v10l4 6H12l4-6V30z"/></svg>
-          <h3>No Notifications</h3>
-          <p>You're all caught up!</p>
-        </div>
-      </div>
+      <div style="color:#878787;padding:20px 0;">No notifications.</div>
     </div>
 
-    <!-- ═══════════════════════════════════════════ -->
-    <!-- ═══ MY RENTALS (EMI) ═══ -->
-    <!-- ═══════════════════════════════════════════ -->
-    <div class="panel" id="panel-emi">
-      <div class="panel-title" style="display:flex;align-items:center;gap:10px">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#F07830" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M2 10h20"/><path d="M6 16h4"/><path d="M14 16h4"/></svg>
-        My Rentals
-      </div>
-      <div class="panel-subtitle">View and manage your DBUGG laptop rental plans and EMI payments.</div>
-      <div id="rentalsContainer">
-        <div class="loader"><div class="spinner"></div></div>
-      </div>
-    </div>
+  </div><!-- /acct-main -->
+</div>
 
-    <!-- ═══════════════════════════════════════════ -->
-    <!-- ═══ KYC VERIFICATION ═══ -->
-    <!-- ═══════════════════════════════════════════ -->
-    <div class="panel" id="panel-kyc">
-      <div class="panel-title" style="display:flex;align-items:center;gap:10px">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#F07830" stroke-width="2"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="10"/></svg>
-        KYC Verification
-      </div>
-      <div class="panel-subtitle">Complete your KYC to avail DBUGG EMI rental plans. Your documents are securely stored.</div>
-
-      <!-- KYC Status Banner -->
-      <div id="kycStatusBanner"></div>
-
-      <!-- KYC Steps Progress -->
-      <div class="kyc-steps" id="kycSteps">
-        <div class="kyc-step active" data-step="1">
-          <div class="kyc-step-num">1</div>
-          <div class="kyc-step-label">Personal Details</div>
-        </div>
-        <div class="kyc-step" data-step="2">
-          <div class="kyc-step-num">2</div>
-          <div class="kyc-step-label">Documents</div>
-        </div>
-        <div class="kyc-step" data-step="3">
-          <div class="kyc-step-num">3</div>
-          <div class="kyc-step-label">Verification</div>
-        </div>
-      </div>
-
-      <!-- KYC Form -->
-      <div id="kycFormArea">
-
-        <!-- Step 1: Personal Details -->
-        <div class="kyc-section" id="kycStep1">
-          <h3><span class="step-num">1</span> Personal Details</h3>
-          <div class="form-row">
-            <div class="field">
-              <label>Full Name</label>
-              <input class="field-input" id="kycFullName" placeholder="As per Aadhaar"/>
-            </div>
-            <div class="field">
-              <label>Phone Number</label>
-              <input class="field-input" id="kycPhone" type="tel" placeholder="10-digit mobile"/>
-            </div>
-          </div>
-          <div class="form-row">
-            <div class="field">
-              <label>Aadhaar Number</label>
-              <input class="field-input" id="kycAadhaar" placeholder="XXXX XXXX XXXX" maxlength="14"/>
-            </div>
-            <div class="field">
-              <label>PAN Number</label>
-              <input class="field-input" id="kycPan" placeholder="ABCDE1234F" maxlength="10" style="text-transform:uppercase"/>
-            </div>
-          </div>
-          <div class="form-row">
-            <div class="field">
-              <label>Date of Birth</label>
-              <input class="field-input" id="kycDob" type="date"/>
-            </div>
-            <div class="field">
-              <label>Current Address</label>
-              <input class="field-input" id="kycAddress" placeholder="Full address"/>
-            </div>
-          </div>
-        </div>
-
-        <!-- Step 2: Document Upload -->
-        <div class="kyc-section" id="kycStep2">
-          <h3><span class="step-num">2</span> Document Upload</h3>
-          <div class="upload-grid">
-            <div>
-              <label style="display:block;font-size:12px;font-weight:600;color:#878787;margin-bottom:6px;text-transform:uppercase;letter-spacing:.3px">Aadhaar Front</label>
-              <div class="file-upload-area" id="uploadAadhaarFront">
-                <div class="upload-icon">&#128196;</div>
-                <div class="upload-text">Click to upload or drag &amp; drop<br/><strong>PNG, JPG</strong> up to 5MB</div>
-                <input type="file" accept="image/*,.pdf" onchange="handleFileSelect(this,'aadhaarFront')"/>
-              </div>
-            </div>
-            <div>
-              <label style="display:block;font-size:12px;font-weight:600;color:#878787;margin-bottom:6px;text-transform:uppercase;letter-spacing:.3px">Aadhaar Back</label>
-              <div class="file-upload-area" id="uploadAadhaarBack">
-                <div class="upload-icon">&#128196;</div>
-                <div class="upload-text">Click to upload or drag &amp; drop<br/><strong>PNG, JPG</strong> up to 5MB</div>
-                <input type="file" accept="image/*,.pdf" onchange="handleFileSelect(this,'aadhaarBack')"/>
-              </div>
-            </div>
-            <div>
-              <label style="display:block;font-size:12px;font-weight:600;color:#878787;margin-bottom:6px;text-transform:uppercase;letter-spacing:.3px">PAN Card</label>
-              <div class="file-upload-area" id="uploadPanCard">
-                <div class="upload-icon">&#128196;</div>
-                <div class="upload-text">Click to upload or drag &amp; drop<br/><strong>PNG, JPG</strong> up to 5MB</div>
-                <input type="file" accept="image/*,.pdf" onchange="handleFileSelect(this,'panCard')"/>
-              </div>
-            </div>
-            <div>
-              <label style="display:block;font-size:12px;font-weight:600;color:#878787;margin-bottom:6px;text-transform:uppercase;letter-spacing:.3px">Selfie Photo</label>
-              <div class="file-upload-area" id="uploadSelfie">
-                <div class="upload-icon">&#129489;</div>
-                <div class="upload-text">Click to upload or drag &amp; drop<br/><strong>PNG, JPG</strong> up to 5MB</div>
-                <input type="file" accept="image/*" onchange="handleFileSelect(this,'selfie')"/>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Step 3: Verification Status -->
-        <div class="kyc-section" id="kycStep3">
-          <h3><span class="step-num">3</span> Verification Status</h3>
-          <div id="kycVerificationStatus">
-            <p style="font-size:13px;color:#878787">Submit your details and documents above. Our team will verify your KYC within 24-48 hours.</p>
-          </div>
-        </div>
-
-        <button class="save-btn-orange" id="kycSubmitBtn" onclick="submitKyc()">Submit KYC for Verification</button>
-      </div>
-
-      <!-- Shown when KYC already submitted -->
-      <div id="kycSubmittedArea" style="display:none"></div>
-    </div>
-
-  </div><!-- /main-panel -->
-</div><!-- /account-wrap -->
-
-<!-- Toast -->
-<div class="toast" id="toast"></div>
-
-<!-- ════════════ SCRIPTS ════════════ -->
 <script src="shop-api.js"></script>
 <script>
-/* ── Panels ───────────────────────────────────── */
-const panels = ['profile','orders','addresses','pan','gift','upi','cards','coupons','reviews','notifications','emi','kyc'];
+if (!getToken()) window.location.href = '/login.html';
 
+const user = getUser();
+let userData = {};
+
+if (user) {
+  const nameParts = (user.name || '').split(' ');
+  document.getElementById('sidebar-name').textContent = user.name || user.email || 'User';
+  const av = (user.name || user.email || 'U')[0].toUpperCase();
+  document.getElementById('sidebar-avatar').textContent = av;
+}
+
+// ── Panel switching ──────────────────────────────────────────────
+const panels = ['profile','orders','emi','kyc','addresses','pan','gift','upi','cards','coupons','reviews','notifications'];
 function setPanel(name, el) {
   panels.forEach(p => {
-    const panel = document.getElementById('panel-' + p);
-    if (panel) {
-      panel.style.display = 'none';
-      panel.classList.remove('active-panel');
-    }
+    const panel = document.getElementById('panel-'+p);
+    if (panel) panel.style.display = p === name ? '' : 'none';
   });
-  const target = document.getElementById('panel-' + name);
-  if (target) {
-    target.style.display = '';
-    target.classList.add('active-panel');
-  }
   document.querySelectorAll('.nav-link').forEach(n => n.classList.remove('active'));
   if (el) el.classList.add('active');
-
-  // Load data for specific panels
   if (name === 'orders') loadRecentOrders();
-  if (name === 'emi') loadMyRentals();
+  if (name === 'emi') loadRentals();
   if (name === 'kyc') loadKycStatus();
 }
 
-/* ── Toast ────────────────────────────────────── */
-function showToast(msg, type) {
-  const t = document.getElementById('toast');
-  t.textContent = msg;
-  t.className = 'toast ' + (type || 'info') + ' show';
-  setTimeout(() => t.classList.remove('show'), 3500);
-}
-
-/* ── Auth guard ───────────────────────────────── */
-function requireAuth() {
-  const token = getToken();
-  if (!token) {
-    window.location.href = '/login.html';
-    return false;
-  }
-  return true;
-}
-
-/* ── Init ─────────────────────────────────────── */
-async function initAccount() {
-  if (!requireAuth()) return;
-
-  try {
-    const user = getUser();
-    if (user) {
-      const name = (user.firstName || '') + ' ' + (user.lastName || '');
-      const initial = (user.firstName || 'U').charAt(0).toUpperCase();
-      document.getElementById('headerAvatar').textContent = initial;
-      document.getElementById('headerName').textContent = name.trim() || user.email || 'User';
-      document.getElementById('sideName').textContent = name.trim() || 'User';
-
-      // Pre-fill profile
-      document.getElementById('profFirstName').value = user.firstName || '';
-      document.getElementById('profLastName').value = user.lastName || '';
-      document.getElementById('profEmail').value = user.email || '';
-      document.getElementById('profPhone').value = user.phone || '';
-      document.getElementById('profGender').value = user.gender || '';
-      document.getElementById('profDob').value = user.dob || '';
-    }
-  } catch (e) {
-    console.error('Init error:', e);
-  }
-}
-
-/* ── Profile ──────────────────────────────────── */
-async function saveProfile() {
-  try {
-    const body = {
-      firstName: document.getElementById('profFirstName').value.trim(),
-      lastName: document.getElementById('profLastName').value.trim(),
-      phone: document.getElementById('profPhone').value.trim(),
-      gender: document.getElementById('profGender').value,
-      dob: document.getElementById('profDob').value
-    };
-    await apiFetch('/user/profile', { method: 'PUT', body: JSON.stringify(body) });
-    showToast('Profile updated successfully!', 'success');
-  } catch (e) {
-    showToast(e.message || 'Failed to update profile', 'error');
-  }
-}
-
-/* ── Orders ───────────────────────────────────── */
-async function loadRecentOrders() {
-  const container = document.getElementById('ordersContainer');
-  container.innerHTML = '<div class="loader"><div class="spinner"></div></div>';
-  try {
-    const res = await apiFetch('/orders/my');
-    const orders = res.orders || res || [];
-    if (!orders.length) {
-      container.innerHTML = '<div class="empty-state"><svg viewBox="0 0 64 64" fill="none" stroke="#bbb" stroke-width="2"><rect x="10" y="10" width="44" height="44" rx="4"/><path d="M22 28h20"/><path d="M22 36h12"/></svg><h3>No Orders Yet</h3><p>Your order history will appear here.</p></div>';
-      return;
-    }
-    container.innerHTML = orders.map(o => {
-      const statusCls = 'status-' + (o.status || 'pending').toLowerCase().replace(/\s+/g, '-');
-      const items = (o.items || []).map(i => i.name || i.title || 'Item').join(', ');
-      const date = o.createdAt ? new Date(o.createdAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }) : '';
-      return '<div class="order-card">' +
-        '<div class="order-header">' +
-          '<div><div class="order-id">Order #' + (o.orderId || o._id || '') + '</div><div class="order-date">' + date + '</div></div>' +
-          '<span class="order-status ' + statusCls + '">' + (o.status || 'Pending') + '</span>' +
-        '</div>' +
-        '<div class="order-items">' + (items || 'Order items') + '</div>' +
-        '<div class="order-total" style="margin-top:6px">' + money(o.total || o.amount || 0) + '</div>' +
-      '</div>';
-    }).join('');
-  } catch (e) {
-    container.innerHTML = '<div class="empty-state"><h3>Could not load orders</h3><p>' + (e.message || '') + '</p></div>';
-  }
-}
-
-/* ── Addresses ────────────────────────────────── */
-function showAddressForm() {
-  document.getElementById('addressForm').style.display = '';
-  ['addrName','addrPhone','addrPincode','addrCity','addrLine','addrState','addrLandmark'].forEach(id => {
-    document.getElementById(id).value = '';
-  });
-}
-
-async function saveAddress() {
-  try {
-    const body = {
-      name: document.getElementById('addrName').value.trim(),
-      phone: document.getElementById('addrPhone').value.trim(),
-      pincode: document.getElementById('addrPincode').value.trim(),
-      city: document.getElementById('addrCity').value.trim(),
-      address: document.getElementById('addrLine').value.trim(),
-      state: document.getElementById('addrState').value.trim(),
-      landmark: document.getElementById('addrLandmark').value.trim(),
-      type: document.getElementById('addrType').value
-    };
-    await apiFetch('/user/address', { method: 'POST', body: JSON.stringify(body) });
-    document.getElementById('addressForm').style.display = 'none';
-    showToast('Address saved!', 'success');
-    loadAddresses();
-  } catch (e) {
-    showToast(e.message || 'Failed to save address', 'error');
-  }
-}
-
-async function loadAddresses() {
-  try {
-    const res = await apiFetch('/user/addresses');
-    const list = res.addresses || res || [];
-    const container = document.getElementById('addressList');
-    if (!list.length) {
-      container.innerHTML = '<div class="empty-state"><h3>No Saved Addresses</h3><p>Add an address to get started.</p></div>';
-      return;
-    }
-    container.innerHTML = list.map(a =>
-      '<div class="card-item">' +
-        '<div class="card-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#2874f0" stroke-width="2"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/><circle cx="12" cy="9" r="2.5"/></svg></div>' +
-        '<div class="card-body"><h4>' + (a.name || '') + ' <span style="font-size:11px;color:#878787;font-weight:400;background:#f0f0f0;padding:2px 8px;border-radius:3px;margin-left:6px">' + (a.type || 'Home') + '</span></h4>' +
-        '<p>' + (a.address || '') + ', ' + (a.city || '') + ' - ' + (a.pincode || '') + '</p>' +
-        '<p>Phone: ' + (a.phone || '') + '</p></div>' +
-        '<div class="card-action" onclick="deleteAddress(\'' + (a._id || '') + '\')">Remove</div>' +
-      '</div>'
-    ).join('');
-  } catch (e) {
-    console.error('Load addresses:', e);
-  }
-}
-
-async function deleteAddress(id) {
-  if (!confirm('Remove this address?')) return;
-  try {
-    await apiFetch('/user/address/' + id, { method: 'DELETE' });
-    showToast('Address removed', 'success');
-    loadAddresses();
-  } catch (e) {
-    showToast(e.message || 'Failed to remove', 'error');
-  }
-}
-
-/* ── PAN ──────────────────────────────────────── */
-async function savePan() {
-  try {
-    const body = {
-      panNumber: document.getElementById('panNumber').value.trim().toUpperCase(),
-      panName: document.getElementById('panName').value.trim()
-    };
-    if (!/^[A-Z]{5}[0-9]{4}[A-Z]$/.test(body.panNumber)) {
-      showToast('Invalid PAN format', 'error');
-      return;
-    }
-    await apiFetch('/user/pan', { method: 'PUT', body: JSON.stringify(body) });
-    showToast('PAN details saved!', 'success');
-  } catch (e) {
-    showToast(e.message || 'Failed to save PAN', 'error');
-  }
-}
-
-/* ── Logout ───────────────────────────────────── */
-function doLogout() {
-  localStorage.removeItem('token');
-  localStorage.removeItem('user');
-  window.location.href = '/login.html';
-}
-
-/* ═══════════════════════════════════════════════ */
-/* ═══ DBUGG EMI — MY RENTALS ═══ */
-/* ═══════════════════════════════════════════════ */
-
-async function loadMyRentals() {
-  const container = document.getElementById('rentalsContainer');
-  container.innerHTML = '<div class="loader"><div class="spinner"></div></div>';
-
-  try {
-    const res = await apiFetch('/rental/my');
-    const rentals = res.rentals || res || [];
-
-    if (!rentals.length) {
-      container.innerHTML =
-        '<div class="empty-state">' +
-          '<svg viewBox="0 0 64 64" fill="none" stroke="#bbb" stroke-width="2"><rect x="8" y="12" width="48" height="32" rx="3"/><path d="M16 48h32"/><path d="M24 44h16v4H24z"/><circle cx="32" cy="28" r="0.5" fill="#bbb"/></svg>' +
-          '<h3>No Active Rentals</h3>' +
-          '<p>You don\'t have any laptop rentals yet. Browse our collection to get started!</p>' +
-          '<a href="/laptops.html" style="display:inline-block;margin-top:12px;color:#F07830;font-weight:600;font-size:13px;text-decoration:none">Browse Laptops &rarr;</a>' +
-        '</div>';
-      return;
-    }
-
-    container.innerHTML = rentals.map(r => {
-      const statusLabel = formatRentalStatus(r.status);
-      const statusClass = 'status-' + (r.status || 'pending');
-      const startDate = r.startDate ? new Date(r.startDate).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }) : 'N/A';
-      const nextDue = r.nextDueDate ? new Date(r.nextDueDate).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }) : 'N/A';
-
-      return '<div class="rental-card">' +
-        '<div class="rental-card-header">' +
-          '<div>' +
-            '<div class="rental-card-title">' + escHtml(r.laptopName || r.laptop?.name || 'Laptop') + '</div>' +
-            '<div class="rental-card-serial">Serial: ' + escHtml(r.serialNumber || r.laptop?.serialNumber || 'N/A') + '</div>' +
-          '</div>' +
-          '<span class="rental-status ' + statusClass + '">' + statusLabel + '</span>' +
-        '</div>' +
-        '<div class="rental-card-details">' +
-          '<div class="rental-detail"><div class="rd-label">Monthly Rent</div><div class="rd-value amount">' + money(r.monthlyRent || r.emiAmount || 0) + '/mo</div></div>' +
-          '<div class="rental-detail"><div class="rd-label">Deposit</div><div class="rd-value">' + money(r.deposit || r.depositAmount || 0) + '</div></div>' +
-          '<div class="rental-detail"><div class="rd-label">Tenure</div><div class="rd-value">' + (r.tenure || r.months || 'N/A') + ' months</div></div>' +
-          '<div class="rental-detail"><div class="rd-label">Total Paid</div><div class="rd-value">' + money(r.totalPaid || 0) + '</div></div>' +
-        '</div>' +
-        '<div class="rental-card-footer">' +
-          '<div class="dates"><span>Start: ' + startDate + '</span><span>Next Due: ' + nextDue + '</span></div>' +
-          '<button class="view-details-btn" onclick="viewRentalDetails(\'' + (r._id || r.id || '') + '\')">View Details</button>' +
-        '</div>' +
-      '</div>';
-    }).join('');
-  } catch (e) {
-    container.innerHTML = '<div class="empty-state"><h3>Could not load rentals</h3><p>' + escHtml(e.message || 'Something went wrong') + '</p></div>';
-  }
-}
-
-function formatRentalStatus(status) {
-  const map = {
-    kyc_pending: 'KYC Pending',
-    active: 'Active',
-    overdue: 'Overdue',
-    completed: 'Completed',
-    returned: 'Returned',
-    rejected: 'Rejected',
-    pending: 'Pending'
-  };
-  return map[status] || (status || 'Unknown');
-}
-
-async function viewRentalDetails(rentalId) {
-  if (!rentalId) return;
-  try {
-    const res = await apiFetch('/rental/' + rentalId);
-    const r = res.rental || res;
-    const container = document.getElementById('rentalsContainer');
-
-    let timelineHtml = '';
-    if (r.payments && r.payments.length) {
-      timelineHtml = '<div class="emi-timeline"><h4>EMI Payment Timeline</h4>';
-      r.payments.forEach((p, i) => {
-        const cls = p.status === 'paid' ? 'paid' : (p.status === 'due' ? 'due' : 'upcoming');
-        const date = p.dueDate ? new Date(p.dueDate).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }) : '';
-        const paidDate = p.paidDate ? ' (Paid: ' + new Date(p.paidDate).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }) + ')' : '';
-        timelineHtml += '<div class="emi-item ' + cls + '">' +
-          '<div class="emi-dot"></div>' +
-          '<div class="emi-info"><div class="emi-month">EMI ' + (i + 1) + ' - ' + (p.month || '') + '</div><div class="emi-date">' + date + paidDate + '</div></div>' +
-          '<div class="emi-amount">' + money(p.amount || 0) + '</div>' +
-        '</div>';
-      });
-      timelineHtml += '</div>';
-    }
-
-    container.innerHTML =
-      '<div style="margin-bottom:16px"><button class="view-details-btn" onclick="loadMyRentals()" style="border-color:#2874f0;color:#2874f0">&larr; Back to Rentals</button></div>' +
-      '<div class="rental-card" style="border-color:#F07830">' +
-        '<div class="rental-card-header">' +
-          '<div>' +
-            '<div class="rental-card-title">' + escHtml(r.laptopName || r.laptop?.name || 'Laptop') + '</div>' +
-            '<div class="rental-card-serial">Serial: ' + escHtml(r.serialNumber || r.laptop?.serialNumber || 'N/A') + '</div>' +
-          '</div>' +
-          '<span class="rental-status status-' + (r.status || 'pending') + '">' + formatRentalStatus(r.status) + '</span>' +
-        '</div>' +
-        '<div class="rental-card-details" style="grid-template-columns:1fr 1fr 1fr">' +
-          '<div class="rental-detail"><div class="rd-label">Monthly Rent</div><div class="rd-value amount">' + money(r.monthlyRent || r.emiAmount || 0) + '/mo</div></div>' +
-          '<div class="rental-detail"><div class="rd-label">Deposit</div><div class="rd-value">' + money(r.deposit || r.depositAmount || 0) + '</div></div>' +
-          '<div class="rental-detail"><div class="rd-label">Tenure</div><div class="rd-value">' + (r.tenure || r.months || 'N/A') + ' months</div></div>' +
-          '<div class="rental-detail"><div class="rd-label">Total Paid</div><div class="rd-value">' + money(r.totalPaid || 0) + '</div></div>' +
-          '<div class="rental-detail"><div class="rd-label">Remaining</div><div class="rd-value">' + money(r.remaining || 0) + '</div></div>' +
-          '<div class="rental-detail"><div class="rd-label">Next Due</div><div class="rd-value">' + (r.nextDueDate ? new Date(r.nextDueDate).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }) : 'N/A') + '</div></div>' +
-        '</div>' +
-        timelineHtml +
-      '</div>';
-  } catch (e) {
-    showToast(e.message || 'Failed to load rental details', 'error');
-  }
-}
-
-/* ═══════════════════════════════════════════════ */
-/* ═══ KYC VERIFICATION ═══ */
-/* ═══════════════════════════════════════════════ */
-
-const kycFiles = { aadhaarFront: null, aadhaarBack: null, panCard: null, selfie: null };
-
-function handleFileSelect(input, key) {
-  const file = input.files[0];
-  if (!file) return;
-  if (file.size > 5 * 1024 * 1024) {
-    showToast('File size must be under 5MB', 'error');
-    input.value = '';
-    return;
-  }
-  kycFiles[key] = file;
-  const area = input.closest('.file-upload-area');
-  area.classList.add('has-file');
-  area.querySelector('.upload-text').innerHTML = '<strong>' + escHtml(file.name) + '</strong><br/>Ready to upload';
-}
-
-async function loadKycStatus() {
-  const banner = document.getElementById('kycStatusBanner');
-  const formArea = document.getElementById('kycFormArea');
-  const submittedArea = document.getElementById('kycSubmittedArea');
-
-  try {
-    const res = await apiFetch('/rental/kyc/status');
-    const kyc = res.kyc || res;
-    const status = kyc.status || 'not_submitted';
-
-    // Status banner
-    const statusLabels = {
-      not_submitted: 'Not Submitted',
-      pending: 'Under Review',
-      approved: 'Approved',
-      rejected: 'Rejected'
-    };
-    banner.innerHTML = '<div class="kyc-status-badge badge-' + status + '"><span class="status-dot"></span> KYC Status: ' + (statusLabels[status] || status) + '</div>';
-
-    // Update step indicators
-    const steps = document.querySelectorAll('.kyc-step');
-    if (status === 'approved') {
-      steps.forEach(s => { s.classList.remove('active'); s.classList.add('completed'); });
-    } else if (status === 'pending') {
-      steps[0].classList.remove('active'); steps[0].classList.add('completed');
-      steps[1].classList.remove('active'); steps[1].classList.add('completed');
-      steps[2].classList.add('active');
-    } else if (status === 'rejected') {
-      steps.forEach(s => { s.classList.remove('active', 'completed'); });
-      steps[0].classList.add('active');
-    } else {
-      steps.forEach(s => s.classList.remove('active', 'completed'));
-      steps[0].classList.add('active');
-    }
-
-    if (status === 'approved') {
-      formArea.style.display = 'none';
-      submittedArea.style.display = '';
-      submittedArea.innerHTML =
-        '<div style="text-align:center;padding:40px 20px">' +
-          '<svg width="64" height="64" viewBox="0 0 64 64" fill="none"><circle cx="32" cy="32" r="30" stroke="#2e7d32" stroke-width="3"/><path d="M20 32l8 8 16-16" stroke="#2e7d32" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>' +
-          '<h3 style="margin-top:16px;color:#2e7d32;font-size:18px">KYC Verified</h3>' +
-          '<p style="color:#878787;font-size:13px;margin-top:4px">Your KYC has been approved. You can now avail DBUGG EMI rental plans.</p>' +
-          (kyc.approvedAt ? '<p style="font-size:12px;color:#bbb;margin-top:8px">Approved on: ' + new Date(kyc.approvedAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }) + '</p>' : '') +
-        '</div>';
-    } else if (status === 'pending') {
-      formArea.style.display = 'none';
-      submittedArea.style.display = '';
-      submittedArea.innerHTML =
-        '<div style="text-align:center;padding:40px 20px">' +
-          '<svg width="64" height="64" viewBox="0 0 64 64" fill="none"><circle cx="32" cy="32" r="30" stroke="#e65100" stroke-width="3"/><path d="M32 18v16" stroke="#e65100" stroke-width="3" stroke-linecap="round"/><circle cx="32" cy="42" r="2" fill="#e65100"/></svg>' +
-          '<h3 style="margin-top:16px;color:#e65100;font-size:18px">KYC Under Review</h3>' +
-          '<p style="color:#878787;font-size:13px;margin-top:4px">Your KYC documents are being verified. This usually takes 24-48 hours.</p>' +
-          (kyc.submittedAt ? '<p style="font-size:12px;color:#bbb;margin-top:8px">Submitted on: ' + new Date(kyc.submittedAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }) + '</p>' : '') +
-        '</div>';
-    } else if (status === 'rejected') {
-      formArea.style.display = '';
-      submittedArea.style.display = 'none';
-      const reason = kyc.rejectionReason || 'Please re-submit your documents.';
-      document.getElementById('kycVerificationStatus').innerHTML =
-        '<div style="background:#ffebee;padding:12px;border-radius:6px;border-left:4px solid #c62828">' +
-          '<div style="font-size:14px;font-weight:600;color:#c62828;margin-bottom:4px">KYC Rejected</div>' +
-          '<p style="font-size:13px;color:#666">' + escHtml(reason) + '</p>' +
-        '</div>';
-      // Pre-fill from previous submission
-      if (kyc.fullName) document.getElementById('kycFullName').value = kyc.fullName;
-      if (kyc.phone) document.getElementById('kycPhone').value = kyc.phone;
-      if (kyc.aadhaar) document.getElementById('kycAadhaar').value = kyc.aadhaar;
-      if (kyc.pan) document.getElementById('kycPan').value = kyc.pan;
-      if (kyc.dob) document.getElementById('kycDob').value = kyc.dob;
-      if (kyc.address) document.getElementById('kycAddress').value = kyc.address;
-    } else {
-      // not_submitted
-      formArea.style.display = '';
-      submittedArea.style.display = 'none';
-      // Pre-fill from user profile
-      const user = getUser();
-      if (user) {
-        if (!document.getElementById('kycFullName').value) {
-          document.getElementById('kycFullName').value = ((user.firstName || '') + ' ' + (user.lastName || '')).trim();
-        }
-        if (!document.getElementById('kycPhone').value) {
-          document.getElementById('kycPhone').value = user.phone || '';
-        }
-      }
-    }
-  } catch (e) {
-    // If API 404 / no KYC exists, treat as not_submitted
-    banner.innerHTML = '<div class="kyc-status-badge badge-not_submitted"><span class="status-dot"></span> KYC Status: Not Submitted</div>';
-    formArea.style.display = '';
-    submittedArea.style.display = 'none';
-
-    const user = getUser();
-    if (user) {
-      if (!document.getElementById('kycFullName').value) {
-        document.getElementById('kycFullName').value = ((user.firstName || '') + ' ' + (user.lastName || '')).trim();
-      }
-      if (!document.getElementById('kycPhone').value) {
-        document.getElementById('kycPhone').value = user.phone || '';
-      }
-    }
-  }
-}
-
-async function submitKyc() {
-  const fullName = document.getElementById('kycFullName').value.trim();
-  const phone = document.getElementById('kycPhone').value.trim();
-  const aadhaar = document.getElementById('kycAadhaar').value.trim().replace(/\s/g, '');
-  const pan = document.getElementById('kycPan').value.trim().toUpperCase();
-  const dob = document.getElementById('kycDob').value;
-  const address = document.getElementById('kycAddress').value.trim();
-
-  // Validation
-  if (!fullName) { showToast('Please enter your full name', 'error'); return; }
-  if (!phone || phone.length < 10) { showToast('Please enter a valid phone number', 'error'); return; }
-  if (!aadhaar || aadhaar.length !== 12) { showToast('Please enter a valid 12-digit Aadhaar number', 'error'); return; }
-  if (!/^[A-Z]{5}[0-9]{4}[A-Z]$/.test(pan)) { showToast('Please enter a valid PAN number', 'error'); return; }
-  if (!dob) { showToast('Please enter your date of birth', 'error'); return; }
-  if (!address) { showToast('Please enter your address', 'error'); return; }
-  if (!kycFiles.aadhaarFront) { showToast('Please upload Aadhaar front', 'error'); return; }
-  if (!kycFiles.aadhaarBack) { showToast('Please upload Aadhaar back', 'error'); return; }
-  if (!kycFiles.panCard) { showToast('Please upload PAN card', 'error'); return; }
-  if (!kycFiles.selfie) { showToast('Please upload a selfie', 'error'); return; }
-
-  const btn = document.getElementById('kycSubmitBtn');
-  btn.disabled = true;
-  btn.textContent = 'Submitting...';
-
-  try {
-    const formData = new FormData();
-    formData.append('fullName', fullName);
-    formData.append('phone', phone);
-    formData.append('aadhaar', aadhaar);
-    formData.append('pan', pan);
-    formData.append('dob', dob);
-    formData.append('address', address);
-    formData.append('aadhaarFront', kycFiles.aadhaarFront);
-    formData.append('aadhaarBack', kycFiles.aadhaarBack);
-    formData.append('panCard', kycFiles.panCard);
-    formData.append('selfie', kycFiles.selfie);
-
-    const token = getToken();
-    const res = await fetch('http://200.234.39.146:4000/rental/kyc/submit', {
-      method: 'POST',
-      headers: { 'Authorization': 'Bearer ' + token },
-      body: formData
+// ── Edit toggles ─────────────────────────────────────────────────
+const editSections = { info: false, email: false, phone: false };
+function toggleEdit(section) {
+  editSections[section] = !editSections[section];
+  const on = editSections[section];
+  if (section === 'info') {
+    ['field-firstname','field-lastname','gender-m','gender-f','gender-o'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.disabled = !on;
     });
-
-    if (!res.ok) {
-      const err = await res.json().catch(() => ({}));
-      throw new Error(err.message || 'KYC submission failed');
-    }
-
-    showToast('KYC submitted successfully! Verification takes 24-48 hours.', 'success');
-    loadKycStatus();
-  } catch (e) {
-    showToast(e.message || 'Failed to submit KYC', 'error');
-  } finally {
-    btn.disabled = false;
-    btn.textContent = 'Submit KYC for Verification';
+    document.getElementById('edit-info-btn').textContent = on ? 'Cancel' : 'Edit';
+    document.getElementById('info-save-row').style.display = on ? '' : 'none';
+  }
+  if (section === 'email') {
+    document.getElementById('field-email').disabled = !on;
+    if (on) document.getElementById('field-email').focus();
+    document.getElementById('email-save-row').style.display = on ? '' : 'none';
+  }
+  if (section === 'phone') {
+    document.getElementById('field-phone').disabled = !on;
+    if (on) document.getElementById('field-phone').focus();
+    document.getElementById('phone-save-row').style.display = on ? '' : 'none';
   }
 }
 
-/* ── Utility ──────────────────────────────────── */
-function escHtml(s) {
-  return (s || '').replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+// ── Save helpers ─────────────────────────────────────────────────
+function showMsg(id, text, ok) {
+  const el = document.getElementById(id);
+  el.textContent = text;
+  el.className = 'save-msg ' + (ok ? 'ok' : 'err');
+  setTimeout(() => { el.textContent = ''; el.className = 'save-msg'; }, 3000);
 }
 
-/* ── Boot ─────────────────────────────────────── */
-initAccount();
+async function savePersonalInfo() {
+  const first = document.getElementById('field-firstname').value.trim();
+  const last  = document.getElementById('field-lastname').value.trim();
+  const gender = document.querySelector('[name=gender]:checked')?.value || '';
+  try {
+    await apiFetch('/users/me', { method: 'PATCH', body: JSON.stringify({ name: `${first} ${last}`.trim(), gender }) });
+    showMsg('info-msg', 'Saved successfully!', true);
+    const u = getUser();
+    if (u) { u.name = `${first} ${last}`.trim(); localStorage.setItem('dbugg_user', JSON.stringify(u)); }
+    document.getElementById('sidebar-name').textContent = `${first} ${last}`.trim();
+    toggleEdit('info');
+  } catch(e) { showMsg('info-msg', e.message || 'Save failed.', false); }
+}
+
+async function saveEmail() {
+  const email = document.getElementById('field-email').value.trim();
+  if (!email || !email.includes('@')) { showMsg('email-msg', 'Enter a valid email.', false); return; }
+  try {
+    await apiFetch('/users/me', { method: 'PATCH', body: JSON.stringify({ email }) });
+    showMsg('email-msg', 'Email updated!', true);
+    toggleEdit('email');
+  } catch(e) { showMsg('email-msg', e.message || 'Update failed.', false); }
+}
+
+async function savePhone() {
+  const phone = document.getElementById('field-phone').value.trim();
+  try {
+    await apiFetch('/users/me', { method: 'PATCH', body: JSON.stringify({ phone }) });
+    showMsg('phone-msg', 'Phone updated!', true);
+    toggleEdit('phone');
+  } catch(e) { showMsg('phone-msg', e.message || 'Update failed.', false); }
+}
+
+// ── Load user data ────────────────────────────────────────────────
+async function loadUserData() {
+  try {
+    const u = await apiFetch('/users/me');
+    userData = u;
+    const nameParts = (u.name || '').split(' ');
+    document.getElementById('field-firstname').value = nameParts[0] || '';
+    document.getElementById('field-lastname').value  = nameParts.slice(1).join(' ') || '';
+    document.getElementById('field-email').value  = u.email || '';
+    document.getElementById('field-phone').value  = u.phone || '';
+    document.getElementById('sidebar-name').textContent = u.name || u.email || 'User';
+    document.getElementById('sidebar-avatar').textContent = (u.name || u.email || 'U')[0].toUpperCase();
+    if (u.gender === 'male')   document.getElementById('gender-m').checked = true;
+    if (u.gender === 'female') document.getElementById('gender-f').checked = true;
+    if (u.gender === 'other')  document.getElementById('gender-o').checked = true;
+  } catch(e) {
+    // fallback to cached user
+    if (user) {
+      const nameParts = (user.name || '').split(' ');
+      document.getElementById('field-firstname').value = nameParts[0] || '';
+      document.getElementById('field-lastname').value  = nameParts.slice(1).join(' ') || '';
+      document.getElementById('field-email').value  = user.email || '';
+      document.getElementById('field-phone').value  = user.phone || '';
+    }
+  }
+}
+
+// ── Recent orders ────────────────────────────────────────────────
+const statusBadge = {
+  pending:'s-pending',confirmed:'s-confirmed',processing:'s-processing',
+  shipped:'s-shipped',out_for_delivery:'s-out_for_delivery',delivered:'s-delivered',
+  cancelled:'s-cancelled',returned:'s-returned',return_requested:'s-return_requested',
+};
+
+async function loadRecentOrders() {
+  const el = document.getElementById('recent-orders-list');
+  try {
+    const orders = await apiFetch('/orders');
+    const recent = (orders || []).slice(0, 5);
+    if (!recent.length) {
+      el.innerHTML = '<div style="color:#878787;padding:20px 0;">No orders yet. <a href="/index.html" style="color:#2874f0;font-weight:600;">Start shopping →</a></div>';
+      return;
+    }
+    el.innerHTML = recent.map(o => `
+      <div class="orders-preview-item" onclick="window.location='/orders.html'" style="cursor:pointer;">
+        <div>
+          <div class="op-num">${o.orderNumber || o.id}</div>
+          <div class="op-date">${new Date(o.createdAt).toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'})}</div>
+        </div>
+        <div class="op-amount">₹${(o.amount||0).toLocaleString('en-IN')}</div>
+        <span class="op-status ${statusBadge[o.status]||'s-pending'}">${(o.status||'').replace('_',' ')}</span>
+      </div>
+    `).join('');
+  } catch(e) {
+    el.innerHTML = `<div style="color:#878787;padding:10px 0;">${e.message}</div>`;
+  }
+}
+
+
+// -- DBUGG EMI - Load Rentals --
+async function loadRentals() {
+  const el = document.getElementById('emi-rentals-list');
+  try {
+    const rentals = await apiFetch('/rental/my');
+    if (!rentals || !rentals.length) {
+      el.innerHTML = '<div class="emi-empty">No active rentals. <a href="/rental.html">Browse rental laptops &rarr;</a></div>';
+      return;
+    }
+    el.innerHTML = rentals.map(r => {
+      const statusLabel = (r.status || '').replace(/_/g, ' ');
+      const statusClass = (r.status || '').toLowerCase();
+      let h = '<div class="emi-card"><div class="emi-card-head">' +
+        '<div class="emi-card-title">Rental #' + (r.id || '').slice(0,8) + '</div>' +
+        '<span class="emi-badge ' + statusClass + '">' + statusLabel + '</span></div>' +
+        '<div class="emi-detail"><span>Monthly EMI</span><span>&#8377;' + (r.monthlyRent||0).toLocaleString('en-IN') + '</span></div>' +
+        '<div class="emi-detail"><span>Deposit</span><span>&#8377;' + (r.depositAmount||0).toLocaleString('en-IN') + '</span></div>';
+      if (r.startDate) h += '<div class="emi-detail"><span>Start Date</span><span>' + new Date(r.startDate).toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'}) + '</span></div>';
+      if (r.nextDueDate) h += '<div class="emi-detail"><span>Next Due</span><span>' + new Date(r.nextDueDate).toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'}) + '</span></div>';
+      h += '</div>';
+      return h;
+    }).join('');
+  } catch(e) {
+    el.innerHTML = '<div class="emi-empty">' + (e.message || 'Failed to load rentals.') + '</div>';
+  }
+}
+
+// -- KYC Status --
+async function loadKycStatus() {
+  const el = document.getElementById('kyc-status-container');
+  try {
+    const rentals = await apiFetch('/rental/my');
+    let html = '<div class="kyc-status-box">';
+    if (!rentals || !rentals.length) {
+      html += '<div class="kyc-status-row"><div class="kyc-dot not_submitted"></div>' +
+        '<div class="kyc-status-label">No KYC documents submitted</div></div>' +
+        '<div style="color:#878787;font-size:13px;margin-top:10px;">KYC verification is required when you rent a laptop. <a href="/rental.html" style="color:#2874f0;font-weight:600;">Browse rentals &rarr;</a></div>';
+    } else {
+      rentals.forEach(r => {
+        const isPending = r.status === 'kyc_pending';
+        const dotClass = isPending ? 'pending' : 'approved';
+        const label = isPending ? 'KYC Pending Review' : 'KYC Verified';
+        html += '<div class="kyc-status-row"><div class="kyc-dot ' + dotClass + '"></div>' +
+          '<div class="kyc-status-label">Rental #' + (r.id||'').slice(0,8) + ' &mdash; ' + label + '</div>' +
+          '<div class="kyc-status-val" style="color:' + (isPending ? '#F07830' : '#388e3c') + ';">' + (isPending ? 'Under Review' : 'Approved') + '</div></div>';
+      });
+    }
+    html += '</div>';
+    html += '<div style="margin-top:16px;"><div class="faq-title">How KYC Works</div>' +
+      '<div class="faq-item"><div class="faq-q">What documents are needed?</div>' +
+      '<div class="faq-a">Aadhaar card (front &amp; back), PAN card, and a selfie for face verification.</div></div>' +
+      '<div class="faq-item"><div class="faq-q">How long does verification take?</div>' +
+      '<div class="faq-a">KYC documents are usually reviewed within 24-48 hours by our admin team.</div></div>' +
+      '<div class="faq-item"><div class="faq-q">What happens after KYC approval?</div>' +
+      '<div class="faq-a">Once approved, you can pay the security deposit and your rental becomes active.</div></div></div>';
+    el.innerHTML = html;
+  } catch(e) {
+    el.innerHTML = '<div style="color:#878787;padding:10px 0;">' + (e.message || 'Failed to load KYC status.') + '</div>';
+  }
+}
+
+function doLogout() {
+  if (confirm('Log out of your account?')) {
+    logout();
+    window.location.href = '/login.html';
+  }
+}
+
+loadUserData();
+</script>
+
+<!-- BOTTOM NAV -->
+<nav class="bottom-nav">
+  <div class="bottom-nav-inner">
+    <a href="/index.html" class="bn-item ">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+      Home
+    </a>
+    <a href="/index.html#products" class="bn-item ">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M4 8h4V4H4v4zm6 12h4v-4h-4v4zm-6 0h4v-4H4v4zm0-6h4v-4H4v4zm6 0h4v-4h-4v4zm6-10v4h4V4h-4zm-6 4h4V4h-4v4zm6 6h4v-4h-4v4zm0 6h4v-4h-4v4z"/></svg>
+      Categories
+    </a>
+    <a href="/account.html" class="bn-item active">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.54 0 3 1.46 3 3s-1.46 3-3 3-3-1.46-3-3 1.46-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z"/></svg>
+      Account
+    </a>
+    <a href="/cart.html" class="bn-item ">
+      <span class="bn-pos">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M7 18c-1.1 0-1.99.9-1.99 2S5.9 22 7 22s2-.9 2-2-.9-2-2-2zM1 2v2h2l3.6 7.59-1.35 2.45c-.16.28-.25.61-.25.96C5 16.1 5.9 17 7 17h12v-2H7.42c-.14 0-.25-.11-.25-.25l.03-.12.9-1.63H19c.75 0 1.41-.41 1.75-1.03l3.58-6.49A1 1 0 0023.25 4H5.21l-.94-2H1zm16 16c-1.1 0-1.99.9-1.99 2s.89 2 1.99 2 2-.9 2-2-.9-2-2-2z"/></svg>
+        <span class="bn-badge" id="bn-cart-ct"></span>
+      </span>
+      Cart
+    </a>
+  </div>
+</nav>
+<script>
+(function(){try{const c=JSON.parse(localStorage.getItem('cartItems')||'[]').reduce((s,i)=>s+(i.qty||1),0);const el=document.getElementById('bn-cart-ct');if(el&&c>0){el.textContent=c;el.style.display='flex';}}catch(e){}}());
 </script>
 </body>
 </html>
