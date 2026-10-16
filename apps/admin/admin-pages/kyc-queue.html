@@ -160,35 +160,112 @@ tbody td{padding:12px 16px;font-size:13.5px;color:var(--text-primary);font-varia
 </style>
 </head>
 <body>
-<aside class="sidebar">
-  <div class="sidebar-logo"><div class="brand">d<span>bugg</span>s</div><div class="tagline">Admin Panel</div></div>
-  <nav class="nav-section">
-    <a href="dashboard.html" class="nav-item"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"/></svg>Dashboard</a>
-    <a href="inventory.html" class="nav-item"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M20 6h-2.18c.07-.44.18-.88.18-1.34C18 2.54 15.46 0 12 0S6 2.54 6 4.66C6 5.12 6.11 5.56 6.18 6H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2z"/></svg>Inventory Units</a>
-    <a href="qc-grading.html" class="nav-item"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"/></svg>QC &amp; Grading</a>
-    <a href="b2c-orders.html" class="nav-item"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M7 4h-2l-3 9v2h18v-2l-3-9h-2l1 4H6L7 4zm0 8H5.5l.67-2H7v2zm2 0v-2h.5l-.5 2zm3 0h-1l.5-2h.5v2zm2 0v-2h.5l.5 2h-1zm3 0l-.67-2H18v2h-1zM3 17v2h18v-2H3z"/></svg>B2C Orders</a>
-    <a href="returns.html" class="nav-item"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 5V1L7 6l5 5V7c3.31 0 6 2.69 6 6s-2.69 6-6 6-6-2.69-6-6H4c0 4.42 3.58 8 8 8s8-3.58 8-8-3.58-8-8-8z"/></svg>Returns &amp; Refunds</a>
-    <a href="b2b-approvals.html" class="nav-item"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>B2B Approvals</a>
-    <a href="quotations.html" class="nav-item"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg>Quotations &amp; POs</a>
-    <a href="kyc-queue.html" class="nav-item active"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>KYC Queue</a>
-    <a href="rentals.html" class="nav-item"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M20 4H4c-1.11 0-2 .89-2 2v12c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V6c0-1.11-.89-2-2-2zm0 14H4v-6h16v6zm0-10H4V6h16v2z"/></svg>Rentals &amp; Deposits</a>
-    <a href="dealer-applications.html" class="nav-item"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 14l-5-5 1.41-1.41L12 14.17l7.59-7.59L21 8l-9 9z"/></svg>Dealer Applications</a>
-    <a href="dealers-tiers.html" class="nav-item"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>Dealers &amp; Tiers</a>
-    <a href="commission.html" class="nav-item"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M11.8 10.9c-2.27-.59-3-1.2-3-2.15 0-1.09 1.01-1.85 2.7-1.85 1.78 0 2.44.85 2.5 2.1h2.21c-.07-1.72-1.12-3.3-3.21-3.81V3h-3v2.16c-1.94.42-3.5 1.68-3.5 3.61 0 2.31 1.91 3.46 4.7 4.13 2.5.6 3 1.48 3 2.41 0 .69-.49 1.79-2.7 1.79-2.06 0-2.87-.92-2.98-2.1h-2.2c.12 2.19 1.76 3.42 3.68 3.83V21h3v-2.15c1.95-.37 3.5-1.5 3.5-3.55 0-2.84-2.43-3.81-4.7-4.4z"/></svg>Commission &amp; Payouts</a>
-    <a href="warranty.html" class="nav-item"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 4l5 2.18V11c0 3.5-2.33 6.79-5 7.93-2.67-1.14-5-4.43-5-7.93V7.18L12 5z"/></svg>Warranty &amp; Support</a>
-    <a href="marketing.html" class="nav-item"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/></svg>Marketing &amp; CMS</a>
-    <a href="finance.html" class="nav-item"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM7 7h2v2H7V7zm0 4h2v2H7v-2zm0 4h2v2H7v-2zm10 2h-6v-2h6v2zm0-4h-6v-2h6v2zm0-4h-6V7h6v2z"/></svg>Finance &amp; GST</a>
-    <a href="reports.html" class="nav-item"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg>Reports</a>
-  </nav>
-  <div style="padding:4px 20px;"><div class="nav-section-label">Super Admin</div></div>
-  <nav class="nav-section" style="padding-top:4px;">
-    <a href="admins-roles.html" class="nav-item"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1s3.1 1.39 3.1 3.1v2z"/></svg>Admins &amp; Roles</a>
-    <a href="pricing-rules.html" class="nav-item"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.63 5.84C17.27 5.33 16.67 5 16 5L5 5.01C3.9 5.01 3 5.9 3 7v10c0 1.1.9 1.99 2 1.99L16 19c.67 0 1.27-.33 1.63-.84L22 12l-4.37-6.16z"/></svg>Pricing &amp; Rules</a>
-    <a href="integrations.html" class="nav-item"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg>Integrations</a>
-    <a href="audit-log.html" class="nav-item"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M13 3c-4.97 0-9 4.03-9 9H1l3.89 3.89.07.14L9 12H6c0-3.87 3.13-7 7-7s7 3.13 7 7-3.13 7-7 7c-1.93 0-3.68-.79-4.94-2.06l-1.42 1.42C8.27 19.99 10.51 21 13 21c4.97 0 9-4.03 9-9s-4.03-9-9-9zm-1 5v5l4.28 2.54.72-1.21-3.5-2.08V8H12z"/></svg>Audit Log</a>
-  </nav>
-  <div class="sidebar-footer"><div class="user-info"><div class="avatar">SA</div><div><div class="user-name">Super Admin</div><div class="user-role">admin@dbuggs.in</div></div></div></div>
+<style>
+.dbugg-sidebar{width:240px;min-width:220px;background:#1C2B6B;display:flex;flex-direction:column;position:fixed;top:0;left:0;height:100vh;overflow-y:auto;z-index:1000;flex-shrink:0;}
+.dbugg-sidebar::-webkit-scrollbar{width:4px;}
+.dbugg-sidebar::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.2);border-radius:4px;}
+.dbugg-sidebar .sb-logo{padding:20px 20px 14px;border-bottom:1px solid rgba(255,255,255,0.08);}
+.dbugg-sidebar .sb-brand{font-family:"Space Grotesk",sans-serif;font-size:20px;font-weight:700;color:#fff;}
+.dbugg-sidebar .sb-brand span{color:#F07830;}
+.dbugg-sidebar .sb-tagline{font-size:11px;color:rgba(255,255,255,0.5);margin-top:2px;}
+.sb-nav{flex:1;padding:8px 0 16px;}
+.sb-section-label{font-size:10px;font-weight:700;letter-spacing:0.1em;color:rgba(255,255,255,0.55);text-transform:uppercase;padding:14px 20px 5px;display:block!important;}
+.sb-item{display:flex!important;align-items:center;gap:10px;padding:9px 20px;color:rgba(255,255,255,0.72);text-decoration:none;font-size:13.5px;font-weight:500;transition:background 0.15s,color 0.15s;border:none;background:none;width:100%;cursor:pointer;font-family:inherit;white-space:nowrap;}
+.sb-item:hover{background:rgba(255,255,255,0.08);color:#fff;}
+.sb-item.sb-active{background:rgba(240,120,48,0.18);color:#fff;border-right:3px solid #F07830;}
+.sb-item svg{width:16px;height:16px;flex-shrink:0;opacity:0.8;}
+.sb-item.sb-active svg{opacity:1;}
+.sb-footer{padding:14px 20px;border-top:1px solid rgba(255,255,255,0.08);margin-top:auto;}
+.sb-footer .sb-user{display:flex;align-items:center;gap:10px;}
+.sb-footer .sb-avatar{width:34px;height:34px;border-radius:50%;background:#F07830;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;color:#fff;flex-shrink:0;}
+.sb-footer .sb-name{font-size:13px;font-weight:600;color:#fff;}
+.sb-footer .sb-role{font-size:11px;color:rgba(255,255,255,0.5);}
+</style>
+<aside class="dbugg-sidebar">
+  <div class="sb-logo">
+    <div class="sb-brand">d<span>bugg</span>s</div>
+    <div class="sb-tagline">Admin Panel</div>
+  </div>
+  <nav class="sb-nav">
+  <span class="sb-section-label">Overview</span>
+  <a href="dashboard.html" class="sb-item"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"/></svg>Dashboard</a>
+  <span class="sb-section-label">Inventory</span>
+  <a href="inventory.html" class="sb-item"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M20 6h-2.18c.07-.44.18-.88.18-1.34C18 2.54 15.46 0 12 0S6 2.54 6 4.66C6 5.12 6.11 5.56 6.18 6H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zM12 2c1.35 0 2 1.03 2 2.66 0 .73-.16 1.47-.44 2.07-.44.95-1.32 1.27-1.56 1.27s-1.12-.32-1.56-1.27C10.16 6.13 10 5.39 10 4.66 10 3.03 10.65 2 12 2zm0 10c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2z"/></svg>Inventory Units</a>
+  <a href="qc-grading.html" class="sb-item"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"/></svg>QC &amp; Grading</a>
+  <span class="sb-section-label">Orders</span>
+  <a href="b2c-orders.html" class="sb-item"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M7 4h-2l-3 9v2h18v-2l-3-9h-2l1 4H6L7 4zm0 8H5.5l.67-2H7v2zm2 0v-2h.5l-.5 2zm3 0h-1l.5-2h.5v2zm2 0v-2h.5l.5 2h-1zm3 0l-.67-2H18v2h-1zM3 17v2h18v-2H3z"/></svg>B2C Orders</a>
+  <a href="returns.html" class="sb-item"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 5V1L7 6l5 5V7c3.31 0 6 2.69 6 6s-2.69 6-6 6-6-2.69-6-6H4c0 4.42 3.58 8 8 8s8-3.58 8-8-3.58-8-8-8z"/></svg>Returns &amp; Refunds</a>
+  <span class="sb-section-label">B2B</span>
+  <a href="b2b-approvals.html" class="sb-item"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>B2B Approvals</a>
+  <a href="quotations.html" class="sb-item"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg>Quotations &amp; POs</a>
+  <span class="sb-section-label">Rental</span>
+  <a href="kyc-queue.html" class="sb-item sb-active"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>KYC Queue</a>
+  <a href="rentals.html" class="sb-item"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M20 4H4c-1.11 0-2 .89-2 2v12c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V6c0-1.11-.89-2-2-2zm0 14H4v-6h16v6zm0-10H4V6h16v2z"/></svg>Rentals &amp; Deposits</a>
+  <span class="sb-section-label">Dealers</span>
+  <a href="dealer-applications.html" class="sb-item"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 14l-5-5 1.41-1.41L12 14.17l7.59-7.59L21 8l-9 9z"/></svg>Dealer Applications</a>
+  <a href="dealers-tiers.html" class="sb-item"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>Dealers &amp; Tiers</a>
+  <a href="commission.html" class="sb-item"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M11.8 10.9c-2.27-.59-3-1.2-3-2.15 0-1.09 1.01-1.85 2.7-1.85 1.78 0 2.44.85 2.5 2.1h2.21c-.07-1.72-1.12-3.3-3.21-3.81V3h-3v2.16c-1.94.42-3.5 1.68-3.5 3.61 0 2.31 1.91 3.46 4.7 4.13 2.5.6 3 1.48 3 2.41 0 .69-.49 1.79-2.7 1.79-2.06 0-2.87-.92-2.98-2.1h-2.2c.12 2.19 1.76 3.42 3.68 3.83V21h3v-2.15c1.95-.37 3.5-1.5 3.5-3.55 0-2.84-2.43-3.81-4.7-4.4z"/></svg>Commission &amp; Payouts</a>
+  <span class="sb-section-label">Support</span>
+  <a href="warranty.html" class="sb-item"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 4l5 2.18V11c0 3.5-2.33 6.79-5 7.93-2.67-1.14-5-4.43-5-7.93V7.18L12 5z"/></svg>Warranty &amp; Support</a>
+  <span class="sb-section-label">Marketing &amp; Finance</span>
+  <a href="marketing.html" class="sb-item"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/></svg>Marketing &amp; CMS</a>
+  <a href="finance.html" class="sb-item"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM7 7h2v2H7V7zm0 4h2v2H7v-2zm0 4h2v2H7v-2zm10 2h-6v-2h6v2zm0-4h-6v-2h6v2zm0-4h-6V7h6v2z"/></svg>Finance &amp; GST</a>
+  <a href="reports.html" class="sb-item"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg>Reports</a>
+  <span class="sb-section-label">Super Admin</span>
+  <a href="admins-roles.html" class="sb-item"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1s3.1 1.39 3.1 3.1v2z"/></svg>Admins &amp; Roles</a>
+  <a href="pricing-rules.html" class="sb-item"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.63 5.84C17.27 5.33 16.67 5 16 5L5 5.01C3.9 5.01 3 5.9 3 7v10c0 1.1.9 1.99 2 1.99L16 19c.67 0 1.27-.33 1.63-.84L22 12l-4.37-6.16z"/></svg>Pricing &amp; Rules</a>
+  <a href="integrations.html" class="sb-item"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg>Integrations</a>
+  <a href="audit-log.html" class="sb-item"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M13 3c-4.97 0-9 4.03-9 9H1l3.89 3.89.07.14L9 12H6c0-3.87 3.13-7 7-7s7 3.13 7 7-3.13 7-7 7c-1.93 0-3.68-.79-4.94-2.06l-1.42 1.42C8.27 19.99 10.51 21 13 21c4.97 0 9-4.03 9-9s-4.03-9-9-9zm-1 5v5l4.28 2.54.72-1.21-3.5-2.08V8H12z"/></svg>Audit Log</a>
+  <a href="banner-offers.html" class="sb-item"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M21 3H3c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H3V5h18v14zm-10-7h9v5h-9zm-4-3c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm3.75 3H2.85l2.9-3.65L7.65 14l2.1-2.64L12.25 14H6.75z"/></svg>Banner &amp; Offers</a>
+  <a href="coupons.html" class="sb-item"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M21.41 11.58l-9-9C12.05 2.22 11.55 2 11 2H4c-1.1 0-2 .9-2 2v7c0 .55.22 1.05.59 1.42l9 9c.36.36.86.58 1.41.58s1.05-.22 1.41-.59l7-7c.37-.36.59-.86.59-1.41s-.23-1.06-.59-1.42zM5.5 7C4.67 7 4 6.33 4 5.5S4.67 4 5.5 4 7 4.67 7 5.5 6.33 7 5.5 7z"/></svg>Coupon Management</a>
+  <a href="login-activity.html" class="sb-item"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 4l5 2.18V11c0 3.5-2.33 6.79-5 7.93-2.67-1.14-5-4.43-5-7.93V7.18L12 5z"/></svg>Login Activity &amp; IP</a>
+</nav>
+  <div class="sb-footer">
+    <div class="sb-user">
+      <div class="sb-avatar">SA</div>
+      <div>
+        <div class="sb-name">Super Admin</div>
+        <div class="sb-role">admin@dbuggs.in</div>
+      </div>
+    </div>
+  </div>
 </aside>
+<style>.main-wrapper,.main{margin-left:240px!important;}
+/* Review Modal */
+.modal-overlay{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.5);z-index:200;align-items:center;justify-content:center;}
+.modal-overlay.active{display:flex;}
+.modal-box{background:#fff;border-radius:14px;width:680px;max-width:90vw;max-height:85vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,0.2);}
+.modal-header{padding:18px 24px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;background:#fff;border-radius:14px 14px 0 0;z-index:1;}
+.modal-header h3{font-family:'Space Grotesk',sans-serif;font-size:17px;font-weight:700;}
+.modal-close{width:32px;height:32px;border-radius:8px;border:1px solid var(--border);background:none;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:18px;color:var(--text-secondary);}
+.modal-close:hover{background:var(--page-bg);}
+.modal-body{padding:24px;}
+.user-info-card{background:var(--page-bg);border-radius:10px;padding:16px;margin-bottom:20px;display:flex;gap:14px;align-items:center;}
+.user-info-card .user-avatar{width:48px;height:48px;border-radius:50%;background:var(--accent);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:18px;color:#fff;flex-shrink:0;}
+.user-info-card .user-details{flex:1;}
+.user-info-card .user-name{font-weight:700;font-size:15px;color:var(--text-primary);}
+.user-info-card .user-email{font-size:12.5px;color:var(--text-secondary);margin-top:2px;}
+.user-info-card .user-phone{font-size:12.5px;color:var(--text-secondary);}
+.doc-section{margin-bottom:20px;}
+.doc-section-title{font-family:'Space Grotesk',sans-serif;font-size:14px;font-weight:600;color:var(--text-primary);margin-bottom:10px;display:flex;align-items:center;gap:8px;}
+.doc-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;}
+.doc-item{background:var(--page-bg);border:1px solid var(--border);border-radius:10px;padding:16px;text-align:center;}
+.doc-item .doc-icon{font-size:36px;margin-bottom:8px;}
+.doc-item .doc-label{font-size:12.5px;font-weight:600;color:var(--text-primary);}
+.doc-item .doc-status{font-size:11px;margin-top:6px;}
+.doc-item img{width:100%;height:120px;object-fit:cover;border-radius:6px;margin-bottom:8px;background:#e5e7eb;}
+.kyc-detail-row{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);font-size:13px;}
+.kyc-detail-row:last-child{border-bottom:none;}
+.kyc-detail-row .label{color:var(--text-secondary);font-weight:500;}
+.kyc-detail-row .value{color:var(--text-primary);font-weight:600;}
+.modal-actions{padding:16px 24px;border-top:1px solid var(--border);display:flex;gap:10px;justify-content:flex-end;position:sticky;bottom:0;background:#fff;border-radius:0 0 14px 14px;}
+.status-chip{display:inline-flex;align-items:center;font-size:11.5px;font-weight:600;padding:3px 10px;border-radius:12px;}
+.status-pending{background:#FEF3C7;color:#92400E;}
+.status-approved{background:#D1FAE5;color:#065F46;}
+.status-rejected{background:#FEE2E2;color:#991B1B;}
+.btn-review-main{background:var(--accent);color:#fff;border:none;border-radius:var(--radius-sm);padding:6px 14px;font-size:12.5px;font-weight:600;cursor:pointer;transition:all 0.15s;font-family:'DM Sans',sans-serif;}
+.btn-review-main:hover{background:var(--accent-hover);}
+</style>
 
 
 <div class="main-wrapper">
@@ -208,63 +285,310 @@ tbody td{padding:12px 16px;font-size:13.5px;color:var(--text-primary);font-varia
       <div class="card-header"><div class="card-title">Pending KYC Applications</div></div>
       <div style="overflow-x:auto;">
         <table>
-          <thead><tr><th>User ID</th><th>Doc Type</th><th>Masked ID</th><th>Face Match</th><th>Submitted</th><th>Action</th></tr></thead>
+          <thead><tr><th>User</th><th>Doc Type</th><th>Masked ID</th><th>Face Match</th><th>Submitted</th><th>Status</th><th>Action</th></tr></thead>
           <tbody id="kyc-tbody">
-            <tr><td colspan="6" style="text-align:center;color:var(--text-secondary);padding:24px;">Loading...</td></tr>
+            <tr><td colspan="7" style="text-align:center;color:var(--text-secondary);padding:24px;">Loading...</td></tr>
           </tbody>
         </table>
       </div>
     </div>
   </main>
+
+<!-- Review Modal -->
+<div class="modal-overlay" id="reviewModal">
+  <div class="modal-box">
+    <div class="modal-header">
+      <h3 id="modalTitle">KYC Review</h3>
+      <button class="modal-close" onclick="closeModal()">&times;</button>
+    </div>
+    <div class="modal-body" id="modalBody">Loading...</div>
+    <div class="modal-actions" id="modalActions"></div>
+  </div>
+</div>
 </div>
 
 <script src="../admin-api.js"></script>
 <script>
+var allDocs = [];
+
 async function loadKycQueue() {
-  const tbody = document.getElementById('kyc-tbody');
+  var tbody = document.getElementById('kyc-tbody');
   try {
-    const docs = await apiFetch('/rental/kyc/queue');
-    if (!docs) return;
+    var docs = await apiFetch('/rental/kyc/queue');
+    if (!docs) docs = [];
+    allDocs = docs;
     document.getElementById('pending-count').textContent = docs.length;
     if (docs.length === 0) {
-      tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--text-secondary);padding:24px;">No pending KYC applications.</td></tr>';
+      tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;color:var(--text-secondary);padding:24px;">No pending KYC applications.</td></tr>';
     } else {
-      tbody.innerHTML = docs.map(d => `
-        <tr>
-          <td style="font-size:12px;font-family:monospace;">${d.userId.slice(0,8)}</td>
-          <td><span class="chip chip-rental">${d.type}</span></td>
-          <td style="font-size:12.5px;">${d.maskedId || '—'}</td>
-          <td>${d.faceMatchScore ? `<span class="face-match face-match-high">${d.faceMatchScore}%</span>` : '—'}</td>
-          <td style="font-size:12.5px;color:var(--text-secondary);">${new Date(d.createdAt).toLocaleDateString('en-IN')}</td>
-          <td style="display:flex;gap:6px;">
-            <button class="btn-review" onclick="approveKyc('${d.id}')">Approve</button>
-            <button class="btn-review" style="border-color:var(--red);color:var(--red);" onclick="rejectKyc('${d.id}')">Reject</button>
-          </td>
-        </tr>
-      `).join('');
+      tbody.innerHTML = docs.map(function(d) {
+        var statusChip = '<span class="status-chip status-pending">Pending</span>';
+        return '<tr>'
+          + '<td style="font-size:12px;font-family:monospace;">' + d.userId.slice(0,8) + '</td>'
+          + '<td><span class="chip chip-rental">' + d.type + '</span></td>'
+          + '<td style="font-size:12.5px;">' + (d.maskedId || '\u2014') + '</td>'
+          + '<td>' + (d.faceMatchScore ? '<span class="face-match face-match-high">' + d.faceMatchScore + '%</span>' : '\u2014') + '</td>'
+          + '<td style="font-size:12.5px;color:var(--text-secondary);">' + new Date(d.createdAt).toLocaleDateString('en-IN') + '</td>'
+          + '<td>' + statusChip + '</td>'
+          + '<td><button class="btn-review-main" onclick="openReview(\'' + d.id + '\',\'' + d.userId + '\')">Review</button></td>'
+          + '</tr>';
+      }).join('');
     }
   } catch (e) {
-    tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;color:#991B1B;padding:24px;">Error: ${e.message}</td></tr>`;
+    tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;color:#991B1B;padding:24px;">Error: ' + e.message + '</td></tr>';
   }
 }
 
-async function approveKyc(id) {
+async function openReview(docId, userId) {
+  var modal = document.getElementById('reviewModal');
+  var body = document.getElementById('modalBody');
+  var actions = document.getElementById('modalActions');
+  modal.classList.add('active');
+  body.innerHTML = '<div style="text-align:center;padding:40px;color:var(--text-secondary);">Loading documents...</div>';
+  actions.innerHTML = '';
+
   try {
-    await apiFetch(`/rental/kyc/${id}/approve`, { method: 'PUT', body: {} });
+    var userRes = null;
+    try { userRes = await apiFetch('/admin/users/' + userId); } catch(e) {}
+
+    var allUserDocs = [];
+    try {
+      var allKyc = await apiFetch('/rental/admin/all-kyc');
+      allUserDocs = allKyc.filter(function(d) { return d.userId === userId; });
+    } catch(e) {
+      allUserDocs = allDocs.filter(function(d) { return d.userId === userId; });
+    }
+
+    var currentDoc = allUserDocs.find(function(d) { return d.id === docId; }) || allDocs.find(function(d) { return d.id === docId; });
+
+    var html = '';
+
+    html += '<div class="user-info-card">';
+    html += '<div class="user-avatar">' + (userRes && userRes.name ? userRes.name.charAt(0).toUpperCase() : 'U') + '</div>';
+    html += '<div class="user-details">';
+    html += '<div class="user-name">' + (userRes && userRes.name ? userRes.name : 'User') + '</div>';
+    html += '<div class="user-email">' + (userRes && userRes.email ? userRes.email : userId.slice(0,8) + '...') + '</div>';
+    html += '<div class="user-phone">' + (userRes && userRes.phone ? userRes.phone : '') + '</div>';
+    html += '</div></div>';
+
+    html += '<div class="doc-section">';
+    html += '<div class="doc-section-title"><svg width="16" height="16" viewBox="0 0 24 24" fill="var(--accent)"><path d="M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg> KYC Details</div>';
+    if (currentDoc) {
+      html += '<div style="background:var(--page-bg);border-radius:8px;padding:14px;">';
+      html += '<div class="kyc-detail-row"><span class="label">Document Type</span><span class="value">' + (currentDoc.type || '').toUpperCase() + '</span></div>';
+      html += '<div class="kyc-detail-row"><span class="label">Masked ID</span><span class="value">' + (currentDoc.maskedId || 'N/A') + '</span></div>';
+      html += '<div class="kyc-detail-row"><span class="label">Face Match Score</span><span class="value">' + (currentDoc.faceMatchScore ? currentDoc.faceMatchScore + '%' : 'N/A') + '</span></div>';
+      html += '<div class="kyc-detail-row"><span class="label">Status</span><span class="value"><span class="status-chip status-' + currentDoc.status + '">' + currentDoc.status.charAt(0).toUpperCase() + currentDoc.status.slice(1) + '</span></span></div>';
+      html += '<div class="kyc-detail-row"><span class="label">Submitted</span><span class="value">' + new Date(currentDoc.createdAt).toLocaleString('en-IN') + '</span></div>';
+      html += '</div>';
+    }
+    html += '</div>';
+
+    html += '<div class="doc-section">';
+    html += '<div class="doc-section-title"><svg width="16" height="16" viewBox="0 0 24 24" fill="var(--accent)"><path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/></svg> Uploaded Documents</div>';
+    html += '<div class="doc-grid">';
+
+    allUserDocs.forEach(function(doc) {
+      var typeLabel = doc.type.toUpperCase();
+      var icon = doc.type === 'aadhaar' ? '&#127380;' : doc.type === 'pan' ? '&#128179;' : '&#128196;';
+      var statusClass = 'status-' + doc.status;
+      html += '<div class="doc-item">';
+      if (doc.docUrlEncrypted && doc.docUrlEncrypted.startsWith('http')) {
+        html += '<img src="' + doc.docUrlEncrypted + '" alt="' + typeLabel + '" onerror="this.style.display=\'none\';this.nextElementSibling.style.display=\'block\'">';
+        html += '<div class="doc-icon" style="display:none">' + icon + '</div>';
+      } else {
+        html += '<div class="doc-icon">' + icon + '</div>';
+      }
+      html += '<div class="doc-label">' + typeLabel + '</div>';
+      html += '<div class="doc-status"><span class="status-chip ' + statusClass + '">' + doc.status.charAt(0).toUpperCase() + doc.status.slice(1) + '</span></div>';
+      html += '</div>';
+    });
+
+    if (currentDoc && currentDoc.selfieUrl) {
+      html += '<div class="doc-item">';
+      if (currentDoc.selfieUrl.startsWith('http')) {
+        html += '<img src="' + currentDoc.selfieUrl + '" alt="Selfie" onerror="this.style.display=\'none\';this.nextElementSibling.style.display=\'block\'">';
+        html += '<div class="doc-icon" style="display:none">&#129331;</div>';
+      } else {
+        html += '<div class="doc-icon">&#129331;</div>';
+      }
+      html += '<div class="doc-label">SELFIE</div>';
+      html += '<div class="doc-status"><span class="status-chip status-pending">Uploaded</span></div>';
+      html += '</div>';
+    } else {
+      html += '<div class="doc-item">';
+      html += '<div class="doc-icon">&#129331;</div>';
+      html += '<div class="doc-label">SELFIE</div>';
+      html += '<div class="doc-status" style="color:var(--text-muted);font-size:11px;">Not uploaded</div>';
+      html += '</div>';
+    }
+
+    html += '</div></div>';
+
+    body.innerHTML = html;
+
+    if (currentDoc && currentDoc.status === 'pending') {
+      actions.innerHTML = '<button class="btn btn-outline" onclick="closeModal()">Cancel</button>'
+        + '<button class="btn btn-danger" onclick="rejectFromModal(\'' + docId + '\')">Reject</button>'
+        + '<button class="btn btn-primary" onclick="approveFromModal(\'' + docId + '\')">Approve</button>';
+    } else {
+      actions.innerHTML = '<button class="btn btn-outline" onclick="closeModal()">Close</button>';
+    }
+
+  } catch(e) {
+    body.innerHTML = '<div style="text-align:center;padding:40px;color:#991B1B;">Error: ' + e.message + '</div>';
+    actions.innerHTML = '<button class="btn btn-outline" onclick="closeModal()">Close</button>';
+  }
+}
+
+function closeModal() {
+  document.getElementById('reviewModal').classList.remove('active');
+}
+
+async function approveFromModal(id) {
+  try {
+    await apiFetch('/rental/kyc/' + id + '/approve', { method: 'PUT', body: {} });
+    closeModal();
     loadKycQueue();
   } catch (e) { alert('Failed: ' + e.message); }
 }
 
-async function rejectKyc(id) {
-  const reason = prompt('Rejection reason:');
+async function rejectFromModal(id) {
+  var reason = prompt('Rejection reason:');
   if (reason === null) return;
   try {
-    await apiFetch(`/rental/kyc/${id}/reject`, { method: 'PUT', body: { reason } });
+    await apiFetch('/rental/kyc/' + id + '/reject', { method: 'PUT', body: { reason: reason } });
+    closeModal();
     loadKycQueue();
   } catch (e) { alert('Failed: ' + e.message); }
 }
+
+document.getElementById('reviewModal').addEventListener('click', function(e) {
+  if (e.target === this) closeModal();
+});
 
 loadKycQueue();
 </script>
-</body>
-</html>
+
+    var userRes = null;
+    try { userRes = await apiFetch('/admin/users/' + userId); } catch(e) {}
+
+    var allUserDocs = [];
+    try {
+      var allKyc = await apiFetch('/rental/admin/all-kyc');
+      allUserDocs = allKyc.filter(function(d) { return d.userId === userId; });
+    } catch(e) {
+      allUserDocs = allDocs.filter(function(d) { return d.userId === userId; });
+    }
+
+    var currentDoc = allUserDocs.find(function(d) { return d.id === docId; }) || allDocs.find(function(d) { return d.id === docId; });
+
+    var html = '';
+
+    html += '<div class="user-info-card">';
+    html += '<div class="user-avatar">' + (userRes && userRes.name ? userRes.name.charAt(0).toUpperCase() : 'U') + '</div>';
+    html += '<div class="user-details">';
+    html += '<div class="user-name">' + (userRes && userRes.name ? userRes.name : 'User') + '</div>';
+    html += '<div class="user-email">' + (userRes && userRes.email ? userRes.email : userId.slice(0,8) + '...') + '</div>';
+    html += '<div class="user-phone">' + (userRes && userRes.phone ? userRes.phone : '') + '</div>';
+    html += '</div></div>';
+
+    html += '<div class="doc-section">';
+    html += '<div class="doc-section-title"><svg width="16" height="16" viewBox="0 0 24 24" fill="var(--accent)"><path d="M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg> KYC Details</div>';
+    if (currentDoc) {
+      html += '<div style="background:var(--page-bg);border-radius:8px;padding:14px;">';
+      html += '<div class="kyc-detail-row"><span class="label">Document Type</span><span class="value">' + (currentDoc.type || '').toUpperCase() + '</span></div>';
+      html += '<div class="kyc-detail-row"><span class="label">Masked ID</span><span class="value">' + (currentDoc.maskedId || 'N/A') + '</span></div>';
+      html += '<div class="kyc-detail-row"><span class="label">Face Match Score</span><span class="value">' + (currentDoc.faceMatchScore ? currentDoc.faceMatchScore + '%' : 'N/A') + '</span></div>';
+      html += '<div class="kyc-detail-row"><span class="label">Status</span><span class="value"><span class="status-chip status-' + currentDoc.status + '">' + currentDoc.status.charAt(0).toUpperCase() + currentDoc.status.slice(1) + '</span></span></div>';
+      html += '<div class="kyc-detail-row"><span class="label">Submitted</span><span class="value">' + new Date(currentDoc.createdAt).toLocaleString('en-IN') + '</span></div>';
+      html += '</div>';
+    }
+    html += '</div>';
+
+    html += '<div class="doc-section">';
+    html += '<div class="doc-section-title"><svg width="16" height="16" viewBox="0 0 24 24" fill="var(--accent)"><path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/></svg> Uploaded Documents</div>';
+    html += '<div class="doc-grid">';
+
+    allUserDocs.forEach(function(doc) {
+      var typeLabel = doc.type.toUpperCase();
+      var icon = doc.type === 'aadhaar' ? '&#127380;' : doc.type === 'pan' ? '&#128179;' : '&#128196;';
+      var statusClass = 'status-' + doc.status;
+      html += '<div class="doc-item">';
+      if (doc.docUrlEncrypted && doc.docUrlEncrypted.startsWith('http')) {
+        html += '<img src="' + doc.docUrlEncrypted + '" alt="' + typeLabel + '" onerror="this.style.display=\'none\';this.nextElementSibling.style.display=\'block\'">';
+        html += '<div class="doc-icon" style="display:none">' + icon + '</div>';
+      } else {
+        html += '<div class="doc-icon">' + icon + '</div>';
+      }
+      html += '<div class="doc-label">' + typeLabel + '</div>';
+      html += '<div class="doc-status"><span class="status-chip ' + statusClass + '">' + doc.status.charAt(0).toUpperCase() + doc.status.slice(1) + '</span></div>';
+      html += '</div>';
+    });
+
+    if (currentDoc && currentDoc.selfieUrl) {
+      html += '<div class="doc-item">';
+      if (currentDoc.selfieUrl.startsWith('http')) {
+        html += '<img src="' + currentDoc.selfieUrl + '" alt="Selfie" onerror="this.style.display=\'none\';this.nextElementSibling.style.display=\'block\'">';
+        html += '<div class="doc-icon" style="display:none">&#129331;</div>';
+      } else {
+        html += '<div class="doc-icon">&#129331;</div>';
+      }
+      html += '<div class="doc-label">SELFIE</div>';
+      html += '<div class="doc-status"><span class="status-chip status-pending">Uploaded</span></div>';
+      html += '</div>';
+    } else {
+      html += '<div class="doc-item">';
+      html += '<div class="doc-icon">&#129331;</div>';
+      html += '<div class="doc-label">SELFIE</div>';
+      html += '<div class="doc-status" style="color:var(--text-muted);font-size:11px;">Not uploaded</div>';
+      html += '</div>';
+    }
+
+    html += '</div></div>';
+
+    body.innerHTML = html;
+
+    if (currentDoc && currentDoc.status === 'pending') {
+      actions.innerHTML = '<button class="btn btn-outline" onclick="closeModal()">Cancel</button>'
+        + '<button class="btn btn-danger" onclick="rejectFromModal(\'' + docId + '\')">Reject</button>'
+        + '<button class="btn btn-primary" onclick="approveFromModal(\'' + docId + '\')">Approve</button>';
+    } else {
+      actions.innerHTML = '<button class="btn btn-outline" onclick="closeModal()">Close</button>';
+    }
+
+  } catch(e) {
+    body.innerHTML = '<div style="text-align:center;padding:40px;color:#991B1B;">Error: ' + e.message + '</div>';
+    actions.innerHTML = '<button class="btn btn-outline" onclick="closeModal()">Close</button>';
+  }
+}
+
+function closeModal() {
+  document.getElementById('reviewModal').classList.remove('active');
+}
+
+async function approveFromModal(id) {
+  try {
+    await apiFetch('/rental/kyc/' + id + '/approve', { method: 'PUT', body: {} });
+    closeModal();
+    loadKycQueue();
+  } catch (e) { alert('Failed: ' + e.message); }
+}
+
+async function rejectFromModal(id) {
+  var reason = prompt('Rejection reason:');
+  if (reason === null) return;
+  try {
+    await apiFetch('/rental/kyc/' + id + '/reject', { method: 'PUT', body: { reason: reason } });
+    closeModal();
+    loadKycQueue();
+  } catch (e) { alert('Failed: ' + e.message); }
+}
+
+document.getElementById('reviewModal').addEventListener('click', function(e) {
+  if (e.target === this) closeModal();
+});
+
+loadKycQueue();
+</script>
+</body>>

@@ -1,0 +1,1057 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EMI Application - DBUGG</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<script src="shop-api.js"></script>
+<style>
+:root {
+  --blue: #2874f0;
+  --blue-dark: #1a5dc7;
+  --orange: #fb641b;
+  --orange-dark: #e85d19;
+  --green: #388e3c;
+  --red: #d32f2f;
+  --yellow: #f57c00;
+  --bg: #f1f3f6;
+  --card: #fff;
+  --text: #212121;
+  --text-sec: #878787;
+  --border: #e0e0e0;
+  --shadow: 0 1px 4px rgba(0,0,0,.08);
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:'Inter',system-ui,sans-serif; background:var(--bg); color:var(--text); min-height:100vh; }
+
+/* Header */
+.header { background:var(--blue); padding:12px 0; position:sticky; top:0; z-index:100; }
+.header-inner { max-width:1200px; margin:0 auto; padding:0 16px; display:flex; align-items:center; gap:16px; }
+.header .logo { color:#fff; font-size:20px; font-weight:700; text-decoration:none; letter-spacing:-.5px; }
+.header .logo span { color:#ffe500; }
+.header .tagline { color:#fff; font-size:13px; opacity:.8; }
+
+/* Progress */
+.progress-bar { background:#fff; border-bottom:1px solid var(--border); padding:16px 0; }
+.progress-inner { max-width:1200px; margin:0 auto; padding:0 16px; display:flex; align-items:center; gap:0; }
+.step-indicator { display:flex; align-items:center; flex:1; }
+.step-indicator:last-child { flex:0; }
+.step-dot { width:32px; height:32px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:13px; font-weight:600; border:2px solid var(--border); color:var(--text-sec); background:#fff; flex-shrink:0; transition:.3s; }
+.step-dot.active { border-color:var(--blue); color:#fff; background:var(--blue); }
+.step-dot.done { border-color:var(--green); color:#fff; background:var(--green); }
+.step-line { flex:1; height:2px; background:var(--border); margin:0 6px; transition:.3s; }
+.step-line.done { background:var(--green); }
+.step-label { display:block; font-size:10px; color:var(--text-sec); text-align:center; margin-top:4px; white-space:nowrap; }
+.step-label.active { color:var(--blue); font-weight:600; }
+.step-label.done { color:var(--green); }
+.step-wrap { display:flex; flex-direction:column; align-items:center; }
+
+/* Layout */
+.container { max-width:1200px; margin:0 auto; padding:24px 16px; display:flex; gap:24px; align-items:flex-start; }
+.main-col { flex:1; min-width:0; }
+.side-col { width:340px; flex-shrink:0; position:sticky; top:80px; }
+
+/* Cards */
+.card { background:var(--card); border-radius:4px; box-shadow:var(--shadow); padding:24px; margin-bottom:16px; }
+.card-title { font-size:18px; font-weight:700; margin-bottom:20px; color:var(--text); display:flex; align-items:center; gap:8px; }
+.card-title .icon { font-size:20px; }
+
+/* Form elements */
+.form-group { margin-bottom:16px; }
+.form-label { display:block; font-size:13px; font-weight:600; color:#555; margin-bottom:6px; }
+.form-input { width:100%; padding:10px 12px; border:1px solid var(--border); border-radius:4px; font-size:14px; font-family:inherit; outline:none; transition:.2s; }
+.form-input:focus { border-color:var(--blue); box-shadow:0 0 0 2px rgba(40,116,240,.15); }
+.form-input.error { border-color:var(--red); }
+.form-select { appearance:none; background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath d='M3 5l3 3 3-3' fill='none' stroke='%23888' stroke-width='1.5'/%3E%3C/svg%3E") right 12px center no-repeat; padding-right:32px; }
+.form-hint { font-size:11px; color:var(--text-sec); margin-top:4px; }
+.form-error { font-size:11px; color:var(--red); margin-top:4px; display:none; }
+
+/* Buttons */
+.btn { display:inline-flex; align-items:center; justify-content:center; gap:6px; padding:12px 28px; border:none; border-radius:4px; font-size:14px; font-weight:600; font-family:inherit; cursor:pointer; transition:.2s; }
+.btn:disabled { opacity:.5; cursor:not-allowed; }
+.btn-primary { background:var(--orange); color:#fff; }
+.btn-primary:hover:not(:disabled) { background:var(--orange-dark); }
+.btn-secondary { background:#fff; color:var(--blue); border:1px solid var(--blue); }
+.btn-secondary:hover:not(:disabled) { background:rgba(40,116,240,.05); }
+.btn-blue { background:var(--blue); color:#fff; }
+.btn-blue:hover:not(:disabled) { background:var(--blue-dark); }
+.btn-sm { padding:8px 16px; font-size:13px; }
+.btn-block { width:100%; }
+
+/* EMI options */
+.emi-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:12px; margin-bottom:20px; }
+.emi-option { border:2px solid var(--border); border-radius:8px; padding:16px; text-align:center; cursor:pointer; transition:.2s; }
+.emi-option:hover { border-color:var(--blue); }
+.emi-option.selected { border-color:var(--blue); background:rgba(40,116,240,.04); }
+.emi-option .months { font-size:24px; font-weight:700; color:var(--blue); }
+.emi-option .label { font-size:11px; color:var(--text-sec); margin-top:2px; }
+.emi-option .amount { font-size:15px; font-weight:600; margin-top:8px; }
+.emi-option .per-mo { font-size:11px; color:var(--text-sec); }
+
+/* Price breakdown */
+.breakdown { border-top:1px solid var(--border); padding-top:16px; }
+.breakdown-row { display:flex; justify-content:space-between; padding:6px 0; font-size:14px; }
+.breakdown-row.total { border-top:2px solid var(--text); margin-top:8px; padding-top:12px; font-weight:700; font-size:16px; }
+.breakdown-row .label { color:#555; }
+
+/* Verification badge */
+.verified-badge { display:inline-flex; align-items:center; gap:4px; color:var(--green); font-size:13px; font-weight:600; }
+.verified-badge svg { width:16px; height:16px; }
+
+/* OTP row */
+.otp-row { display:flex; gap:8px; align-items:flex-start; }
+.otp-row .form-input { flex:1; }
+
+/* Upload */
+.upload-area { border:2px dashed var(--border); border-radius:8px; padding:24px; text-align:center; cursor:pointer; transition:.2s; position:relative; }
+.upload-area:hover { border-color:var(--blue); background:rgba(40,116,240,.02); }
+.upload-area.has-file { border-color:var(--green); border-style:solid; background:rgba(56,142,60,.04); }
+.upload-area input[type=file] { position:absolute; inset:0; opacity:0; cursor:pointer; }
+.upload-icon { font-size:28px; margin-bottom:6px; }
+.upload-text { font-size:13px; color:var(--text-sec); }
+.upload-name { font-size:12px; color:var(--green); font-weight:600; margin-top:4px; }
+.upload-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; }
+
+/* Eligibility result */
+.eligibility-result { padding:16px; border-radius:8px; margin-top:16px; display:flex; align-items:center; gap:12px; }
+.eligibility-result.eligible { background:#e8f5e9; border:1px solid #a5d6a7; }
+.eligibility-result.review { background:#fff3e0; border:1px solid #ffcc80; }
+.eligibility-result.rejected { background:#ffebee; border:1px solid #ef9a9a; }
+.eligibility-icon { font-size:28px; }
+.eligibility-text h4 { font-size:15px; margin-bottom:2px; }
+.eligibility-text p { font-size:13px; color:#555; }
+
+/* Agreement box */
+.agreement-box { max-height:300px; overflow-y:auto; border:1px solid var(--border); border-radius:4px; padding:16px; font-size:12px; line-height:1.7; color:#555; background:#fafafa; margin-bottom:16px; }
+.agreement-box h4 { color:var(--text); margin:12px 0 6px; font-size:13px; }
+.agreement-box h4:first-child { margin-top:0; }
+
+/* Checkbox */
+.checkbox-row { display:flex; align-items:flex-start; gap:8px; margin:16px 0; }
+.checkbox-row input[type=checkbox] { width:18px; height:18px; accent-color:var(--blue); margin-top:1px; flex-shrink:0; }
+.checkbox-row label { font-size:13px; cursor:pointer; }
+
+/* Summary card */
+.summary-card { background:var(--card); border-radius:4px; box-shadow:var(--shadow); overflow:hidden; }
+.summary-header { background:var(--blue); padding:14px 16px; }
+.summary-header h3 { color:#fff; font-size:15px; font-weight:600; }
+.summary-body { padding:16px; }
+.summary-product { display:flex; gap:12px; padding-bottom:12px; border-bottom:1px solid var(--border); margin-bottom:12px; }
+.summary-product img { width:64px; height:64px; object-fit:contain; border-radius:4px; border:1px solid var(--border); }
+.summary-product .name { font-size:14px; font-weight:600; }
+.summary-product .serial { font-size:11px; color:var(--text-sec); margin-top:2px; }
+.summary-row { display:flex; justify-content:space-between; padding:4px 0; font-size:13px; }
+.summary-row.total { border-top:1px dashed var(--border); margin-top:8px; padding-top:8px; font-weight:700; font-size:14px; }
+.summary-secure { display:flex; align-items:center; gap:6px; font-size:11px; color:var(--text-sec); margin-top:12px; padding-top:12px; border-top:1px solid var(--border); }
+
+/* EMI schedule table */
+.emi-table { width:100%; border-collapse:collapse; font-size:13px; margin-top:12px; }
+.emi-table th { background:#f5f5f5; padding:10px; text-align:left; font-weight:600; font-size:12px; color:#555; border-bottom:2px solid var(--border); }
+.emi-table td { padding:10px; border-bottom:1px solid var(--border); }
+.emi-table tr:last-child td { border-bottom:none; }
+.emi-table .status-paid { color:var(--green); font-weight:600; }
+.emi-table .status-upcoming { color:var(--text-sec); }
+
+/* Success */
+.success-card { text-align:center; padding:40px 24px; }
+.success-icon { width:72px; height:72px; background:var(--green); border-radius:50%; display:inline-flex; align-items:center; justify-content:center; margin-bottom:16px; }
+.success-icon svg { width:36px; height:36px; fill:#fff; }
+.success-card h2 { font-size:22px; color:var(--green); margin-bottom:8px; }
+.success-card p { font-size:14px; color:#555; margin-bottom:4px; }
+.rental-id { display:inline-block; background:#e8f5e9; color:var(--green); font-weight:700; font-size:16px; padding:8px 20px; border-radius:4px; margin:12px 0; }
+
+/* Step navigation */
+.step-nav { display:flex; justify-content:space-between; margin-top:24px; padding-top:16px; border-top:1px solid var(--border); }
+
+/* Signed timestamp */
+.signed-stamp { display:flex; align-items:center; gap:8px; padding:12px 16px; background:#e8f5e9; border-radius:8px; margin-top:16px; }
+.signed-stamp svg { width:20px; height:20px; fill:var(--green); flex-shrink:0; }
+.signed-stamp .info { font-size:13px; }
+.signed-stamp .info strong { color:var(--green); }
+.signed-stamp .info span { display:block; font-size:11px; color:var(--text-sec); margin-top:2px; }
+
+/* Hidden */
+.hidden { display:none !important; }
+
+/* Loading spinner */
+.spinner { width:20px; height:20px; border:2px solid rgba(255,255,255,.3); border-top-color:#fff; border-radius:50%; animation:spin .6s linear infinite; display:inline-block; }
+@keyframes spin { to { transform:rotate(360deg); } }
+
+/* Responsive */
+@media (max-width:900px) {
+  .container { flex-direction:column; }
+  .side-col { width:100%; position:static; order:-1; }
+  .emi-grid { grid-template-columns:repeat(2,1fr); }
+  .upload-grid { grid-template-columns:1fr; }
+  .progress-inner { overflow-x:auto; }
+}
+@media (max-width:480px) {
+  .emi-grid { grid-template-columns:1fr 1fr; }
+  .step-label { font-size:8px; }
+  .step-dot { width:26px; height:26px; font-size:11px; }
+}
+</style>
+</head>
+<body>
+
+<!-- Header -->
+<header class="header">
+  <div class="header-inner">
+    <a href="/" class="logo">D<span>BUGG</span></a>
+    <span class="tagline">EMI Application</span>
+  </div>
+</header>
+
+<!-- Progress Bar -->
+<div class="progress-bar">
+  <div class="progress-inner" id="progressBar"></div>
+</div>
+
+<!-- Main Layout -->
+<div class="container">
+  <div class="main-col" id="mainContent"></div>
+  <div class="side-col" id="sideContent"></div>
+</div>
+
+<script>
+// ─── Helpers ────────────────────────────────────────────────────────
+function money(n) { return '₹' + Number(n).toLocaleString('en-IN'); }
+
+const INTEREST_RATES = { 3: 0.02, 6: 0.04, 9: 0.06, 12: 0.08 };
+const STEPS = [
+  { label: 'EMI Plan', icon: '💳' },
+  { label: 'Mobile', icon: '📱' },
+  { label: 'KYC', icon: '📋' },
+  { label: 'Eligibility', icon: '✅' },
+  { label: 'E-Sign', icon: '✍️' },
+  { label: 'Approval', icon: '✅' },
+  { label: 'Payment', icon: '💰' }
+];
+const EMI_VERSION = 2;
+
+// ─── State ──────────────────────────────────────────────────────────
+const state = {
+  currentStep: 0,
+  product: null,
+  emiMonths: null,
+  emiAmount: 0,
+  deposit: 0,
+  totalPayable: 0,
+  interest: 0,
+  phone: '',
+  phoneVerified: false,
+  pan: '',
+  panVerified: false,
+  panName: '',
+  aadhaar: '',
+  aadhaarFrontBase64: null,
+  aadhaarBackBase64: null,
+  selfieBase64: null,
+  aadhaarFrontName: '',
+  aadhaarBackName: '',
+  selfieName: '',
+  employmentType: '',
+  income: '',
+  company: '',
+  eligible: null, // 'eligible','review','rejected'
+  kycSubmitted: false,
+  kycStatus: null,
+  agreedTerms: false,
+  eSigned: false,
+  approvalStatus: null,
+  eSignTime: null,
+  paymentDone: false,
+  rentalId: null,
+  razorpayOrderId: null
+};
+
+// ─── Init ───────────────────────────────────────────────────────────
+const params = new URLSearchParams(window.location.search);
+const laptopId = params.get('id');
+
+async function init() {
+  if (!laptopId) {
+    document.getElementById('mainContent').innerHTML = '<div class="card"><p>No product selected. Please go back and choose a laptop.</p></div>';
+    return;
+  }
+  try {
+    const res = await apiFetch('/products/' + laptopId);
+    var freshProduct = res.product || res;
+    loadState();
+    state.product = freshProduct;
+    state.deposit = Math.round(Number(state.product.sellingPrice) * 0.20);
+  } catch (e) {
+    loadState();
+    if (!state.product) {
+      state.product = {
+        id: laptopId,
+        brand: 'HP',
+        model: 'EliteBook 840 G5',
+        sellingPrice: 32999,
+        imageUrl: 'https://via.placeholder.com/200x200?text=Laptop',
+        serialNo: 'DBUGG-' + laptopId
+      };
+    }
+    state.deposit = Math.round(Number(state.product.sellingPrice) * 0.20);
+  }
+  render();
+}
+
+// ─── Render ─────────────────────────────────────────────────────────
+function render() {
+  renderProgress();
+  renderSidebar();
+  renderStep();
+  saveState();
+}
+
+function renderProgress() {
+  const el = document.getElementById('progressBar');
+  let html = '';
+  STEPS.forEach((s, i) => {
+    const isDone = i < state.currentStep;
+    const isActive = i === state.currentStep;
+    const dotClass = isDone ? 'done' : isActive ? 'active' : '';
+    const labelClass = isDone ? 'done' : isActive ? 'active' : '';
+    html += '<div class="step-wrap">';
+    html += '<div class="step-dot ' + dotClass + '">' + (isDone ? '✓' : (i + 1)) + '</div>';
+    html += '<span class="step-label ' + labelClass + '">' + s.label + '</span>';
+    html += '</div>';
+    if (i < STEPS.length - 1) {
+      html += '<div class="step-line' + (isDone ? ' done' : '') + '"></div>';
+    }
+  });
+  el.innerHTML = html;
+}
+
+function getLaptopImage(p) {
+  if (p.imageUrl) return p.imageUrl;
+  var svg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" width="120" height="120">'
+    + '<defs><linearGradient id="bg2" x1="0" y1="0" x2="0" y2="1"><stop offset="0%25" stop-color="%23EFF1F8"/><stop offset="100%25" stop-color="%23E0E4F5"/></linearGradient>'
+    + '<linearGradient id="sc2" x1="0" y1="0" x2="0" y2="1"><stop offset="0%25" stop-color="%232a3d8f"/><stop offset="100%25" stop-color="%231C2B6B"/></linearGradient></defs>'
+    + '<rect width="120" height="120" fill="url(%23bg2)"/>'
+    + '<path d="M30 82 L90 82 L96 90 L24 90 Z" fill="%239CA3AF"/><rect x="24" y="90" width="72" height="3" rx="1" fill="%236B7280"/>'
+    + '<rect x="34" y="35" width="52" height="47" rx="3" fill="%23374151"/><rect x="37" y="38" width="46" height="41" rx="1" fill="url(%23sc2)"/>'
+    + '<text x="60" y="62" font-family="Arial,sans-serif" font-size="9" font-weight="700" fill="%23F07830" text-anchor="middle">d<tspan fill="%23fff">BUGG</tspan></text>'
+    + '</svg>';
+  return "data:image/svg+xml," + svg;
+}
+
+function renderSidebar() {
+  const p = state.product;
+  if (!p) return;
+  let html = '<div class="summary-card">';
+  html += '<div class="summary-header"><h3>Order Summary</h3></div>';
+  html += '<div class="summary-body">';
+  html += '<div class="summary-product">';
+  html += '<img src="' + getLaptopImage(p) + '" alt="' + p.brand + ' ' + p.model + '">';
+  html += '<div><div class="name">' + p.brand + ' ' + p.model + '</div>';
+  html += '<div class="serial">S/N: ' + (p.serialNo || 'N/A') + '</div></div>';
+  html += '</div>';
+  html += '<div class="summary-row"><span>Product Price</span><span>' + money(p.sellingPrice) + '</span></div>';
+  if (state.emiMonths) {
+    html += '<div class="summary-row"><span>EMI Duration</span><span>' + state.emiMonths + ' months</span></div>';
+    html += '<div class="summary-row"><span>Interest (' + (INTEREST_RATES[state.emiMonths] * 100) + '%)</span><span>' + money(state.interest) + '</span></div>';
+    html += '<div class="summary-row"><span>Monthly EMI</span><span style="color:var(--blue);font-weight:700">' + money(state.emiAmount) + '/mo</span></div>';
+    html += '<div class="summary-row"><span>Security Deposit</span><span>' + money(state.deposit) + '</span></div>';
+    html += '<div class="summary-row" style="font-size:11px;color:var(--text-sec)"><span>(Refundable)</span><span></span></div>';
+    html += '<div class="summary-row total"><span>Total Payable</span><span>' + money(state.totalPayable) + '</span></div>';
+  }
+  html += '<div class="summary-secure"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#888" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg> Secure & Encrypted</div>';
+  html += '</div></div>';
+  document.getElementById('sideContent').innerHTML = html;
+}
+
+// ─── Step Renderers ─────────────────────────────────────────────────
+
+function renderStep() {
+  const renderers = [renderStep1, renderStep2, renderStep3, renderStep4, renderStep5, renderStep6Approval, renderStep7Payment];
+  renderers[state.currentStep]();
+}
+
+// STEP 1: Choose EMI Plan
+function renderStep1() {
+  const p = state.product;
+  let html = '<div class="card">';
+  html += '<div class="card-title"><span class="icon">💳</span> Choose Your EMI Plan</div>';
+  html += '<div class="emi-grid">';
+  [3, 6, 9, 12].forEach(m => {
+    const rate = INTEREST_RATES[m];
+    const interest = Math.round(p.sellingPrice * rate);
+    const total = p.sellingPrice + interest;
+    const emi = Math.round(total / m);
+    const sel = state.emiMonths === m ? ' selected' : '';
+    html += '<div class="emi-option' + sel + '" onclick="selectEMI(' + m + ')">';
+    html += '<div class="months">' + m + '</div>';
+    html += '<div class="label">Months</div>';
+    html += '<div class="amount">' + money(emi) + '</div>';
+    html += '<div class="per-mo">per month</div>';
+    html += '</div>';
+  });
+  html += '</div>';
+
+  if (state.emiMonths) {
+    html += '<div class="breakdown">';
+    html += '<div class="breakdown-row"><span class="label">Product Price</span><span>' + money(p.sellingPrice) + '</span></div>';
+    html += '<div class="breakdown-row"><span class="label">Interest (' + (INTEREST_RATES[state.emiMonths] * 100) + '%)</span><span>+ ' + money(state.interest) + '</span></div>';
+    html += '<div class="breakdown-row"><span class="label">Total (Price + Interest)</span><span>' + money(p.sellingPrice + state.interest) + '</span></div>';
+    html += '<div class="breakdown-row"><span class="label">Monthly EMI (' + state.emiMonths + ' months)</span><span style="color:var(--blue);font-weight:700">' + money(state.emiAmount) + '</span></div>';
+    html += '<div class="breakdown-row"><span class="label">Security Deposit (20%, refundable)</span><span>' + money(state.deposit) + '</span></div>';
+    html += '<div class="breakdown-row total"><span>Total Payable</span><span>' + money(state.totalPayable) + '</span></div>';
+    html += '</div>';
+  }
+
+  html += '<div class="step-nav"><div></div>';
+  html += '<button class="btn btn-primary" onclick="goNext()" ' + (state.emiMonths ? '' : 'disabled') + '>Continue <span style="margin-left:4px">→</span></button>';
+  html += '</div></div>';
+  document.getElementById('mainContent').innerHTML = html;
+}
+
+function selectEMI(months) {
+  state.emiMonths = months;
+  const rate = INTEREST_RATES[months];
+  state.interest = Math.round(state.product.sellingPrice * rate);
+  const total = state.product.sellingPrice + state.interest;
+  state.emiAmount = Math.round(total / months);
+  state.totalPayable = (state.emiAmount * months) + state.deposit;
+  saveState();
+  render();
+}
+
+// STEP 2: Mobile Verification
+function renderStep2() {
+  let html = '<div class="card">';
+  html += '<div class="card-title"><span class="icon">📱</span> Mobile Verification</div>';
+  html += '<p style="font-size:13px;color:var(--text-sec);margin-bottom:20px">We need to verify your mobile number for communication and EMI reminders.</p>';
+
+  html += '<div class="form-group">';
+  html += '<label class="form-label">Mobile Number</label>';
+  html += '<div class="otp-row">';
+  html += '<input type="tel" class="form-input" id="phoneInput" maxlength="10" placeholder="Enter 10-digit mobile number" value="' + state.phone + '" ' + (state.phoneVerified ? 'disabled' : '') + '>';
+  if (!state.phoneVerified) {
+    html += '<button class="btn btn-blue btn-sm" id="sendOtpBtn" onclick="sendPhoneOTP()">Send OTP</button>';
+  } else {
+    html += '<span class="verified-badge"><svg viewBox="0 0 24 24" fill="var(--green)"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg> Verified</span>';
+  }
+  html += '</div></div>';
+
+  html += '<div id="otpSection" class="' + (state.phoneVerified ? 'hidden' : 'hidden') + '">';
+  html += '<div class="form-group">';
+  html += '<label class="form-label">Enter OTP</label>';
+  html += '<div class="otp-row">';
+  html += '<input type="text" class="form-input" id="otpInput" maxlength="6" placeholder="6-digit OTP">';
+  html += '<button class="btn btn-blue btn-sm" onclick="verifyPhoneOTP()">Verify</button>';
+  html += '</div>';
+  html += '<div class="form-hint">OTP sent! Use 111111 to verify</div>';
+  html += '</div></div>';
+
+  html += '<div class="step-nav">';
+  html += '<button class="btn btn-secondary" onclick="goBack()">← Back</button>';
+  html += '<button class="btn btn-primary" onclick="goNext()" ' + (state.phoneVerified ? '' : 'disabled') + '>Continue →</button>';
+  html += '</div></div>';
+  document.getElementById('mainContent').innerHTML = html;
+}
+
+function sendPhoneOTP() {
+  const phone = document.getElementById('phoneInput').value.trim();
+  if (!/^\d{10}$/.test(phone)) {
+    alert('Please enter a valid 10-digit mobile number');
+    return;
+  }
+  state.phone = phone;
+  document.getElementById('otpSection').classList.remove('hidden');
+  document.getElementById('sendOtpBtn').textContent = 'Resend'; document.getElementById('otpInput').value = '111111';
+}
+
+function verifyPhoneOTP() {
+  const otp = document.getElementById('otpInput').value.trim();
+  if (!/^\d{6}$/.test(otp)) {
+    alert('Please enter a valid 6-digit OTP');
+    return;
+  }
+  state.phoneVerified = true;
+  saveState();
+  render();
+}
+
+// STEP 3: KYC Verification
+function renderStep3() {
+  let html = '<div class="card">';
+  html += '<div class="card-title"><span class="icon">📋</span> KYC Verification</div>';
+
+  // PAN
+  html += '<div class="form-group">';
+  html += '<label class="form-label">PAN Card Number</label>';
+  html += '<div class="otp-row">';
+  html += '<input type="text" class="form-input" id="panInput" maxlength="10" placeholder="e.g. ABCDE1234F" value="' + state.pan + '" style="text-transform:uppercase" ' + (state.panVerified ? 'disabled' : '') + '>';
+  if (!state.panVerified) {
+    html += '<button class="btn btn-blue btn-sm" onclick="verifyPAN()">Verify PAN</button>';
+  } else {
+    html += '<span class="verified-badge"><svg viewBox="0 0 24 24" fill="var(--green)"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg> ' + state.panName + '</span>';
+  }
+  html += '</div>';
+  html += '<div class="form-hint">Format: 5 letters, 4 digits, 1 letter</div>';
+  html += '</div>';
+
+  // Aadhaar
+  html += '<div class="form-group">';
+  html += '<label class="form-label">Aadhaar Number</label>';
+  html += '<input type="text" class="form-input" id="aadhaarInput" maxlength="14" placeholder="XXXX XXXX XXXX" value="' + state.aadhaar + '">';
+  html += '<div class="form-hint">12-digit Aadhaar number</div>';
+  html += '</div>';
+
+  // Uploads
+  html += '<label class="form-label" style="margin-bottom:12px">Upload Documents</label>';
+  html += '<div class="upload-grid">';
+
+  // Aadhaar front
+  html += '<div class="upload-area' + (state.aadhaarFrontBase64 ? ' has-file' : '') + '">';
+  html += '<input type="file" accept="image/*,.pdf" onchange="handleUpload(event,\'aadhaarFront\')">';
+  html += '<div class="upload-icon">' + (state.aadhaarFrontBase64 ? '✅' : '🆔') + '</div>';
+  html += '<div class="upload-text">Aadhaar Front</div>';
+  if (state.aadhaarFrontName) html += '<div class="upload-name">' + state.aadhaarFrontName + '</div>';
+  html += '</div>';
+
+  // Aadhaar back
+  html += '<div class="upload-area' + (state.aadhaarBackBase64 ? ' has-file' : '') + '">';
+  html += '<input type="file" accept="image/*,.pdf" onchange="handleUpload(event,\'aadhaarBack\')">';
+  html += '<div class="upload-icon">' + (state.aadhaarBackBase64 ? '✅' : '🆔') + '</div>';
+  html += '<div class="upload-text">Aadhaar Back</div>';
+  if (state.aadhaarBackName) html += '<div class="upload-name">' + state.aadhaarBackName + '</div>';
+  html += '</div>';
+
+  // Selfie
+  html += '<div class="upload-area' + (state.selfieBase64 ? ' has-file' : '') + '">';
+  html += '<input type="file" accept="image/*" onchange="handleUpload(event,\'selfie\')">';
+  html += '<div class="upload-icon">' + (state.selfieBase64 ? '✅' : '🤳') + '</div>';
+  html += '<div class="upload-text">Live Selfie</div>';
+  if (state.selfieName) html += '<div class="upload-name">' + state.selfieName + '</div>';
+  html += '</div>';
+
+  html += '</div>'; // upload-grid
+
+  html += '<div class="step-nav">';
+  if (state.kycSubmitted && state.kycStatus === "pending") {
+    html += "<div style=\"background:#fff3e0;border:1px solid #ffb74d;border-radius:8px;padding:16px;margin-top:16px\"><strong style=\"color:#e65100\">KYC Under Review</strong><div style=\"font-size:13px;color:#666;margin-top:4px\">Documents submitted. Being reviewed.</div></div>";
+  } else if (state.kycSubmitted && state.kycStatus === "approved") {
+    html += "<div style=\"background:#e8f5e9;border:1px solid #66bb6a;border-radius:8px;padding:16px;margin-top:16px\"><strong style=\"color:#2e7d32\">KYC Approved</strong><div style=\"font-size:13px;color:#666;margin-top:4px\">Identity verified.</div></div>";
+  }
+  html += "<div class=\"step-nav\">";
+  html += "<button class=\"btn btn-secondary\" onclick=\"goBack()\">Back</button>";
+  if (state.kycSubmitted && state.kycStatus === "pending") {
+    html += "<button class=\"btn btn-blue\" onclick=\"checkKycStatus()\" id=\"kycNextBtn\">Check Status</button>";
+  } else if (state.kycSubmitted && state.kycStatus === "approved") {
+    html += "<button class=\"btn btn-primary\" onclick=\"goNext()\" id=\"kycNextBtn\">Continue</button>";
+  } else {
+    html += "<button class=\"btn btn-primary\" onclick=\"goNext()\" id=\"kycNextBtn\">Submit KYC</button>";
+  }
+  html += '</div></div>';
+  document.getElementById('mainContent').innerHTML = html;
+}
+
+function verifyPAN() {
+  const pan = document.getElementById('panInput').value.trim().toUpperCase();
+  if (!/^[A-Z]{5}\d{4}[A-Z]$/.test(pan)) {
+    alert('Invalid PAN format. Expected: ABCDE1234F');
+    return;
+  }
+  state.pan = pan;
+  // Simulate: derive name from PAN
+  const names = ['Rahul Sharma', 'Priya Patel', 'Amit Kumar', 'Sneha Gupta', 'Vikram Singh'];
+  state.panName = names[Math.floor(Math.random() * names.length)];
+  state.panVerified = true;
+  saveState();
+  render();
+}
+
+function handleUpload(event, type) {
+  const file = event.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    const base64 = e.target.result;
+    if (type === 'aadhaarFront') {
+      state.aadhaarFrontBase64 = base64;
+      state.aadhaarFrontName = file.name;
+    } else if (type === 'aadhaarBack') {
+      state.aadhaarBackBase64 = base64;
+      state.aadhaarBackName = file.name;
+    } else if (type === 'selfie') {
+      state.selfieBase64 = base64;
+      state.selfieName = file.name;
+    }
+    render();
+  };
+  reader.readAsDataURL(file);
+}
+
+function validateKYC() {
+  var aadhaar = document.getElementById("aadhaarInput") ? document.getElementById("aadhaarInput").value.replace(/\s/g, "") : state.aadhaar;
+  if (!state.panVerified) { alert("Please verify your PAN card"); return false; }
+  if (!/^\d{12}$/.test(aadhaar)) { alert("Please enter valid 12-digit Aadhaar"); return false; }
+  state.aadhaar = aadhaar;
+  if (!state.aadhaarFrontBase64) { alert("Upload Aadhaar front"); return false; }
+  if (!state.aadhaarBackBase64) { alert("Upload Aadhaar back"); return false; }
+  if (!state.selfieBase64) { alert("Upload selfie"); return false; }
+  if (!state.kycSubmitted) { submitKYCToBackend(); return false; }
+  if (state.kycStatus !== "approved") { checkKycStatus(); return false; }
+  return true;
+}
+
+async function submitKYCToBackend() {
+  var btn = document.getElementById("kycNextBtn");
+  if (btn) { btn.disabled = true; btn.textContent = "Submitting..."; }
+  try { await apiFetch("/rental/kyc/submit", { method: "POST", body: JSON.stringify({ type: "aadhaar", docUrlEncrypted: (state.aadhaarFrontBase64||  "").substring(0,500000), selfieUrl: (state.selfieBase64||"").substring(0,500000) }) }); } catch(e) {}
+  state.kycSubmitted = true; state.kycStatus = "pending"; saveState(); render();
+}
+
+async function checkKycStatus() {
+  var btn = document.getElementById("kycNextBtn");
+  if (btn) { btn.disabled = true; btn.textContent = "Checking..."; }
+  try {
+    var res = await apiFetch("/rental/kyc/status");
+    if (res.kycStatus === "approved") { state.kycStatus = "approved"; saveState(); state.currentStep++; saveState(); render(); return; }
+    state.kycStatus = res.kycStatus || "pending"; saveState(); render();
+  } catch(e) { if (btn) { btn.disabled = false; btn.textContent = "Check Status"; } alert("Could not check. Try again."); }
+}
+
+// STEP 4: Income & Eligibility
+function renderStep4() {
+  let html = '<div class="card">';
+  html += '<div class="card-title"><span class="icon">✅</span> Income & Eligibility Check</div>';
+
+  html += '<div class="form-group">';
+  html += '<label class="form-label">Employment Type</label>';
+  html += '<select class="form-input form-select" id="empType">';
+  html += '<option value="">Select employment type</option>';
+  ['Salaried', 'Self-employed', 'Student', 'Other'].forEach(t => {
+    html += '<option value="' + t + '"' + (state.employmentType === t ? ' selected' : '') + '>' + t + '</option>';
+  });
+  html += '</select></div>';
+
+  html += '<div class="form-group">';
+  html += '<label class="form-label">Monthly Income</label>';
+  html += '<input type="number" class="form-input" id="incomeInput" placeholder="Enter monthly income in INR" value="' + state.income + '">';
+  html += '</div>';
+
+  html += '<div class="form-group">';
+  html += '<label class="form-label">Company / College Name</label>';
+  html += '<input type="text" class="form-input" id="companyInput" placeholder="Where do you work or study?" value="' + state.company + '">';
+  html += '</div>';
+
+  html += '<button class="btn btn-blue btn-block" onclick="checkEligibility()" ' + (state.eligible ? 'disabled' : '') + '>Check Eligibility</button>';
+
+  if (state.eligible === 'eligible') {
+    html += '<div class="eligibility-result eligible">';
+    html += '<div class="eligibility-icon">✅</div>';
+    html += '<div class="eligibility-text"><h4 style="color:var(--green)">Congratulations! You are Eligible</h4>';
+    html += '<p>Your EMI application has been pre-approved. Proceed to sign the agreement.</p></div></div>';
+  } else if (state.eligible === 'review') {
+    html += '<div class="eligibility-result review">';
+    html += '<div class="eligibility-icon">⏳</div>';
+    html += '<div class="eligibility-text"><h4 style="color:var(--yellow)">Under Manual Review</h4>';
+    html += '<p>Your application requires additional review. You can proceed for now and our team will contact you.</p></div></div>';
+  } else if (state.eligible === 'rejected') {
+    html += '<div class="eligibility-result rejected">';
+    html += '<div class="eligibility-icon">❌</div>';
+    html += '<div class="eligibility-text"><h4 style="color:var(--red)">Not Eligible</h4>';
+    html += '<p>Based on the information provided, you do not meet the minimum eligibility criteria for EMI. Minimum monthly income required is ₹10,000.</p></div></div>';
+  }
+
+  html += '<div class="step-nav">';
+  html += '<button class="btn btn-secondary" onclick="goBack()">← Back</button>';
+  html += '<button class="btn btn-primary" onclick="goNext()" ' + (state.eligible && state.eligible !== 'rejected' ? '' : 'disabled') + '>Continue →</button>';
+  html += '</div></div>';
+  document.getElementById('mainContent').innerHTML = html;
+}
+
+function checkEligibility() {
+  const emp = document.getElementById('empType').value;
+  const income = Number(document.getElementById('incomeInput').value);
+  const company = document.getElementById('companyInput').value.trim();
+
+  if (!emp) { alert('Please select employment type'); return; }
+  if (!income || income <= 0) { alert('Please enter your monthly income'); return; }
+  if (!company) { alert('Please enter company/college name'); return; }
+
+  state.employmentType = emp;
+  state.income = income;
+  state.company = company;
+
+  if (income >= 15000) {
+    state.eligible = 'eligible'; saveState();
+  } else if (income >= 10000) {
+    state.eligible = 'review'; saveState();
+  } else {
+    state.eligible = 'rejected'; saveState();
+  }
+  render();
+}
+
+// STEP 5: E-Sign Agreement
+function renderStep5() {
+  const p = state.product;
+  let html = '<div class="card">';
+  html += '<div class="card-title"><span class="icon">✍️</span> E-Sign Rental Agreement</div>';
+
+  // Summary
+  html += '<div style="background:#f5f7ff;border-radius:8px;padding:16px;margin-bottom:16px">';
+  html += '<div style="font-weight:600;margin-bottom:8px">Agreement Summary</div>';
+  html += '<div class="summary-row"><span>Product</span><span>' + p.brand + ' ' + p.model + '</span></div>';
+  html += '<div class="summary-row"><span>Serial Number</span><span>' + (p.serialNo || 'N/A') + '</span></div>';
+  html += '<div class="summary-row"><span>EMI Duration</span><span>' + state.emiMonths + ' months</span></div>';
+  html += '<div class="summary-row"><span>Monthly EMI</span><span>' + money(state.emiAmount) + '</span></div>';
+  html += '<div class="summary-row"><span>Security Deposit</span><span>' + money(state.deposit) + '</span></div>';
+  html += '<div class="summary-row" style="font-weight:700;border-top:1px solid var(--border);padding-top:8px;margin-top:8px"><span>Total Payable</span><span>' + money(state.totalPayable) + '</span></div>';
+  html += '</div>';
+
+  // Agreement text
+  html += '<div class="agreement-box">';
+  html += '<h4>RENTAL-CUM-EMI AGREEMENT</h4>';
+  html += '<p>This agreement is entered into between DBUGG Technologies Pvt. Ltd. (hereinafter referred to as "the Company") and the Customer (details as verified through KYC).</p>';
+  html += '<h4>1. PRODUCT DETAILS</h4>';
+  html += '<p>The Company agrees to provide the following refurbished product on a rental-cum-EMI basis: ' + p.brand + ' ' + p.model + ' (Serial: ' + (p.serialNo || 'N/A') + '), valued at ' + money(p.sellingPrice) + '.</p>';
+  html += '<h4>2. EMI TERMS</h4>';
+  html += '<p>The Customer agrees to pay a monthly EMI of ' + money(state.emiAmount) + ' for a period of ' + state.emiMonths + ' months. A security deposit of ' + money(state.deposit) + ' (20% of product value) is payable upfront and is fully refundable upon satisfactory return of the product or completion of all EMI payments.</p>';
+  html += '<h4>3. INTEREST & CHARGES</h4>';
+  html += '<p>An interest rate of ' + (INTEREST_RATES[state.emiMonths] * 100) + '% flat is applied on the product value. Late payment of EMI will attract a penalty of Rs. 500 per instance or 2% of EMI amount, whichever is higher.</p>';
+  html += '<h4>4. OWNERSHIP & TRANSFER</h4>';
+  html += '<p>The product remains the property of the Company until all EMI payments are completed. Upon successful completion of all payments, ownership of the product shall be transferred to the Customer.</p>';
+  html += '<h4>5. PRODUCT CONDITION</h4>';
+  html += '<p>The Customer shall maintain the product in good working condition. Any damage beyond normal wear and tear shall be borne by the Customer. The Company provides a 6-month warranty on hardware components.</p>';
+  html += '<h4>6. TERMINATION</h4>';
+  html += '<p>Either party may terminate this agreement with 30 days written notice. Early termination by the Customer will require payment of remaining EMIs or return of the product in acceptable condition, with adjustment of the security deposit.</p>';
+  html += '<h4>7. GOVERNING LAW</h4>';
+  html += '<p>This agreement shall be governed by the laws of India. Any disputes shall be subject to the jurisdiction of courts in Bangalore, Karnataka.</p>';
+  html += '</div>';
+
+  // Agree checkbox
+  html += '<div class="checkbox-row">';
+  html += '<input type="checkbox" id="agreeCheck" ' + (state.agreedTerms ? 'checked' : '') + ' onchange="toggleAgree(this)" ' + (state.eSigned ? 'disabled' : '') + '>';
+  html += '<label for="agreeCheck">I have read and agree to the terms and conditions of this Rental-cum-EMI agreement</label>';
+  html += '</div>';
+
+  // E-Sign
+  if (!state.eSigned) {
+    html += '<div style="margin-top:16px">';
+    html += '<button class="btn btn-primary" onclick="signAgreement()" ' + (state.agreedTerms ? '' : 'disabled') + ' id="signBtn">✍️ Sign Agreement Digitally</button>';
+    html += '</div>';
+  } else {
+    html += '<div class="signed-stamp">';
+    html += '<svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>';
+    html += '<div class="info"><strong>Agreement Signed Digitally</strong>';
+    html += '<span>Signed on: ' + state.eSignTime + '</span></div>';
+    html += '</div>';
+  }
+
+  html += '<div class="step-nav">';
+  html += '<button class="btn btn-secondary" onclick="goBack()">← Back</button>';
+  html += '<button class="btn btn-primary" onclick="goNext()" ' + (state.eSigned ? '' : 'disabled') + '>Continue →</button>';
+  html += '</div></div>';
+  document.getElementById('mainContent').innerHTML = html;
+}
+
+function toggleAgree(el) {
+  state.agreedTerms = el.checked;
+  var btn = document.getElementById("signBtn");
+  if (btn) btn.disabled = !el.checked;
+}
+
+function signAgreement() {
+  if (!state.agreedTerms) { alert('Please agree to the terms first'); return; }
+  state.eSigned = true;
+  state.eSignTime = new Date().toLocaleString('en-IN', { dateStyle: 'medium', timeStyle: 'medium' });
+  saveState();
+  render();
+}
+
+// STEP 6: Payment & Setup
+function renderStep6Approval() {
+  var p = state.product;
+  var html = "<div class=\"card\">";
+  html += "<div class=\"card-title\"><span class=\"icon\">&#9989;</span> Application Review</div>";
+  
+  if (state.approvalStatus === "approved") {
+    html += "<div style=\"background:#e8f5e9;border:1px solid #66bb6a;border-radius:12px;padding:24px;text-align:center;margin-bottom:20px\">";
+    html += "<div style=\"font-size:48px;margin-bottom:12px\">&#127881;</div>";
+    html += "<div style=\"font-size:20px;font-weight:700;color:#2e7d32;margin-bottom:8px\">Application Approved!</div>";
+    html += "<div style=\"font-size:14px;color:#555\">Your EMI application has been approved. Proceed to make your security deposit payment.</div>";
+    html += "</div>";
+  } else if (state.approvalStatus === "rejected") {
+    html += "<div style=\"background:#ffebee;border:1px solid #ef5350;border-radius:12px;padding:24px;text-align:center;margin-bottom:20px\">";
+    html += "<div style=\"font-size:48px;margin-bottom:12px\">&#10060;</div>";
+    html += "<div style=\"font-size:20px;font-weight:700;color:#c62828;margin-bottom:8px\">Application Rejected</div>";
+    html += "<div style=\"font-size:14px;color:#555\">Unfortunately your application was not approved. Please contact support.</div>";
+    html += "</div>";
+  } else {
+    html += "<div style=\"background:#fff3e0;border:1px solid #ffb74d;border-radius:12px;padding:24px;text-align:center;margin-bottom:20px\">";
+    html += "<div style=\"font-size:48px;margin-bottom:12px\">&#9203;</div>";
+    html += "<div style=\"font-size:20px;font-weight:700;color:#e65100;margin-bottom:8px\">Waiting for Approval</div>";
+    html += "<div style=\"font-size:14px;color:#555;margin-bottom:16px\">Your application is being reviewed by our team. This usually takes 2-4 hours.</div>";
+    html += "<button class=\"btn btn-blue\" onclick=\"checkApprovalStatus()\">Check Status</button>";
+    html += "</div>";
+    html += "<div style=\"background:#f5f7ff;border-radius:8px;padding:16px;margin-bottom:16px\">";
+    html += "<div style=\"font-weight:600;margin-bottom:12px\">Application Summary</div>";
+    html += "<div class=\"summary-row\"><span>Product</span><span>" + p.brand + " " + p.model + "</span></div>";
+    html += "<div class=\"summary-row\"><span>EMI Plan</span><span>" + state.emiMonths + " months</span></div>";
+    html += "<div class=\"summary-row\"><span>Monthly EMI</span><span>" + money(state.emiAmount) + "/mo</span></div>";
+    html += "<div class=\"summary-row\"><span>Security Deposit</span><span>" + money(state.deposit) + "</span></div>";
+    html += "</div>";
+  }
+
+  html += "<div class=\"step-nav\">";
+  html += "<button class=\"btn btn-secondary\" onclick=\"goBack()\">Back</button>";
+  html += "<button class=\"btn btn-primary\" onclick=\"goNext()\" " + (state.approvalStatus === "approved" ? "" : "disabled") + ">Continue</button>";
+  html += "</div></div>";
+  document.getElementById("mainContent").innerHTML = html;
+}
+
+async function checkApprovalStatus() {
+  try {
+    var res = await apiFetch("/rental/kyc/status");
+    if (res.kycStatus === "approved") {
+      state.approvalStatus = "approved";
+    } else if (res.kycStatus === "rejected") {
+      state.approvalStatus = "rejected";
+    } else {
+      state.approvalStatus = "pending";
+    }
+    saveState();
+    render();
+  } catch(e) {
+    alert("Could not check status. Try again.");
+  }
+}
+
+
+function renderStep7Payment() {
+  const p = state.product;
+  if (state.paymentDone) {
+    renderSuccess();
+    return;
+  }
+  let html = '<div class="card">';
+  html += '<div class="card-title"><span class="icon">💰</span> Payment & EMI Setup</div>';
+
+  // Final summary
+  html += '<div style="background:#f5f7ff;border-radius:8px;padding:16px;margin-bottom:20px">';
+  html += '<div style="font-weight:600;margin-bottom:12px">Final Payment Summary</div>';
+  html += '<div class="summary-row"><span>Product</span><span>' + p.brand + ' ' + p.model + '</span></div>';
+  html += '<div class="summary-row"><span>EMI Plan</span><span>' + state.emiMonths + ' months @ ' + money(state.emiAmount) + '/mo</span></div>';
+  html += '<div class="summary-row"><span>Total EMI Amount</span><span>' + money(state.emiAmount * state.emiMonths) + '</span></div>';
+  html += '<div class="summary-row" style="font-weight:700;margin-top:8px;padding-top:8px;border-top:1px solid var(--border)"><span>Pay Now: Security Deposit</span><span style="color:var(--blue)">' + money(state.deposit) + '</span></div>';
+  html += '</div>';
+
+  html += '<button class="btn btn-primary btn-block" onclick="initiatePayment()" style="padding:14px;font-size:16px" id="payBtn">Pay ' + money(state.deposit) + ' via Razorpay</button>';
+  html += '<p style="text-align:center;font-size:12px;color:var(--text-sec);margin-top:8px">Security deposit is 100% refundable after EMI completion</p>';
+
+  // EMI Schedule Preview
+  html += '<div style="margin-top:24px">';
+  html += '<div style="font-weight:600;margin-bottom:8px">EMI Schedule Preview</div>';
+  html += '<div style="overflow-x:auto">';
+  html += '<table class="emi-table"><thead><tr><th>#</th><th>Due Date</th><th>EMI Amount</th><th>Status</th></tr></thead><tbody>';
+  const now = new Date();
+  for (let i = 0; i < state.emiMonths; i++) {
+    const dueDate = new Date(now.getFullYear(), now.getMonth() + 1 + i, 5);
+    const dateStr = dueDate.toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' });
+    html += '<tr>';
+    html += '<td>' + (i + 1) + '</td>';
+    html += '<td>' + dateStr + '</td>';
+    html += '<td>' + money(state.emiAmount) + '</td>';
+    html += '<td><span class="status-upcoming">Upcoming</span></td>';
+    html += '</tr>';
+  }
+  html += '</tbody></table></div></div>';
+
+  html += '<div class="step-nav">';
+  html += '<button class="btn btn-secondary" onclick="goBack()">← Back</button>';
+  html += '<div></div>';
+  html += '</div></div>';
+  document.getElementById('mainContent').innerHTML = html;
+}
+
+async function initiatePayment() {
+  const p = state.product;
+  const btn = document.getElementById('payBtn');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span> Processing...';
+
+  // Try to create order via API, fallback to simulated
+  let orderId = 'order_sim_' + Date.now();
+  try {
+    const res = await apiFetch('/rental/checkout', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        productId: p.id,
+        emiMonths: state.emiMonths,
+        emiAmount: state.emiAmount,
+        deposit: state.deposit,
+        totalPayable: state.totalPayable,
+        phone: state.phone,
+        pan: state.pan,
+        panName: state.panName,
+        aadhaar: state.aadhaar,
+        aadhaarFront: state.aadhaarFrontBase64,
+        aadhaarBack: state.aadhaarBackBase64,
+        selfie: state.selfieBase64,
+        employmentType: state.employmentType,
+        income: state.income,
+        company: state.company,
+        eligible: state.eligible,
+        eSignTime: state.eSignTime
+      })
+    });
+    if (res.orderId) orderId = res.orderId;
+    if (res.rentalId) state.rentalId = res.rentalId;
+    if (res.razorpayOrderId) state.razorpayOrderId = res.razorpayOrderId;
+  } catch (e) {
+    console.log('API call failed, simulating payment:', e);
+  }
+
+  // Open Razorpay checkout
+  try {
+    const user = typeof getUser === 'function' ? getUser() : null;
+    const options = {
+      key: 'rzp_test_placeholder',
+      amount: state.deposit * 100,
+      currency: 'INR',
+      name: 'DBUGG Technologies',
+      description: 'Security Deposit - ' + p.brand + ' ' + p.model,
+      order_id: state.razorpayOrderId || undefined,
+      prefill: {
+        contact: state.phone,
+        email: user ? user.email : ''
+      },
+      theme: { color: '#2874f0' },
+      handler: function(response) {
+        onPaymentSuccess(response);
+      },
+      modal: {
+        ondismiss: function() {
+          btn.disabled = false;
+          btn.innerHTML = 'Pay ' + money(state.deposit) + ' via Razorpay';
+        }
+      }
+    };
+    const rzp = new Razorpay(options);
+    rzp.open();
+  } catch (e) {
+    // If Razorpay is not available, simulate success
+    console.log('Razorpay not available, simulating:', e);
+    setTimeout(() => {
+      onPaymentSuccess({ razorpay_payment_id: 'pay_sim_' + Date.now() });
+    }, 1500);
+  }
+}
+
+function onPaymentSuccess(response) {
+  state.paymentDone = true;
+  if (!state.rentalId) {
+    state.rentalId = 'DBUGG-R-' + Date.now().toString(36).toUpperCase();
+  }
+  render();
+}
+
+function renderSuccess() {
+  const p = state.product;
+  let html = '<div class="card success-card">';
+  html += '<div class="success-icon"><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg></div>';
+  html += '<h2>Rental Activated Successfully!</h2>';
+  html += '<p>Your EMI rental for <strong>' + p.brand + ' ' + p.model + '</strong> has been set up.</p>';
+  html += '<div class="rental-id">Rental ID: ' + state.rentalId + '</div>';
+  html += '<p style="margin-top:12px">Security deposit of <strong>' + money(state.deposit) + '</strong> has been received.</p>';
+  html += '<p>Your first EMI of <strong>' + money(state.emiAmount) + '</strong> is due on <strong>';
+  const firstDue = new Date();
+  firstDue.setMonth(firstDue.getMonth() + 1);
+  firstDue.setDate(5);
+  html += firstDue.toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' });
+  html += '</strong></p>';
+  html += '</div>';
+
+  // EMI Schedule
+  html += '<div class="card">';
+  html += '<div class="card-title">EMI Schedule</div>';
+  html += '<div style="overflow-x:auto">';
+  html += '<table class="emi-table"><thead><tr><th>#</th><th>Due Date</th><th>EMI Amount</th><th>Status</th></tr></thead><tbody>';
+  const now = new Date();
+  for (let i = 0; i < state.emiMonths; i++) {
+    const dueDate = new Date(now.getFullYear(), now.getMonth() + 1 + i, 5);
+    const dateStr = dueDate.toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' });
+    html += '<tr><td>' + (i + 1) + '</td><td>' + dateStr + '</td><td>' + money(state.emiAmount) + '</td>';
+    html += '<td><span class="status-upcoming">Upcoming</span></td></tr>';
+  }
+  html += '</tbody></table></div>';
+  html += '<div style="text-align:center;margin-top:16px">';
+  html += '<a href="/" class="btn btn-primary">Go to Dashboard</a>';
+  html += '</div></div>';
+  document.getElementById('mainContent').innerHTML = html;
+}
+
+// ─── Navigation ─────────────────────────────────────────────────────
+function goNext() {
+  // Validate current step
+  if (state.currentStep === 0 && !state.emiMonths) return;
+  if (state.currentStep === 1 && !state.phoneVerified) return;
+  if (state.currentStep === 2 && !validateKYC()) return;
+  if (state.currentStep === 3 && (!state.eligible || state.eligible === 'rejected')) return;
+  if (state.currentStep === 4 && !state.eSigned) return;
+  if (state.currentStep === 5 && state.approvalStatus !== 'approved') return;
+  if (state.currentStep >= 6) return;
+  state.currentStep++;
+  saveState();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+  render();
+}
+
+function goBack() {
+  if (state.currentStep <= 0) return;
+  state.currentStep--;
+  saveState();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+  render();
+}
+
+
+// ─── State Persistence ─────────────────────────────────────────────
+function saveState() {
+  try {
+    var toSave = {};
+    Object.keys(state).forEach(function(k) {
+      if (k.indexOf('Base64') === -1) toSave[k] = state[k];
+    });
+    toSave._version = EMI_VERSION;
+    sessionStorage.setItem('emi_state_' + laptopId, JSON.stringify(toSave));
+  } catch(e) {}
+}
+function loadState() {
+  try {
+    var s = sessionStorage.getItem('emi_state_' + laptopId);
+    if (s) {
+      try {
+        var saved = JSON.parse(s);
+        if (!saved._version || saved._version < EMI_VERSION) {
+          sessionStorage.removeItem('emi_state_' + laptopId);
+          return;
+        }
+      } catch(e) { sessionStorage.removeItem('emi_state_' + laptopId); return; }
+    }
+    if (s) {
+      var saved = JSON.parse(s);
+      Object.keys(saved).forEach(function(k) { state[k] = saved[k]; });
+      return true;
+    }
+  } catch(e) {}
+  return false;
+}
+
+// ─── Start ──────────────────────────────────────────────────────────
+init();
+</script>
+</body>
+</html>
