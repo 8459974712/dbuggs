@@ -20,7 +20,17 @@ export class RentalService {
 
   async approveKyc(kycId: string, reviewedBy: string): Promise<KycDocument> {
     await this.kycRepo.update(kycId, { status: KycDocStatus.APPROVED, reviewedBy });
-    return this.kycRepo.findOne({ where: { id: kycId } });
+    const doc = await this.kycRepo.findOne({ where: { id: kycId } });
+    if (doc) {
+      const pending = await this.kycRepo.count({ where: { userId: doc.userId, status: KycDocStatus.PENDING } });
+      if (pending === 0) {
+        await this.rentalRepo.update(
+          { userId: doc.userId, status: RentalStatus.KYC_PENDING },
+          { status: RentalStatus.DEPOSIT_PENDING },
+        );
+      }
+    }
+    return doc;
   }
 
   async rejectKyc(kycId: string, reason: string): Promise<KycDocument> {
