@@ -2,7 +2,7 @@
 -- PostgreSQL database dump
 --
 
-\restrict JKeoqzdlcb1bjpDEZK45HEl0EDZkzRYSgvnY7t2cC2k0ArnVlebxivQFMkQYRbD
+\restrict GU1Cb9VuTL5N6pf9fzxC8UucRJKtOQBayuA7oj7gXpI190FJsZu2j6wEwhOHLhD
 
 -- Dumped from database version 16.15
 -- Dumped by pg_dump version 16.15
@@ -18,46 +18,6 @@ SET xmloption = content;
 SET client_min_messages = warning;
 SET row_security = off;
 
-ALTER TABLE IF EXISTS ONLY public.users DROP CONSTRAINT IF EXISTS "UQ_a000cca60bcf04454e727699490";
-ALTER TABLE IF EXISTS ONLY public.laptops DROP CONSTRAINT IF EXISTS "UQ_5c52abb028a0ef13e1b88fcf54b";
-ALTER TABLE IF EXISTS ONLY public.b2b_buyers DROP CONSTRAINT IF EXISTS "PK_e79e25240e780acd39de919180d";
-ALTER TABLE IF EXISTS ONLY public.users DROP CONSTRAINT IF EXISTS "PK_a3ffb1c0c8416b9fc6f907b7433";
-ALTER TABLE IF EXISTS ONLY public.laptops DROP CONSTRAINT IF EXISTS "PK_99d93b23e37ddcbaf86efb6fd36";
-ALTER TABLE IF EXISTS ONLY public.role_permissions DROP CONSTRAINT IF EXISTS "PK_84059017c90bfcb701b8fa42297";
-ALTER TABLE IF EXISTS ONLY public.orders DROP CONSTRAINT IF EXISTS "PK_710e2d4957aa5878dfe94e4ac2f";
-ALTER TABLE IF EXISTS ONLY public.dealers DROP CONSTRAINT IF EXISTS "PK_4d0d8be9eac6e1822ad16d21194";
-ALTER TABLE IF EXISTS ONLY public.laptop_qc DROP CONSTRAINT IF EXISTS "PK_39bf04dc48fff05ae1459e510b7";
-ALTER TABLE IF EXISTS ONLY public.rentals DROP CONSTRAINT IF EXISTS "PK_2b10d04c95a8bfe85b506ba52ba";
-ALTER TABLE IF EXISTS ONLY public.commissions DROP CONSTRAINT IF EXISTS "PK_2701379966e2e670bb5ff0ae78e";
-ALTER TABLE IF EXISTS ONLY public.audit_logs DROP CONSTRAINT IF EXISTS "PK_1bb179d048bbc581caa3b013439";
-ALTER TABLE IF EXISTS ONLY public.payments DROP CONSTRAINT IF EXISTS "PK_197ab7af18c93fbb0c9b28b4a59";
-ALTER TABLE IF EXISTS ONLY public.kyc_documents DROP CONSTRAINT IF EXISTS "PK_02e49877f1578e6285f84e57ab6";
-DROP TABLE IF EXISTS public.users;
-DROP TABLE IF EXISTS public.role_permissions;
-DROP TABLE IF EXISTS public.rentals;
-DROP TABLE IF EXISTS public.payments;
-DROP TABLE IF EXISTS public.orders;
-DROP TABLE IF EXISTS public.laptops;
-DROP TABLE IF EXISTS public.laptop_qc;
-DROP TABLE IF EXISTS public.kyc_documents;
-DROP TABLE IF EXISTS public.dealers;
-DROP TABLE IF EXISTS public.commissions;
-DROP TABLE IF EXISTS public.b2b_buyers;
-DROP TABLE IF EXISTS public.audit_logs;
-DROP TYPE IF EXISTS public.users_role_enum;
-DROP TYPE IF EXISTS public.users_kycstatus_enum;
-DROP TYPE IF EXISTS public.rentals_status_enum;
-DROP TYPE IF EXISTS public.payments_status_enum;
-DROP TYPE IF EXISTS public.orders_type_enum;
-DROP TYPE IF EXISTS public.orders_status_enum;
-DROP TYPE IF EXISTS public.laptops_status_enum;
-DROP TYPE IF EXISTS public.laptops_grade_enum;
-DROP TYPE IF EXISTS public.kyc_documents_type_enum;
-DROP TYPE IF EXISTS public.kyc_documents_status_enum;
-DROP TYPE IF EXISTS public.dealers_tier_enum;
-DROP TYPE IF EXISTS public.dealers_status_enum;
-DROP TYPE IF EXISTS public.commissions_status_enum;
-DROP EXTENSION IF EXISTS "uuid-ossp";
 --
 -- Name: uuid-ossp; Type: EXTENSION; Schema: -; Owner: -
 --
@@ -230,7 +190,13 @@ CREATE TYPE public.rentals_status_enum AS ENUM (
     'overdue',
     'return_requested',
     'returned',
-    'closed'
+    'closed',
+    'mobile_verified',
+    'pan_verified',
+    'credit_check',
+    'manual_review',
+    'rejected',
+    'approved'
 );
 
 
@@ -491,7 +457,20 @@ CREATE TABLE public.rentals (
     "returnDate" timestamp without time zone,
     "depositRefund" numeric(10,2),
     "createdAt" timestamp without time zone DEFAULT now() NOT NULL,
-    "updatedAt" timestamp without time zone DEFAULT now() NOT NULL
+    "updatedAt" timestamp without time zone DEFAULT now() NOT NULL,
+    tenure integer DEFAULT 6 NOT NULL,
+    "panNumber" character varying(10),
+    "mobileVerified" boolean DEFAULT false NOT NULL,
+    "monthlyIncome" numeric(12,2),
+    "employmentType" character varying(50),
+    "creditScore" integer,
+    "creditStatus" character varying(20) DEFAULT 'pending'::character varying NOT NULL,
+    "totalPayable" numeric(12,2),
+    "processingFee" numeric(10,2) DEFAULT 0 NOT NULL,
+    "rejectionReason" text,
+    "approvedBy" character varying,
+    "approvedAt" timestamp without time zone,
+    "emiSchedule" jsonb
 );
 
 
@@ -624,6 +603,11 @@ b9549283-1cd3-42ba-98cc-1d4635becb90	f184fdd1-43a4-45cd-a9c3-d8707f74c934	pan	ht
 ae4c13d1-50c2-493d-b49e-8e27d4bef25d	0b1403b6-ff2b-4bb2-9154-12f06e74a27d	pan	https://s3.ap-south-1.amazonaws.com/dbuggs-kyc/0b1403b6-ff2b-4bb2-9154-12f06e74a27d/pan.pdf	\N	\N	\N	approved	\N	826b0907-2cea-4cd8-a2bc-2089649d94fa	2026-10-04 19:48:01.027371
 7eac9449-1647-4cc5-83f1-c816407074c5	32bc9f33-1e62-43fd-9c4d-fb7e823f2ac2	aadhaar	https://s3.ap-south-1.amazonaws.com/dbuggs-kyc/32bc9f33-1e62-43fd-9c4d-fb7e823f2ac2/aadhaar.pdf	\N	\N	\N	approved	\N	826b0907-2cea-4cd8-a2bc-2089649d94fa	2026-10-04 19:48:01.028795
 e900b779-f497-4f38-8173-275f214b8c4a	478ca155-481e-4e40-a981-9fe4db69ceda	gstin	https://s3.ap-south-1.amazonaws.com/dbuggs-kyc/478ca155-481e-4e40-a981-9fe4db69ceda/gstin.pdf	\N	\N	\N	approved	\N	826b0907-2cea-4cd8-a2bc-2089649d94fa	2026-10-04 19:48:01.032101
+a994d484-f339-48ed-ae8f-5fae4fed9ba9	cd816567-0336-43da-82e8-5594cf4628c7	aadhaar	uploaded-from-checkout	\N	\N	\N	approved	\N	826b0907-2cea-4cd8-a2bc-2089649d94fa	2026-10-16 13:58:08.415716
+06468ecb-7287-43ad-ad12-50663717e18a	cd816567-0336-43da-82e8-5594cf4628c7	pan	uploaded-from-checkout	\N	\N	\N	approved	\N	826b0907-2cea-4cd8-a2bc-2089649d94fa	2026-10-16 13:58:08.415716
+92deb9f6-14d6-461d-9fe8-90624551d9df	ff4f3ed5-3dcd-46fb-887a-da7d46656cef	pan	pan-uploaded	\N	\N	AB****GH	approved	\N	826b0907-2cea-4cd8-a2bc-2089649d94fa	2026-10-16 23:05:08.692068
+079d12c2-41b7-4d6c-8daa-6caaa07704e7	ff4f3ed5-3dcd-46fb-887a-da7d46656cef	aadhaar	pending-review	selfie-uploaded	\N	XXXX XXXX 1234	approved	\N	826b0907-2cea-4cd8-a2bc-2089649d94fa	2026-10-16 22:51:43.266047
+766f47ba-e7fc-47bd-ba1d-836d0da1bfd1	cd816567-0336-43da-82e8-5594cf4628c7	aadhaar	test-aadhaar-doc	\N	\N	XXXX XXXX 4523	approved	\N	826b0907-2cea-4cd8-a2bc-2089649d94fa	2026-10-16 21:45:56.62667
 \.
 
 
@@ -693,17 +677,18 @@ COPY public.payments (id, "entityId", "entityType", "razorpayOrderId", "razorpay
 -- Data for Name: rentals; Type: TABLE DATA; Schema: public; Owner: dbugg
 --
 
-COPY public.rentals (id, "userId", "laptopId", "monthlyRent", "depositAmount", "autopayId", "agreementUrl", status, "startDate", "nextDueDate", "lateFee", "returnDate", "depositRefund", "createdAt", "updatedAt") FROM stdin;
-3f653f0d-8281-471b-9134-0ea0215097e4	1e35a661-841d-4ca3-8d49-b6137ddaef63	f14a0a5d-ee95-4007-ba47-2d95b44525ca	2799.00	8397.00	\N	\N	active	2026-07-01 00:00:00	2026-11-01 00:00:00	0.00	\N	\N	2026-10-04 19:48:00.914492	2026-10-04 19:48:00.914492
-89c43fd9-cdaa-4d8d-88db-ed13491a0fe6	0b1403b6-ff2b-4bb2-9154-12f06e74a27d	8417e21a-b7ab-49c2-a053-75f0d45aefe1	2299.00	6897.00	\N	\N	active	2026-07-01 00:00:00	2026-11-01 00:00:00	0.00	\N	\N	2026-09-24 19:48:00.922755	2026-10-04 19:48:00.922755
-14cbb247-9fde-4f3e-a13d-4b81ba286e10	32bc9f33-1e62-43fd-9c4d-fb7e823f2ac2	16d90ca1-71f5-489e-93a1-c68b1f3ec072	1899.00	5697.00	\N	\N	active	2026-07-01 00:00:00	2026-11-01 00:00:00	0.00	\N	\N	2026-09-14 19:48:00.92895	2026-10-04 19:48:00.92895
-f852ef17-91f6-44da-81be-84654d2da7a8	f6dc2c4e-6b64-4c58-8588-413be7939773	3f169f1a-2d30-4148-ad2a-76a5c21e90aa	1499.00	4497.00	\N	\N	active	2026-07-01 00:00:00	2026-11-01 00:00:00	0.00	\N	\N	2026-09-04 19:48:00.933043	2026-10-04 19:48:00.933043
-22013974-167f-4e33-9b24-139dfe722e96	0b7980b7-cc0f-4ca5-925d-54169c846e47	b683bae6-364a-4f91-a720-0867bbeff6d8	1799.00	5397.00	\N	\N	active	2026-07-01 00:00:00	2026-11-01 00:00:00	0.00	\N	\N	2026-08-25 19:48:00.938799	2026-10-04 19:48:00.938799
-7d9daf56-08e5-4924-b8f6-9cb4ee602876	1e35a661-841d-4ca3-8d49-b6137ddaef63	5f05a76e-b656-49de-a4e8-27b867d5c5bf	3499.00	10497.00	\N	\N	kyc_pending	2026-07-01 00:00:00	2026-11-01 00:00:00	0.00	\N	\N	2026-08-15 19:48:00.943664	2026-10-04 19:48:00.943664
-813581c4-c4b9-4e09-902c-0d09dff87d43	0b1403b6-ff2b-4bb2-9154-12f06e74a27d	5400d69d-bebd-4ec4-88e9-920d77391aa9	3199.00	9597.00	\N	\N	deposit_pending	2026-07-01 00:00:00	2026-11-01 00:00:00	0.00	\N	\N	2026-08-05 19:48:00.950285	2026-10-04 19:48:00.950285
-1f4e7f18-22bd-4af9-8689-b8f8ef8d6ab7	32bc9f33-1e62-43fd-9c4d-fb7e823f2ac2	52f9d67a-97da-48dc-8b10-7662ac514a4f	3799.00	11397.00	\N	\N	overdue	2026-07-01 00:00:00	2026-11-01 00:00:00	0.00	\N	\N	2026-07-26 19:48:00.955967	2026-10-04 19:48:00.955967
-57c9bffe-77a5-45e7-9e9b-39997ac86f03	f6dc2c4e-6b64-4c58-8588-413be7939773	b00db3b7-bfc5-40d9-9211-6021ebd4d0f6	2799.00	8397.00	\N	\N	closed	2026-07-01 00:00:00	2026-11-01 00:00:00	0.00	\N	\N	2026-07-16 19:48:00.963125	2026-10-04 19:48:00.963125
-a99f5f16-5f20-4909-bc91-7556ac682060	0b7980b7-cc0f-4ca5-925d-54169c846e47	12d636c1-c220-4586-bac8-3740e77ede64	6499.00	19497.00	\N	\N	active	2026-07-01 00:00:00	2026-11-01 00:00:00	0.00	\N	\N	2026-07-06 19:48:00.968081	2026-10-04 19:48:00.968081
+COPY public.rentals (id, "userId", "laptopId", "monthlyRent", "depositAmount", "autopayId", "agreementUrl", status, "startDate", "nextDueDate", "lateFee", "returnDate", "depositRefund", "createdAt", "updatedAt", tenure, "panNumber", "mobileVerified", "monthlyIncome", "employmentType", "creditScore", "creditStatus", "totalPayable", "processingFee", "rejectionReason", "approvedBy", "approvedAt", "emiSchedule") FROM stdin;
+3f653f0d-8281-471b-9134-0ea0215097e4	1e35a661-841d-4ca3-8d49-b6137ddaef63	f14a0a5d-ee95-4007-ba47-2d95b44525ca	2799.00	8397.00	\N	\N	active	2026-07-01 00:00:00	2026-11-01 00:00:00	0.00	\N	\N	2026-10-04 19:48:00.914492	2026-10-04 19:48:00.914492	6	\N	f	\N	\N	\N	pending	\N	0.00	\N	\N	\N	\N
+89c43fd9-cdaa-4d8d-88db-ed13491a0fe6	0b1403b6-ff2b-4bb2-9154-12f06e74a27d	8417e21a-b7ab-49c2-a053-75f0d45aefe1	2299.00	6897.00	\N	\N	active	2026-07-01 00:00:00	2026-11-01 00:00:00	0.00	\N	\N	2026-09-24 19:48:00.922755	2026-10-04 19:48:00.922755	6	\N	f	\N	\N	\N	pending	\N	0.00	\N	\N	\N	\N
+14cbb247-9fde-4f3e-a13d-4b81ba286e10	32bc9f33-1e62-43fd-9c4d-fb7e823f2ac2	16d90ca1-71f5-489e-93a1-c68b1f3ec072	1899.00	5697.00	\N	\N	active	2026-07-01 00:00:00	2026-11-01 00:00:00	0.00	\N	\N	2026-09-14 19:48:00.92895	2026-10-04 19:48:00.92895	6	\N	f	\N	\N	\N	pending	\N	0.00	\N	\N	\N	\N
+f852ef17-91f6-44da-81be-84654d2da7a8	f6dc2c4e-6b64-4c58-8588-413be7939773	3f169f1a-2d30-4148-ad2a-76a5c21e90aa	1499.00	4497.00	\N	\N	active	2026-07-01 00:00:00	2026-11-01 00:00:00	0.00	\N	\N	2026-09-04 19:48:00.933043	2026-10-04 19:48:00.933043	6	\N	f	\N	\N	\N	pending	\N	0.00	\N	\N	\N	\N
+22013974-167f-4e33-9b24-139dfe722e96	0b7980b7-cc0f-4ca5-925d-54169c846e47	b683bae6-364a-4f91-a720-0867bbeff6d8	1799.00	5397.00	\N	\N	active	2026-07-01 00:00:00	2026-11-01 00:00:00	0.00	\N	\N	2026-08-25 19:48:00.938799	2026-10-04 19:48:00.938799	6	\N	f	\N	\N	\N	pending	\N	0.00	\N	\N	\N	\N
+7d9daf56-08e5-4924-b8f6-9cb4ee602876	1e35a661-841d-4ca3-8d49-b6137ddaef63	5f05a76e-b656-49de-a4e8-27b867d5c5bf	3499.00	10497.00	\N	\N	kyc_pending	2026-07-01 00:00:00	2026-11-01 00:00:00	0.00	\N	\N	2026-08-15 19:48:00.943664	2026-10-04 19:48:00.943664	6	\N	f	\N	\N	\N	pending	\N	0.00	\N	\N	\N	\N
+813581c4-c4b9-4e09-902c-0d09dff87d43	0b1403b6-ff2b-4bb2-9154-12f06e74a27d	5400d69d-bebd-4ec4-88e9-920d77391aa9	3199.00	9597.00	\N	\N	deposit_pending	2026-07-01 00:00:00	2026-11-01 00:00:00	0.00	\N	\N	2026-08-05 19:48:00.950285	2026-10-04 19:48:00.950285	6	\N	f	\N	\N	\N	pending	\N	0.00	\N	\N	\N	\N
+1f4e7f18-22bd-4af9-8689-b8f8ef8d6ab7	32bc9f33-1e62-43fd-9c4d-fb7e823f2ac2	52f9d67a-97da-48dc-8b10-7662ac514a4f	3799.00	11397.00	\N	\N	overdue	2026-07-01 00:00:00	2026-11-01 00:00:00	0.00	\N	\N	2026-07-26 19:48:00.955967	2026-10-04 19:48:00.955967	6	\N	f	\N	\N	\N	pending	\N	0.00	\N	\N	\N	\N
+57c9bffe-77a5-45e7-9e9b-39997ac86f03	f6dc2c4e-6b64-4c58-8588-413be7939773	b00db3b7-bfc5-40d9-9211-6021ebd4d0f6	2799.00	8397.00	\N	\N	closed	2026-07-01 00:00:00	2026-11-01 00:00:00	0.00	\N	\N	2026-07-16 19:48:00.963125	2026-10-04 19:48:00.963125	6	\N	f	\N	\N	\N	pending	\N	0.00	\N	\N	\N	\N
+a99f5f16-5f20-4909-bc91-7556ac682060	0b7980b7-cc0f-4ca5-925d-54169c846e47	12d636c1-c220-4586-bac8-3740e77ede64	6499.00	19497.00	\N	\N	active	2026-07-01 00:00:00	2026-11-01 00:00:00	0.00	\N	\N	2026-07-06 19:48:00.968081	2026-10-04 19:48:00.968081	6	\N	f	\N	\N	\N	pending	\N	0.00	\N	\N	\N	\N
+bb6c37ae-bc84-475d-85a0-1727ba818395	cd816567-0336-43da-82e8-5594cf4628c7	52f9d67a-97da-48dc-8b10-7662ac514a4f	3750.00	15000.00	\N	\N	deposit_pending	\N	\N	0.00	\N	\N	2026-10-16 12:25:42.893027	2026-10-16 12:25:42.893027	6	\N	f	\N	\N	\N	pending	\N	0.00	\N	\N	\N	\N
 \.
 
 
@@ -750,6 +735,7 @@ d880b723-40a6-4826-bbb1-29ea21fc4d9a	DigiCart Store	+919552222222	digicart@deale
 b13e9e2e-be84-43e0-9f9b-78a2026cb815	Ops Admin	+919888888888	manageradmin@dbuggs.in	$2a$10$5dNrcT/KMHvPdJ8gSkMzbO4reJjjchjicKFGC68xskOcWBsYzfI0i	admin	approved	\N	t	2026-10-04 19:46:34.23258	2026-10-04 20:28:01.188258
 cd816567-0336-43da-82e8-5594cf4628c7	avinash singh	8877224160	avinashsingh36948@gmail.com	$2a$10$jcDUpjtkre9UtMJZb7myF.Bt0iZXBiDal4G5mjWLxOU65MQVnAtZ.	b2c	pending	\N	t	2026-10-04 22:56:10.688904	2026-10-04 22:56:10.688904
 4a0546de-b16b-4cf3-bc6c-85c214889aea	Avinash Singh	+18877224160	Avinash@gmail.com	$2a$10$PAklsE6LVTQ7Rgd4y7Qvk.fE/sUhVq0gYWQIi8jRNpk9fDv6uHNFq	b2b	pending	\N	t	2026-10-14 10:56:44.945212	2026-10-14 10:56:44.945212
+ff4f3ed5-3dcd-46fb-887a-da7d46656cef	Website Wala	8002633618	websitewala0@gmail.com	$2a$10$IzGhCze6Mds3ygpZYPngdOCaQ33caph4HEph9ughIl6KoYuAK8wBe	b2c	pending	\N	t	2026-10-16 19:23:46.805322	2026-10-16 19:23:46.805322
 826b0907-2cea-4cd8-a2bc-2089649d94fa	Super Admin	+919999999999	admin@dbuggs.in	$2a$10$IpcdvhGjyYGsdy8ffz5Bv.6uEZEhVC42eciMH6L0m8kosKbIsDhNq	super_admin	approved	\N	t	2026-10-04 19:46:34.148819	2026-10-04 19:46:34.148819
 1e35a661-841d-4ca3-8d49-b6137ddaef63	Rahul Sharma	+919777777777	b2c@dbuggs.in	$2a$10$We0e1b6Q9qF5NlW0bGAbCumNeIP4rIG/J48RaAf0Evi7wocNCDE.6	b2c	approved	\N	t	2026-10-04 19:46:34.309621	2026-10-04 19:46:34.309621
 0b1403b6-ff2b-4bb2-9154-12f06e74a27d	Priya Mehta	+919776666666	priya@gmail.com	$2a$10$baYYJU6UpHPXmyVK2XAPsOWyWuApGPogNwBAXSleLpGrC4B6bshCq	b2c	approved	\N	t	2026-10-04 19:46:34.387396	2026-10-04 19:46:34.387396
@@ -878,5 +864,5 @@ ALTER TABLE ONLY public.users
 -- PostgreSQL database dump complete
 --
 
-\unrestrict JKeoqzdlcb1bjpDEZK45HEl0EDZkzRYSgvnY7t2cC2k0ArnVlebxivQFMkQYRbD
+\unrestrict GU1Cb9VuTL5N6pf9fzxC8UucRJKtOQBayuA7oj7gXpI190FJsZu2j6wEwhOHLhD
 
