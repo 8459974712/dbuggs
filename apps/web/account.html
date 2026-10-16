@@ -611,21 +611,32 @@ async function loadRecentOrders() {
 async function loadRentals() {
   const el = document.getElementById('emi-rentals-list');
   try {
-    const rentals = await apiFetch('/rental/my');
-    if (!rentals || !rentals.length) {
-      el.innerHTML = '<div class="emi-empty">No active rentals. <a href="/rental.html">Browse rental laptops &rarr;</a></div>';
+    const data = await apiFetch('/rental/kyc/status');
+    const rentals = data.rentals || [];
+    const kycStatus = data.kycStatus || 'not_submitted';
+    if (!rentals.length) {
+      el.innerHTML = '<div class="emi-empty">No EMI applications. <a href="/rental.html">Browse rental laptops &rarr;</a></div>';
       return;
     }
-    el.innerHTML = rentals.map(r => {
-      const statusLabel = (r.status || '').replace(/_/g, ' ');
-      const statusClass = (r.status || '').toLowerCase();
-      let h = '<div class="emi-card"><div class="emi-card-head">' +
+    el.innerHTML = rentals.map(function(r) {
+      var statusLabel = (r.status || '').replace(/_/g, ' ');
+      var statusClass = (r.status || '').toLowerCase();
+      var h = '<div class="emi-card"><div class="emi-card-head">' +
         '<div class="emi-card-title">Rental #' + (r.id || '').slice(0,8) + '</div>' +
         '<span class="emi-badge ' + statusClass + '">' + statusLabel + '</span></div>' +
         '<div class="emi-detail"><span>Monthly EMI</span><span>&#8377;' + (r.monthlyRent||0).toLocaleString('en-IN') + '</span></div>' +
-        '<div class="emi-detail"><span>Deposit</span><span>&#8377;' + (r.depositAmount||0).toLocaleString('en-IN') + '</span></div>';
+        '<div class="emi-detail"><span>Security Deposit</span><span>&#8377;' + (r.depositAmount||0).toLocaleString('en-IN') + '</span></div>';
       if (r.startDate) h += '<div class="emi-detail"><span>Start Date</span><span>' + new Date(r.startDate).toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'}) + '</span></div>';
       if (r.nextDueDate) h += '<div class="emi-detail"><span>Next Due</span><span>' + new Date(r.nextDueDate).toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'}) + '</span></div>';
+      if (r.status === 'kyc_pending') {
+        h += '<div style="margin-top:12px;padding:10px;background:#fff8e1;border-radius:4px;font-size:13px;color:#e65100;">' +
+          '<strong>KYC Under Review</strong> &mdash; Your documents are being verified. This usually takes 24-48 hours.</div>';
+      }
+      if (r.status === 'deposit_pending') {
+        h += '<div style="margin-top:12px;padding:10px;background:#e8f5e9;border-radius:4px;font-size:13px;color:#2e7d32;">' +
+          '<strong>KYC Approved!</strong> Pay the security deposit to activate your rental.</div>' +
+          '<button onclick="payAdvance(\'' + r.id + '\',\'' + (r.depositAmount||0) + '\')" style="margin-top:10px;background:#F07830;color:#fff;border:none;border-radius:4px;padding:10px 24px;font-size:14px;font-weight:700;cursor:pointer;">Pay Advance &#8377;' + (r.depositAmount||0).toLocaleString('en-IN') + '</button>';
+      }
       h += '</div>';
       return h;
     }).join('');
@@ -634,25 +645,38 @@ async function loadRentals() {
   }
 }
 
+function payAdvance(rentalId, amount) {
+  alert('Advance payment of &#8377;' + Number(amount).toLocaleString('en-IN') + ' will be processed. Payment gateway integration coming soon.');
+}
+
 // -- KYC Status --
 async function loadKycStatus() {
-  const el = document.getElementById('kyc-status-container');
+  var el = document.getElementById('kyc-status-container');
   try {
-    const rentals = await apiFetch('/rental/my');
-    let html = '<div class="kyc-status-box">';
-    if (!rentals || !rentals.length) {
+    var data = await apiFetch('/rental/kyc/status');
+    var docs = data.documents || [];
+    var kycStatus = data.kycStatus || 'not_submitted';
+    var html = '<div class="kyc-status-box">';
+    if (kycStatus === 'not_submitted') {
       html += '<div class="kyc-status-row"><div class="kyc-dot not_submitted"></div>' +
         '<div class="kyc-status-label">No KYC documents submitted</div></div>' +
-        '<div style="color:#878787;font-size:13px;margin-top:10px;">KYC verification is required when you rent a laptop. <a href="/rental.html" style="color:#2874f0;font-weight:600;">Browse rentals &rarr;</a></div>';
+        '<div style="color:#878787;font-size:13px;margin-top:10px;">KYC verification is required to rent a laptop. <a href="/rental.html" style="color:#2874f0;font-weight:600;">Browse rentals &rarr;</a></div>';
     } else {
-      rentals.forEach(r => {
-        const isPending = r.status === 'kyc_pending';
-        const dotClass = isPending ? 'pending' : 'approved';
-        const label = isPending ? 'KYC Pending Review' : 'KYC Verified';
-        html += '<div class="kyc-status-row"><div class="kyc-dot ' + dotClass + '"></div>' +
-          '<div class="kyc-status-label">Rental #' + (r.id||'').slice(0,8) + ' &mdash; ' + label + '</div>' +
-          '<div class="kyc-status-val" style="color:' + (isPending ? '#F07830' : '#388e3c') + ';">' + (isPending ? 'Under Review' : 'Approved') + '</div></div>';
+      var statusColors = {pending:'#F07830',approved:'#388e3c',rejected:'#c62828'};
+      var statusLabels = {pending:'Under Review',approved:'Approved',rejected:'Rejected'};
+      docs.forEach(function(d) {
+        html += '<div class="kyc-status-row"><div class="kyc-dot ' + d.status + '"></div>' +
+          '<div class="kyc-status-label">' + (d.type||'').toUpperCase() + ' Document</div>' +
+          '<div class="kyc-status-val" style="color:' + (statusColors[d.status]||'#878787') + ';">' + (statusLabels[d.status]||d.status) + '</div></div>';
+        if (d.status === 'rejected' && d.rejectionReason) {
+          html += '<div style="padding:4px 0 4px 20px;font-size:12px;color:#c62828;">Reason: ' + d.rejectionReason + '</div>';
+        }
       });
+      html += '<div style="margin-top:10px;padding:10px;border-radius:4px;font-size:13px;';
+      if (kycStatus === 'approved') html += 'background:#e8f5e9;color:#2e7d32;"><strong>All documents verified!</strong> You can now pay the advance deposit from My Rentals section.';
+      else if (kycStatus === 'rejected') html += 'background:#ffebee;color:#c62828;"><strong>Some documents were rejected.</strong> Please resubmit from the rental checkout page.';
+      else html += 'background:#fff8e1;color:#e65100;"><strong>Verification in progress.</strong> Usually takes 24-48 hours.';
+      html += '</div>';
     }
     html += '</div>';
     html += '<div style="margin-top:16px;"><div class="faq-title">How KYC Works</div>' +

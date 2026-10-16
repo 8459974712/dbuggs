@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Put, Body, Param, UseGuards, Request } from '@nestjs/common';
+import { Controller, Get, Post, Put, Body, Param, Query, UseGuards, Request } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 import { RentalService } from './rental.service';
 import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
@@ -33,6 +33,18 @@ export class RentalController {
   @ApiOperation({ summary: 'Admin: KYC approval queue' })
   kycQueue() {
     return this.rentalService.getKycQueue();
+  }
+
+  @Get('kyc/status')
+  @ApiOperation({ summary: 'Get my KYC verification status' })
+  kycStatus(@Request() req) {
+    return this.rentalService.getUserKycStatus(req.user.id);
+  }
+
+  @Get('admin/all-kyc')
+  @ApiOperation({ summary: 'Admin: all KYC documents by status' })
+  allKyc(@Query('status') status?: string) {
+    return this.rentalService.getAllKycByStatus(status);
   }
 
   // Rental booking

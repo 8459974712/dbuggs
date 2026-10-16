@@ -42,6 +42,14 @@ export class RentalService {
     return this.kycRepo.find({ where: { status: KycDocStatus.PENDING }, order: { createdAt: 'ASC' } });
   }
 
+  async getAllKycByStatus(status?: string): Promise<KycDocument[]> {
+    const where: any = {};
+    if (status === 'approved') where.status = KycDocStatus.APPROVED;
+    else if (status === 'rejected') where.status = KycDocStatus.REJECTED;
+    else if (status === 'pending') where.status = KycDocStatus.PENDING;
+    return this.kycRepo.find({ where, order: { createdAt: 'DESC' } });
+  }
+
   async book(userId: string, data: any): Promise<Rental> {
     const kyc = await this.kycRepo.findOne({ where: { userId, status: KycDocStatus.APPROVED } });
     if (!kyc) throw new BadRequestException('KYC not approved. Please complete KYC first.');
@@ -55,7 +63,8 @@ export class RentalService {
     return this.rentalRepo.save(rental);
   }
 
-  async createFromCheckout(userId: string, data: any): Promise<Rental> {
+  async createFromCheckout(userId: string, data: any): Promise<any> {
+    const savedDocs: KycDocument[] = [];
     if (data.documents) {
       const docMap: { key: string; type: KycDocType }[] = [
         { key: 'aadhaarFront', type: KycDocType.AADHAAR },
@@ -66,13 +75,14 @@ export class RentalService {
       for (const { key, type } of docMap) {
         if (data.documents[key]) {
           try {
-            await this.kycRepo.save(this.kycRepo.create({
+            const doc = await this.kycRepo.save(this.kycRepo.create({
               userId,
               type,
               docUrlEncrypted: data.documents[key].substring(0, 500000),
               selfieUrl: key === 'selfie' ? data.documents[key].substring(0, 500000) : null,
               status: KycDocStatus.PENDING,
             }));
+            savedDocs.push(doc);
           } catch (e) { /* skip duplicates */ }
         }
       }
@@ -83,9 +93,29 @@ export class RentalService {
       laptopId: data.laptopId,
       monthlyRent: data.monthlyAmount || 0,
       depositAmount: data.depositAmount || 0,
-      status: data.status === 'kyc_pending' ? RentalStatus.KYC_PENDING : RentalStatus.DEPOSIT_PENDING,
+      status: RentalStatus.KYC_PENDING,
     });
-    return this.rentalRepo.save(rental);
+    const savedRental = await this.rentalRepo.save(rental);
+
+    return {
+      ...savedRental,
+      kycStatus: 'pending',
+      kycDocsCount: savedDocs.length,
+      message: 'KYC documents submitted for review. Rental will be activated after approval.',
+    };
+  }
+
+  async getUserKycStatus(userId: string): Promise<any> {
+    const docs = await this.kycRepo.find({ where: { userId }, order: { createdAt: 'DESC' } });
+    const rentals = await this.rentalRepo.find({ where: { userId }, order: { createdAt: 'DESC' } });
+    const allApproved = docs.length > 0 && docs.every(d => d.status === KycDocStatus.APPROVED);
+    const anyPending = docs.some(d => d.status === KycDocStatus.PENDING);
+    const anyRejected = docs.some(d => d.status === KycDocStatus.REJECTED);
+    return {
+      kycStatus: allApproved ? 'approved' : anyRejected ? 'rejected' : anyPending ? 'pending' : 'not_submitted',
+      documents: docs.map(d => ({ id: d.id, type: d.type, status: d.status, rejectionReason: d.rejectionReason })),
+      rentals: rentals,
+    };
   }
 
   async findByUser(userId: string): Promise<Rental[]> {
