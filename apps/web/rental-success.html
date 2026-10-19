@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rental Confirmed — dbuggs</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Inter',sans-serif;background:#f1f3f6;color:#212121;font-size:14px;}
+a{text-decoration:none;color:inherit;}
+.header{background:#2874f0;padding:0 24px;height:56px;display:flex;align-items:center;}
+.brand{font-size:22px;font-weight:800;color:#fff;font-style:italic;}
+.brand span{color:#f9a825;}
+.page{max-width:540px;margin:40px auto;padding:0 20px;}
+.card{background:#fff;border:1px solid #e0e0e0;border-radius:8px;padding:36px 32px;text-align:center;}
+.success-icon{width:64px;height:64px;background:#e8f5e9;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 20px;}
+.success-icon svg{width:34px;height:34px;color:#388e3c;}
+.card h1{font-size:22px;font-weight:700;color:#212121;margin-bottom:8px;}
+.card p{font-size:14px;color:#878787;margin-bottom:24px;line-height:1.6;}
+.info-box{background:#f8f9fa;border-radius:6px;padding:16px;text-align:left;margin-bottom:24px;}
+.info-row{display:flex;justify-content:space-between;font-size:13px;padding:5px 0;border-bottom:1px solid #efefef;}
+.info-row:last-child{border-bottom:none;}
+.info-row .lbl{color:#878787;}
+.info-row .val{font-weight:600;}
+.steps-next{display:flex;flex-direction:column;gap:10px;text-align:left;margin-bottom:24px;}
+.next-step{display:flex;align-items:flex-start;gap:12px;padding:12px;background:#f0f4ff;border-radius:6px;}
+.step-num{width:24px;height:24px;border-radius:50%;background:#2874f0;color:#fff;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;}
+.step-info strong{font-size:13.5px;display:block;}
+.step-info span{font-size:12px;color:#878787;}
+.btn-home{display:block;width:100%;padding:13px;background:#2874f0;color:#fff;border:none;border-radius:4px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;text-align:center;}
+.btn-home:hover{background:#1a5fd1;}
+.cod-badge{background:#fff8e1;border:1px solid #f59e0b;border-radius:4px;padding:6px 12px;font-size:12.5px;font-weight:600;color:#92400e;display:inline-block;margin-bottom:16px;}
+</style>
+</head>
+<body>
+<header class="header"><a href="/index.html" class="brand">d<span>bugg</span>s</a></header>
+<div class="page">
+  <div class="card">
+    <div class="success-icon">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"/></svg>
+    </div>
+    <h1>Rental Confirmed!</h1>
+    <p id="main-msg">Your rental request has been placed successfully. Our team will contact you for KYC verification.</p>
+    <div id="cod-badge" class="cod-badge" style="display:none;">COD — Pay deposit on delivery</div>
+    <div class="info-box" id="info-box">
+      <div class="info-row"><span class="lbl">Rental ID</span><span class="val" id="r-id">—</span></div>
+      <div class="info-row"><span class="lbl">Payment</span><span class="val" id="r-pay">—</span></div>
+      <div class="info-row"><span class="lbl">Status</span><span class="val" style="color:#f59e0b;">KYC Pending</span></div>
+      <div class="info-row"><span class="lbl">Next Step</span><span class="val">KYC verification via WhatsApp</span></div>
+    </div>
+    <div class="steps-next">
+      <div class="next-step"><span class="step-num">1</span><div class="step-info"><strong>KYC Verification</strong><span>Our team will verify Aadhaar via WhatsApp within 24 hours</span></div></div>
+      <div class="next-step"><span class="step-num">2</span><div class="step-info"><strong>Agreement Signing</strong><span>E-sign rental agreement digitally</span></div></div>
+      <div class="next-step"><span class="step-num">3</span><div class="step-info"><strong>Delivery</strong><span>Laptop delivered to your address in 3–5 days</span></div></div>
+    </div>
+    <a href="/index.html" class="btn-home">Continue Shopping</a>
+  </div>
+</div>
+<script src="shop-api.js"></script>
+<script>
+const p = new URLSearchParams(location.search);
+const method = p.get('method') || 'online';
+const rid = p.get('id') || '';
+const pid = p.get('pid') || '';
+
+document.getElementById('r-id').textContent  = rid || ('RNT-' + Date.now().toString().slice(-8));
+document.getElementById('r-pay').textContent = method === 'cod' ? 'Cash on Delivery' : 'Online (Razorpay)' + (pid ? ' · ' + pid.slice(0,14)+'…' : '');
+if (method === 'cod') {
+  document.getElementById('cod-badge').style.display = 'inline-block';
+  document.getElementById('main-msg').textContent = 'Your rental request is placed. Please keep the deposit amount ready at the time of delivery.';
+}
+</script>
+</body>
+</html>

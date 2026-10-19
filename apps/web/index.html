@@ -3,10 +3,11 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>dbuggs — Refurbished Laptops</title>
+<title>dbuggs — Refurbished Laptops | Buy, Rent, Wholesale</title>
+<meta name="description" content="Certified refurbished laptops — QC tested, graded A+ to C, backed by warranty. Buy, rent monthly, or source in bulk at wholesale prices.">
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@600;700&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
-:root{--navy:#1C2B6B;--accent:#F07830;--accent-hover:#d9631f;--bg:#F7F8FC;--card:#fff;--border:#E5E7EB;--text:#111827;--text-sec:#6B7280;}
+:root{--navy:#1C2B6B;--accent:#F07830;--accent-hover:#d9631f;--bg:#F7F8FC;--card:#fff;--border:#E5E7EB;--text:#111827;--text-sec:#6B7280;--green:#10B981;--blue:#3B82F6;}
 *{box-sizing:border-box;margin:0;padding:0;}
 body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);}
 h1,h2,h3{font-family:'Space Grotesk',sans-serif;}
@@ -17,19 +18,21 @@ a{text-decoration:none;color:inherit;}
 .brand{font-family:'Space Grotesk',sans-serif;font-size:21px;font-weight:700;color:#fff;}
 .brand span{color:var(--accent);}
 .nav-links{display:flex;gap:18px;flex:1;}
-.nav-links a{color:rgba(255,255,255,0.8);font-size:13.5px;font-weight:500;}
+.nav-links a{color:rgba(255,255,255,0.8);font-size:13.5px;font-weight:500;transition:color .15s;}
 .nav-links a:hover{color:#fff;}
 .topbar-right{display:flex;align-items:center;gap:14px;}
-.cart-btn{position:relative;color:#fff;font-size:13.5px;background:rgba(255,255,255,0.1);padding:7px 14px;border-radius:8px;}
+.cart-btn{position:relative;color:#fff;font-size:13.5px;background:rgba(255,255,255,0.1);padding:7px 14px;border-radius:8px;transition:background .15s;}
+.cart-btn:hover{background:rgba(255,255,255,0.18);}
 .cart-badge{position:absolute;top:-6px;right:-6px;background:var(--accent);color:#fff;font-size:10.5px;font-weight:700;width:18px;height:18px;border-radius:50%;display:flex;align-items:center;justify-content:center;}
-.acc-link{color:#fff;font-size:13.5px;background:var(--accent);padding:7px 16px;border-radius:8px;font-weight:600;}
+.acc-link{color:#fff;font-size:13.5px;background:var(--accent);padding:7px 16px;border-radius:8px;font-weight:600;transition:background .15s;}
+.acc-link:hover{background:var(--accent-hover);}
 
 /* HERO */
 .hero{background:linear-gradient(135deg,var(--navy),#2a3d8f);padding:0;display:flex;align-items:center;flex-wrap:wrap;overflow:hidden;}
 .hero-copy{flex:1;min-width:280px;padding:52px 40px;color:#fff;}
 .hero-copy h1{font-size:34px;line-height:1.15;margin-bottom:10px;}
 .hero-copy p{font-size:14.5px;opacity:0.85;margin-bottom:22px;max-width:420px;}
-.hero-cta{display:inline-block;background:var(--accent);color:#fff;font-weight:700;padding:12px 26px;border-radius:9px;font-size:14.5px;}
+.hero-cta{display:inline-block;background:var(--accent);color:#fff;font-weight:700;padding:12px 26px;border-radius:9px;font-size:14.5px;transition:background .15s;}
 .hero-cta:hover{background:var(--accent-hover);}
 .hero-art{flex:1;min-width:260px;min-height:220px;background:rgba(255,255,255,0.06);display:flex;align-items:center;justify-content:center;padding:20px;}
 .hero-art img{max-width:320px;width:100%;filter:drop-shadow(0 20px 30px rgba(0,0,0,0.25));}
@@ -43,8 +46,9 @@ a{text-decoration:none;color:inherit;}
 .section{max-width:1200px;margin:0 auto;padding:36px 28px;}
 .section-title{font-size:19px;margin-bottom:16px;}
 .cat-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:14px;}
-.cat-card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:16px 10px;text-align:center;transition:box-shadow .15s,transform .15s;}
+.cat-card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:16px 10px;text-align:center;transition:box-shadow .15s,transform .15s;cursor:pointer;}
 .cat-card:hover{box-shadow:0 6px 18px rgba(0,0,0,0.07);transform:translateY(-2px);}
+.cat-card.active{border-color:var(--accent);box-shadow:0 0 0 2px rgba(240,120,48,0.2);}
 .cat-icon{font-size:26px;margin-bottom:8px;}
 .cat-name{font-size:12.5px;font-weight:600;}
 
@@ -57,38 +61,87 @@ a{text-decoration:none;color:inherit;}
 .banner-box a{font-weight:700;text-decoration:underline;}
 .wholesale-tag{font-size:10.5px;font-weight:700;color:#1E40AF;background:#DBEAFE;padding:2px 7px;border-radius:10px;margin-left:6px;}
 
-/* FILTERS */
-.filter-bar{max-width:1200px;margin:0 auto;padding:0 28px;display:flex;gap:10px;flex-wrap:wrap;align-items:center;}
-.filter-bar select,.filter-bar input{padding:8px 12px;border:1px solid var(--border);border-radius:8px;font-size:13.5px;font-family:inherit;background:var(--card);}
-.filter-bar input{flex:1;min-width:180px;}
+/* ─── FILTER BAR ─── */
+.filter-section{max-width:1200px;margin:0 auto;padding:20px 28px 0;}
+.filter-bar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;}
+.filter-bar select,.filter-bar input{padding:9px 14px;border:1px solid var(--border);border-radius:8px;font-size:13px;font-family:inherit;background:var(--card);color:var(--text);appearance:auto;cursor:pointer;transition:border-color .15s;}
+.filter-bar select:focus,.filter-bar input:focus{outline:none;border-color:var(--accent);}
+.filter-bar input{flex:1;min-width:200px;}
+.filter-bar select{min-width:130px;}
+
+.filter-meta{display:flex;justify-content:space-between;align-items:center;margin-top:12px;flex-wrap:wrap;gap:8px;}
+.result-count{font-size:13px;color:var(--text-sec);}
+.result-count strong{color:var(--text);}
+.active-filters{display:flex;gap:6px;flex-wrap:wrap;align-items:center;}
+.filter-chip{display:inline-flex;align-items:center;gap:4px;padding:4px 10px;border-radius:99px;font-size:11.5px;font-weight:600;background:#E0E4F5;color:var(--navy);cursor:pointer;transition:background .15s;}
+.filter-chip:hover{background:#cdd3e8;}
+.filter-chip .x{font-size:14px;line-height:1;opacity:0.6;}
+.clear-all{font-size:12px;font-weight:600;color:var(--accent);cursor:pointer;border:none;background:none;padding:4px 8px;}
+.clear-all:hover{text-decoration:underline;}
+
+/* SORT */
+.sort-wrap{display:flex;align-items:center;gap:6px;font-size:12.5px;color:var(--text-sec);}
+.sort-wrap select{padding:6px 10px;border:1px solid var(--border);border-radius:6px;font-size:12.5px;font-family:inherit;background:#fff;cursor:pointer;}
 
 /* PRODUCT GRID */
 .grid-wrap{max-width:1200px;margin:0 auto;padding:20px 28px 60px;}
-.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:18px;}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:18px;}
 .pcard{background:var(--card);border:1px solid var(--border);border-radius:12px;overflow:hidden;display:flex;flex-direction:column;transition:box-shadow 0.15s,transform 0.15s;}
 .pcard:hover{box-shadow:0 8px 24px rgba(0,0,0,0.08);transform:translateY(-2px);}
 .pcard-img{width:100%;aspect-ratio:4/3;background:var(--bg);display:block;object-fit:cover;}
-.pcard-body{padding:14px 16px 16px;display:flex;flex-direction:column;gap:7px;}
-.pcard-top{display:flex;justify-content:space-between;align-items:flex-start;}
+.pcard-body{padding:14px 16px 16px;display:flex;flex-direction:column;gap:6px;flex:1;}
+.pcard-top{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;}
 .grade{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:50%;font-size:10.5px;font-weight:700;color:#fff;flex-shrink:0;}
 .grade-aplus{background:var(--navy);}.grade-a{background:#10B981;}.grade-b{background:#F59E0B;}.grade-c{background:#EF4444;}
 .pcard-model{font-weight:700;font-size:14.5px;}
 .pcard-specs{font-size:11.5px;color:var(--text-sec);}
-.pcard-price{font-weight:700;font-size:18px;color:var(--navy);margin-top:2px;}
+.pcard-pricing{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap;margin-top:2px;}
+.pcard-price{font-weight:700;font-size:18px;color:var(--navy);}
+.pcard-rent{font-size:11.5px;color:var(--green);font-weight:600;}
 .pcard-serial{font-size:10.5px;color:#9CA3AF;font-family:monospace;}
-.pcard-actions{display:flex;gap:8px;margin-top:4px;}
-.btn{flex:1;padding:8px;border-radius:7px;font-size:12.5px;font-weight:600;border:none;cursor:pointer;text-align:center;}
+.pcard-warranty{font-size:10.5px;color:var(--blue);font-weight:500;display:flex;align-items:center;gap:3px;}
+.pcard-actions{display:flex;gap:8px;margin-top:auto;padding-top:8px;}
+.btn{flex:1;padding:9px;border-radius:7px;font-size:12.5px;font-weight:600;border:none;cursor:pointer;text-align:center;transition:all .15s;}
 .btn-primary{background:var(--accent);color:#fff;}.btn-primary:hover{background:var(--accent-hover);}
-.btn-outline{background:#fff;border:1px solid var(--border);color:var(--text);}
-.empty{text-align:center;padding:60px 20px;color:var(--text-sec);}
+.btn-outline{background:#fff;border:1px solid var(--border);color:var(--text);}.btn-outline:hover{border-color:var(--navy);color:var(--navy);}
+.btn-rent{background:rgba(16,185,129,0.1);color:var(--green);border:1px solid rgba(16,185,129,0.3);}.btn-rent:hover{background:rgba(16,185,129,0.18);}
+
+/* EMPTY STATE */
+.empty{text-align:center;padding:60px 20px;color:var(--text-sec);grid-column:1/-1;}
+.empty svg{width:48px;height:48px;color:#D1D5DB;margin-bottom:12px;}
+.empty p{font-size:14px;margin-bottom:8px;}
+.empty .hint{font-size:12.5px;color:#9CA3AF;}
+
+/* FOOTER */
+footer{background:var(--navy);color:rgba(255,255,255,0.7);padding:32px 28px;text-align:center;font-size:12.5px;line-height:1.8;}
+footer strong{color:#fff;}
+footer a{color:var(--accent);text-decoration:underline;}
+
+@media(max-width:768px){
+  .topbar{padding:12px 16px;gap:12px;}
+  .nav-links{gap:12px;}
+  .hero-copy{padding:36px 20px;}
+  .hero-copy h1{font-size:26px;}
+  .trust-bar{gap:18px;padding:12px 16px;}
+  .section,.filter-section,.grid-wrap{padding-left:16px;padding-right:16px;}
+  .filter-bar{flex-direction:column;}
+  .filter-bar select,.filter-bar input{width:100%;min-width:0;}
+  .grid{grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px;}
+}
+@media(max-width:480px){
+  .grid{grid-template-columns:1fr;}
+  .hero-art{display:none;}
+  .cat-grid{grid-template-columns:repeat(3,1fr);}
+}
 </style>
 </head>
 <body>
 <div class="topbar">
-  <div class="brand">d<span>bugg</span>s</div>
+  <a href="/index.html" class="brand">d<span>bugg</span>s</a>
   <div class="nav-links">
     <a href="/index.html">Shop</a>
     <a href="/orders.html">My Orders</a>
+    <a href="/emi-apply.html">Rent</a>
   </div>
   <div class="topbar-right">
     <a href="/cart.html" class="cart-btn">Cart <span class="cart-badge" id="cart-count">0</span></a>
@@ -114,52 +167,285 @@ a{text-decoration:none;color:inherit;}
 
 <div class="section">
   <div class="section-title">Shop by Brand</div>
-  <div class="cat-grid">
-    <a href="#" class="cat-card" onclick="filterBrand('Dell')"><div class="cat-icon">💻</div><div class="cat-name">Dell</div></a>
-    <a href="#" class="cat-card" onclick="filterBrand('HP')"><div class="cat-icon">💻</div><div class="cat-name">HP</div></a>
-    <a href="#" class="cat-card" onclick="filterBrand('Lenovo')"><div class="cat-icon">💻</div><div class="cat-name">Lenovo</div></a>
-    <a href="#" class="cat-card" onclick="filterBrand('Apple')"><div class="cat-icon">🍎</div><div class="cat-name">Apple</div></a>
-    <a href="#" class="cat-card" onclick="filterBrand('Asus')"><div class="cat-icon">💻</div><div class="cat-name">Asus</div></a>
-    <a href="#" class="cat-card" onclick="filterBrand('')"><div class="cat-icon">🛒</div><div class="cat-name">All Laptops</div></a>
+  <div class="cat-grid" id="brand-cards">
+    <a class="cat-card" data-brand="Dell"><div class="cat-icon">💻</div><div class="cat-name">Dell</div></a>
+    <a class="cat-card" data-brand="HP"><div class="cat-icon">💻</div><div class="cat-name">HP</div></a>
+    <a class="cat-card" data-brand="Lenovo"><div class="cat-icon">💻</div><div class="cat-name">Lenovo</div></a>
+    <a class="cat-card" data-brand="Apple"><div class="cat-icon">🍎</div><div class="cat-name">Apple</div></a>
+    <a class="cat-card" data-brand="Asus"><div class="cat-icon">💻</div><div class="cat-name">Asus</div></a>
+    <a class="cat-card" data-brand="Acer"><div class="cat-icon">💻</div><div class="cat-name">Acer</div></a>
+    <a class="cat-card active" data-brand=""><div class="cat-icon">🛒</div><div class="cat-name">All Laptops</div></a>
   </div>
 </div>
 
 <div class="role-banner" id="role-banner"></div>
 
 <a id="shop"></a>
-<div class="filter-bar">
-  <input type="text" id="search" placeholder="Search brand or model…" oninput="debouncedLoad()">
-  <select id="grade-filter" onchange="loadProducts()">
-    <option value="">All Grades</option>
-    <option value="A+">A+</option>
-    <option value="A">A</option>
-    <option value="B">B</option>
-    <option value="C">C</option>
-  </select>
+<div class="filter-section">
+  <div class="filter-bar">
+    <input type="text" id="f-search" placeholder="Search brand, model, processor…" autocomplete="off">
+    <select id="f-brand">
+      <option value="">All Brands</option>
+      <option value="Dell">Dell</option>
+      <option value="HP">HP</option>
+      <option value="Lenovo">Lenovo</option>
+      <option value="Apple">Apple</option>
+      <option value="Asus">Asus</option>
+      <option value="Acer">Acer</option>
+    </select>
+    <select id="f-grade">
+      <option value="">All Grades</option>
+      <option value="A+">A+ (Like New)</option>
+      <option value="A">A (Excellent)</option>
+      <option value="B">B (Good)</option>
+      <option value="C">C (Fair)</option>
+    </select>
+    <select id="f-price">
+      <option value="">All Prices</option>
+      <option value="0-25000">Under ₹25,000</option>
+      <option value="25000-40000">₹25,000 – ₹40,000</option>
+      <option value="40000-60000">₹40,000 – ₹60,000</option>
+      <option value="60000-999999">₹60,000+</option>
+    </select>
+    <select id="f-proc">
+      <option value="">All Processors</option>
+      <option value="i3">Intel Core i3</option>
+      <option value="i5">Intel Core i5</option>
+      <option value="i7">Intel Core i7</option>
+      <option value="Ryzen">AMD Ryzen</option>
+      <option value="M1">Apple M1/M2</option>
+    </select>
+  </div>
+  <div class="filter-meta">
+    <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+      <div class="result-count" id="result-count"></div>
+      <div class="active-filters" id="active-filters"></div>
+    </div>
+    <div class="sort-wrap">
+      <span>Sort:</span>
+      <select id="f-sort">
+        <option value="newest">Newest First</option>
+        <option value="price-asc">Price: Low → High</option>
+        <option value="price-desc">Price: High → Low</option>
+        <option value="grade">Best Grade First</option>
+      </select>
+    </div>
+  </div>
 </div>
 
 <div class="grid-wrap">
   <div class="grid" id="product-grid">
-    <div class="empty">Loading products...</div>
+    <div class="empty">
+      <svg viewBox="0 0 24 24" fill="currentColor"><circle cx="11" cy="11" r="8" fill="none" stroke="currentColor" stroke-width="2"/><path d="M21 21l-4.35-4.35" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+      <p>Loading products...</p>
+    </div>
   </div>
 </div>
+
+<footer>
+  <strong>dbuggs</strong> — Certified Refurbished Laptops<br>
+  Appz Global Tech Pvt. Ltd. · <a href="https://www.appzglobaltech.com">www.appzglobaltech.com</a><br>
+  © 2026 All rights reserved
+</footer>
 
 <script src="shop-api.js"></script>
 <script>
 const user = getUser();
 let b2bApproved = false;
+let allProducts = [];
 
 if (user) {
   document.getElementById('acc-link').textContent = user.name || user.email;
   document.getElementById('acc-link').href = '/account.html';
 }
 
-function filterBrand(brand) {
-  document.getElementById('search').value = brand;
-  loadProducts();
-  document.getElementById('shop').scrollIntoView({ behavior: 'smooth' });
+// ─── Brand card clicks ───
+document.querySelectorAll('#brand-cards .cat-card').forEach(card => {
+  card.addEventListener('click', e => {
+    e.preventDefault();
+    const brand = card.dataset.brand;
+    document.getElementById('f-brand').value = brand;
+    document.querySelectorAll('#brand-cards .cat-card').forEach(c => c.classList.remove('active'));
+    card.classList.add('active');
+    applyFilters();
+    document.getElementById('shop').scrollIntoView({ behavior: 'smooth' });
+  });
+});
+
+// ─── Filter event listeners ───
+document.getElementById('f-search').addEventListener('input', debounce(applyFilters, 300));
+document.getElementById('f-brand').addEventListener('change', function() {
+  syncBrandCards(this.value);
+  applyFilters();
+});
+document.getElementById('f-grade').addEventListener('change', applyFilters);
+document.getElementById('f-price').addEventListener('change', applyFilters);
+document.getElementById('f-proc').addEventListener('change', applyFilters);
+document.getElementById('f-sort').addEventListener('change', applyFilters);
+
+function syncBrandCards(brand) {
+  document.querySelectorAll('#brand-cards .cat-card').forEach(c => {
+    c.classList.toggle('active', c.dataset.brand === brand);
+  });
 }
 
+function debounce(fn, ms) {
+  let t;
+  return function(...args) { clearTimeout(t); t = setTimeout(() => fn.apply(this, args), ms); };
+}
+
+// ─── Get current filters ───
+function getFilters() {
+  return {
+    search: document.getElementById('f-search').value.trim().toLowerCase(),
+    brand: document.getElementById('f-brand').value,
+    grade: document.getElementById('f-grade').value,
+    price: document.getElementById('f-price').value,
+    proc: document.getElementById('f-proc').value,
+    sort: document.getElementById('f-sort').value,
+  };
+}
+
+// ─── Apply filters & render ───
+function applyFilters() {
+  const f = getFilters();
+  let products = [...allProducts];
+
+  if (f.search) {
+    products = products.filter(p =>
+      (p.brand + ' ' + p.model + ' ' + (p.processor || '')).toLowerCase().includes(f.search)
+    );
+  }
+  if (f.brand) {
+    products = products.filter(p => p.brand === f.brand);
+  }
+  if (f.grade) {
+    products = products.filter(p => p.grade === f.grade);
+  }
+  if (f.price) {
+    const [min, max] = f.price.split('-').map(Number);
+    products = products.filter(p => {
+      const price = Number(p.sellingPrice);
+      return price >= min && price <= max;
+    });
+  }
+  if (f.proc) {
+    products = products.filter(p => (p.processor || '').toLowerCase().includes(f.proc.toLowerCase()));
+  }
+
+  // Sort
+  const gradeOrder = { 'A+': 0, 'A': 1, 'B': 2, 'C': 3 };
+  switch (f.sort) {
+    case 'price-asc':
+      products.sort((a, b) => Number(a.sellingPrice) - Number(b.sellingPrice));
+      break;
+    case 'price-desc':
+      products.sort((a, b) => Number(b.sellingPrice) - Number(a.sellingPrice));
+      break;
+    case 'grade':
+      products.sort((a, b) => (gradeOrder[a.grade] ?? 9) - (gradeOrder[b.grade] ?? 9));
+      break;
+    default:
+      products.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+  }
+
+  renderProducts(products);
+  renderFilterMeta(f, products.length);
+}
+
+// ─── Render filter chips + count ───
+function renderFilterMeta(f, count) {
+  document.getElementById('result-count').innerHTML =
+    `Showing <strong>${count}</strong> laptop${count !== 1 ? 's' : ''}`;
+
+  const chips = [];
+  if (f.brand) chips.push({ label: f.brand, clear: () => { document.getElementById('f-brand').value = ''; syncBrandCards(''); } });
+  if (f.grade) chips.push({ label: 'Grade ' + f.grade, clear: () => { document.getElementById('f-grade').value = ''; } });
+  if (f.price) {
+    const labels = { '0-25000': 'Under ₹25K', '25000-40000': '₹25K–40K', '40000-60000': '₹40K–60K', '60000-999999': '₹60K+' };
+    chips.push({ label: labels[f.price] || f.price, clear: () => { document.getElementById('f-price').value = ''; } });
+  }
+  if (f.proc) {
+    const labels = { 'i3': 'Intel i3', 'i5': 'Intel i5', 'i7': 'Intel i7', 'Ryzen': 'AMD Ryzen', 'M1': 'Apple M1/M2' };
+    chips.push({ label: labels[f.proc] || f.proc, clear: () => { document.getElementById('f-proc').value = ''; } });
+  }
+  if (f.search) chips.push({ label: '"' + f.search + '"', clear: () => { document.getElementById('f-search').value = ''; } });
+
+  const container = document.getElementById('active-filters');
+  container.innerHTML = '';
+  chips.forEach(chip => {
+    const el = document.createElement('span');
+    el.className = 'filter-chip';
+    el.innerHTML = chip.label + ' <span class="x">×</span>';
+    el.addEventListener('click', () => { chip.clear(); applyFilters(); });
+    container.appendChild(el);
+  });
+  if (chips.length > 1) {
+    const btn = document.createElement('button');
+    btn.className = 'clear-all';
+    btn.textContent = 'Clear all';
+    btn.addEventListener('click', clearAllFilters);
+    container.appendChild(btn);
+  }
+}
+
+function clearAllFilters() {
+  document.getElementById('f-search').value = '';
+  document.getElementById('f-brand').value = '';
+  document.getElementById('f-grade').value = '';
+  document.getElementById('f-price').value = '';
+  document.getElementById('f-proc').value = '';
+  syncBrandCards('');
+  applyFilters();
+}
+
+// ─── Render products ───
+function renderProducts(products) {
+  const grid = document.getElementById('product-grid');
+  if (products.length === 0) {
+    grid.innerHTML = `
+      <div class="empty">
+        <svg viewBox="0 0 24 24" fill="currentColor"><circle cx="11" cy="11" r="8" fill="none" stroke="currentColor" stroke-width="2"/><path d="M21 21l-4.35-4.35" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        <p>No laptops match your filters</p>
+        <div class="hint">Try removing some filters or search for a different term</div>
+        <button class="clear-all" onclick="clearAllFilters()" style="margin-top:12px;font-size:14px;">Clear all filters</button>
+      </div>`;
+    return;
+  }
+
+  const gradeClass = { 'A+': 'grade-aplus', 'A': 'grade-a', 'B': 'grade-b', 'C': 'grade-c' };
+  grid.innerHTML = products.map(p => {
+    const specs = [p.processor, p.ram, p.storage, p.display].filter(Boolean).join(' · ');
+    const rental = p.rentalPrice ? `or rent from ${money(p.rentalPrice)}/mo` : '';
+    const warranty = p.warrantyMonths ? `${p.warrantyMonths} month warranty` : '';
+    return `
+    <div class="pcard">
+      <img class="pcard-img" src="images/laptop-placeholder.svg" alt="${p.brand} ${p.model}">
+      <div class="pcard-body">
+        <div class="pcard-top">
+          <div>
+            <div class="pcard-model">${p.brand} ${p.model}</div>
+            <div class="pcard-serial">${p.serialNo}</div>
+          </div>
+          ${p.grade ? `<div class="grade ${gradeClass[p.grade] || 'grade-a'}">${p.grade}</div>` : ''}
+        </div>
+        <div class="pcard-specs">${specs || 'Specs not listed'}</div>
+        <div class="pcard-pricing">
+          <span class="pcard-price">${p.sellingPrice ? money(p.sellingPrice) : 'Price on request'}${b2bApproved ? '<span class="wholesale-tag">Bulk</span>' : ''}</span>
+          ${rental ? `<span class="pcard-rent">${rental}</span>` : ''}
+        </div>
+        ${warranty ? `<div class="pcard-warranty"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4z"/></svg>${warranty}</div>` : ''}
+        <div class="pcard-actions">
+          <a href="/product.html?id=${p.id}" class="btn btn-outline">Details</a>
+          ${p.rentalPrice ? `<a href="/rental-checkout.html?id=${p.id}" class="btn btn-rent">Rent</a>` : ''}
+          <button class="btn btn-primary" onclick='addToCart(${JSON.stringify({id:p.id,brand:p.brand,model:p.model,grade:p.grade,sellingPrice:p.sellingPrice,serialNo:p.serialNo})}); this.textContent="Added ✓"; this.disabled=true; setTimeout(()=>{this.textContent="Add to Cart";this.disabled=false;},1500);'>Add to Cart</button>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ─── Role banner ───
 async function loadRoleBanner() {
   const el = document.getElementById('role-banner');
   if (!user) {
@@ -170,17 +456,11 @@ async function loadRoleBanner() {
     try {
       const dealer = await apiFetch('/dealer/my');
       if (dealer && dealer.id) {
-        if (dealer.status === 'active') {
-          el.innerHTML = `<div class="banner-box banner-b2b-approved">✓ Dealer account active — ${dealer.tier} tier. <a href="/vendor-panel/dashboard.html">View dashboard →</a></div>`;
-        } else {
-          el.innerHTML = `<div class="banner-box banner-b2b-pending">⏳ Your dealer application is pending admin approval.</div>`;
-        }
-      } else {
-        el.innerHTML = `<div class="banner-box banner-b2b-prompt">Complete your dealer registration to start selling. <a href="/dealer-register.html">Register now →</a></div>`;
+        el.innerHTML = dealer.status === 'active'
+          ? `<div class="banner-box banner-b2b-approved">✓ Dealer account active — ${dealer.tier} tier. <a href="/vendor-panel/dashboard.html">View dashboard →</a></div>`
+          : `<div class="banner-box banner-b2b-pending">⏳ Your dealer application is pending admin approval.</div>`;
       }
-    } catch {
-      el.innerHTML = `<div class="banner-box banner-b2b-prompt">Complete your dealer registration to start selling. <a href="/dealer-register.html">Register now →</a></div>`;
-    }
+    } catch {}
     return;
   }
   if (user.role === 'b2b') {
@@ -193,63 +473,25 @@ async function loadRoleBanner() {
         } else {
           el.innerHTML = `<div class="banner-box banner-b2b-pending">⏳ Your B2B application is pending admin approval.</div>`;
         }
-      } else {
-        el.innerHTML = `<div class="banner-box banner-b2b-prompt">Complete your B2B registration to unlock wholesale pricing. <a href="/b2b-register.html">Register now →</a></div>`;
       }
-    } catch {
-      el.innerHTML = `<div class="banner-box banner-b2b-prompt">Complete your B2B registration to unlock wholesale pricing. <a href="/b2b-register.html">Register now →</a></div>`;
-    }
+    } catch {}
   }
 }
 
-let debounceTimer;
-function debouncedLoad() { clearTimeout(debounceTimer); debounceTimer = setTimeout(loadProducts, 350); }
-
-async function loadProducts() {
-  const grid = document.getElementById('product-grid');
-  const search = document.getElementById('search').value.trim();
-  const grade = document.getElementById('grade-filter').value;
-  const params = new URLSearchParams();
-  if (search) params.set('search', search);
-  if (grade) params.set('grade', grade);
+// ─── Initial load ───
+async function init() {
+  loadRoleBanner();
   try {
-    const result = await apiFetch('/products?' + params.toString());
-    let products = result.data || result;
-    if (search) {
-      const s = search.toLowerCase();
-      products = products.filter(p => (p.brand || '').toLowerCase().includes(s) || (p.model || '').toLowerCase().includes(s));
-    }
-    if (products.length === 0) {
-      grid.innerHTML = '<div class="empty">No laptops match your search. Try different filters.</div>';
-      return;
-    }
-    const gradeClass = { 'A+': 'grade-aplus', 'A': 'grade-a', 'B': 'grade-b', 'C': 'grade-c' };
-    grid.innerHTML = products.map(p => `
-      <div class="pcard">
-        <img class="pcard-img" src="images/laptop-placeholder.svg" alt="${p.brand} ${p.model}">
-        <div class="pcard-body">
-          <div class="pcard-top">
-            <div>
-              <div class="pcard-model">${p.brand} ${p.model}</div>
-              <div class="pcard-serial">${p.serialNo}</div>
-            </div>
-            ${p.grade ? `<div class="grade ${gradeClass[p.grade] || 'grade-a'}">${p.grade}</div>` : ''}
-          </div>
-          <div class="pcard-specs">${[p.processor, p.ram, p.storage].filter(Boolean).join(' · ') || 'Specs not listed'}</div>
-          <div class="pcard-price">${p.sellingPrice ? money(p.sellingPrice) : 'Price on request'}${b2bApproved ? '<span class="wholesale-tag">Bulk discount</span>' : ''}</div>
-          <div class="pcard-actions">
-            <a href="/product.html?id=${p.id}" class="btn btn-outline">Details</a>
-            <button class="btn btn-primary" onclick='addToCart(${JSON.stringify(p)}); updateCartBadge();'>Add to Cart</button>
-          </div>
-        </div>
-      </div>
-    `).join('');
+    const result = await apiFetch('/products');
+    allProducts = result.data || result;
+    applyFilters();
   } catch (e) {
-    grid.innerHTML = `<div class="empty">Error loading products: ${e.message}</div>`;
+    document.getElementById('product-grid').innerHTML =
+      `<div class="empty"><p>Error loading products</p><div class="hint">${e.message}</div></div>`;
   }
 }
 
-loadRoleBanner().then(loadProducts);
+init();
 </script>
 </body>
 </html>

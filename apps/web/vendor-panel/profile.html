@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>My Profile — Dealer Panel</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Inter',sans-serif;background:#f1f3f6;color:#212121;display:flex;min-height:100vh;}
+a{text-decoration:none;color:inherit;}
+.sidebar{width:220px;background:#1C2B6B;min-height:100vh;display:flex;flex-direction:column;flex-shrink:0;}
+.sidebar-logo{padding:22px 20px 18px;border-bottom:1px solid rgba(255,255,255,.1);}
+.brand{font-size:20px;font-weight:700;color:#fff;}.brand span{color:#F07830;}
+.tagline{font-size:10.5px;color:rgba(255,255,255,.5);margin-top:3px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;}
+.nav-section{padding:16px 10px;flex:1;}
+.nav-group-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:rgba(255,255,255,.35);padding:10px 12px 4px;}
+.nav-item{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:8px;color:rgba(255,255,255,.65);font-size:13.5px;font-weight:500;margin-bottom:4px;transition:background .15s,color .15s;}
+.nav-item svg{width:18px;height:18px;flex-shrink:0;}
+.nav-item:hover,.nav-item.active{background:rgba(255,255,255,.1);color:#fff;}
+.nav-item.active{background:#F07830;color:#fff;}
+.sidebar-footer{padding:14px 10px;border-top:1px solid rgba(255,255,255,.1);}
+.user-row{display:flex;align-items:center;gap:10px;padding:8px 12px;}
+.avatar{width:34px;height:34px;border-radius:50%;background:#F07830;color:#fff;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;flex-shrink:0;}
+.user-name{font-size:13px;font-weight:600;color:#fff;}
+.logout-link{font-size:11.5px;color:rgba(255,255,255,.5);cursor:pointer;margin-top:1px;}
+.logout-link:hover{color:#fff;}
+.main{flex:1;display:flex;flex-direction:column;}
+.topbar{background:#fff;padding:14px 24px;border-bottom:1px solid #e0e0e0;font-size:17px;font-weight:700;}
+.page{padding:24px;display:flex;flex-direction:column;gap:18px;max-width:700px;}
+.card{background:#fff;border-radius:8px;border:1px solid #e0e0e0;overflow:hidden;}
+.card-head{padding:14px 20px;border-bottom:1px solid #f0f0f0;font-size:15px;font-weight:700;}
+.card-body{padding:20px;display:flex;flex-direction:column;gap:14px;}
+.profile-top{display:flex;align-items:center;gap:16px;padding:20px;background:#f8f9fa;border-radius:8px;}
+.profile-avatar{width:60px;height:60px;border-radius:50%;background:#1C2B6B;color:#fff;display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:700;flex-shrink:0;}
+.profile-name{font-size:18px;font-weight:700;}
+.profile-meta{font-size:13px;color:#878787;margin-top:2px;}
+.tier-badge{display:inline-block;padding:3px 10px;border-radius:12px;font-size:11.5px;font-weight:700;background:#fff8e1;color:#e65100;margin-top:4px;}
+.field-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.form-group{display:flex;flex-direction:column;gap:6px;}
+.form-group.full{grid-column:1/-1;}
+.form-group label{font-size:12px;font-weight:600;color:#878787;text-transform:uppercase;letter-spacing:.04em;}
+.form-group input,.form-group select{padding:9px 12px;border:1px solid #e0e0e0;border-radius:6px;font-size:13.5px;font-family:inherit;outline:none;background:#fff;}
+.form-group input:focus{border-color:#1C2B6B;}
+.form-group input[readonly]{background:#f8f9fa;color:#878787;}
+.save-btn{align-self:flex-start;padding:10px 28px;background:#1C2B6B;color:#fff;border:none;border-radius:6px;font-size:13.5px;font-weight:700;cursor:pointer;font-family:inherit;}
+.save-btn:hover{background:#162257;}
+.save-msg{font-size:12.5px;padding:8px 12px;border-radius:6px;}
+.save-msg.ok{background:#e8f5e9;color:#2e7d32;}
+.save-msg.err{background:#ffebee;color:#c62828;}
+.info-row{display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid #f5f5f5;font-size:13.5px;}
+.info-row:last-child{border-bottom:none;}
+.info-row .label{color:#878787;font-weight:500;}
+.info-row .value{font-weight:600;}
+</style>
+</head>
+<body>
+<aside class="sidebar">
+  <div class="sidebar-logo"><div class="brand">d<span>bugg</span>s</div><div class="tagline">Dealer Panel</div></div>
+  <nav class="nav-section">
+    <div class="nav-group-label">Overview</div>
+    <a href="dashboard.html" class="nav-item"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"/></svg>Dashboard</a>
+    <div class="nav-group-label">Finance</div>
+    <a href="commissions.html" class="nav-item"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M11.8 10.9c-2.27-.59-3-1.2-3-2.15 0-1.09 1.01-1.85 2.7-1.85 1.78 0 2.44.85 2.5 2.1h2.21c-.07-1.72-1.12-3.3-3.21-3.81V3h-3v2.16c-1.94.42-3.5 1.68-3.5 3.61 0 2.31 1.91 3.46 4.7 4.13 2.5.6 3 1.48 3 2.41 0 .69-.49 1.79-2.7 1.79-2.06 0-2.87-.92-2.98-2.1h-2.2c.12 2.19 1.76 3.42 3.68 3.83V21h3v-2.15c1.95-.37 3.5-1.5 3.5-3.55 0-2.84-2.43-3.81-4.7-4.4z"/></svg>Commissions &amp; Payouts</a>
+    <a href="wallet.html" class="nav-item"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M21 18v1a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h14a2 2 0 012 2v1h-9a2 2 0 00-2 2v8a2 2 0 002 2h9zm-9-2h10V8H12v8zm4-2.5a1.5 1.5 0 110-3 1.5 1.5 0 010 3z"/></svg>Wallet &amp; Payouts</a>
+    <div class="nav-group-label">Orders</div>
+    <a href="bulk-orders.html" class="nav-item"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 3H5c-1.1 0-2 .9-2 2v14a2 2 0 002 2h14a2 2 0 002-2V5c0-1.1-.9-2-2-2zm-7 3c1.93 0 3.5 1.57 3.5 3.5S13.93 13 12 13s-3.5-1.57-3.5-3.5S10.07 6 12 6zm7 13H5v-.23c0-.62.28-1.2.76-1.58C7.47 15.82 9.64 15 12 15s4.53.82 6.24 2.19c.48.38.76.97.76 1.58V19z"/></svg>My Bulk Orders</a>
+    <a href="../index.html" class="nav-item"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M15.55 13c.75 0 1.41-.41 1.75-1.03l3.58-6.49A1 1 0 0020 4H5.21L4 1H1v2h2l3.6 7.59L5.25 13c-.16.28-.25.61-.25.95C5 15.1 5.9 16 7 16h12v-2H7.42c-.14 0-.25-.11-.25-.25l.03-.12.9-1.63H15.55zM7 17c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm10 0c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/></svg>Place Bulk Order</a>
+    <div class="nav-group-label">Account</div>
+    <a href="profile.html" class="nav-item active"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z"/></svg>My Profile</a>
+    <a href="support.html" class="nav-item"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-2 12H6v-2h12v2zm0-3H6V9h12v2zm0-3H6V6h12v2z"/></svg>Support</a>
+  </nav>
+  <div class="sidebar-footer">
+    <div class="user-row"><div class="avatar" id="avatar">D</div><div><div class="user-name" id="uname">Loading…</div><div class="logout-link" onclick="logout()">Logout</div></div></div>
+  </div>
+</aside>
+<div class="main">
+  <header class="topbar">My Profile</header>
+  <div class="page" id="page"><div style="padding:40px;color:#878787;text-align:center;">Loading…</div></div>
+</div>
+<script src="../shop-api.js"></script>
+<script>
+if (!getToken()) window.location.href = '/login.html';
+const user = getUser();
+if (user) { document.getElementById('uname').textContent = user.name||user.email; document.getElementById('avatar').textContent=(user.name||'D')[0].toUpperCase(); }
+
+async function load() {
+  const page = document.getElementById('page');
+  try {
+    const [me, dealer] = await Promise.all([apiFetch('/users/me'), apiFetch('/dealer/my')]);
+    const bank = dealer?.bankDetails || {};
+    const tierColors = { silver:'background:#e3f2fd;color:#0d47a1', gold:'background:#fff8e1;color:#e65100', platinum:'background:#f3e5f5;color:#4a148c' };
+
+    page.innerHTML = `
+      <div class="profile-top">
+        <div class="profile-avatar">${(me.name||'D')[0].toUpperCase()}</div>
+        <div>
+          <div class="profile-name">${me.name||'—'}</div>
+          <div class="profile-meta">${me.email||'—'} · ${me.phone||'—'}</div>
+          ${dealer ? `<span class="tier-badge" style="${tierColors[dealer.tier]||''}">${dealer.tier||'—'} Dealer · ${dealer.commissionRate||0}% commission</span>` : ''}
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-head">Dealer Information</div>
+        <div class="card-body">
+          <div class="info-row"><span class="label">Company Name</span><span class="value">${dealer?.companyName||'—'}</span></div>
+          <div class="info-row"><span class="label">GSTIN</span><span class="value" style="font-family:monospace">${dealer?.gstin||'—'}</span></div>
+          <div class="info-row"><span class="label">Territory</span><span class="value">${dealer?.territory||'—'}</span></div>
+          <div class="info-row"><span class="label">Tier</span><span class="value">${dealer?.tier||'—'}</span></div>
+          <div class="info-row"><span class="label">Status</span><span class="value">${dealer?.status||'—'}</span></div>
+          <div class="info-row"><span class="label">Joined</span><span class="value">${dealer?.createdAt ? new Date(dealer.createdAt).toLocaleDateString('en-IN',{day:'2-digit',month:'long',year:'numeric'}) : '—'}</span></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-head">Personal Details</div>
+        <div class="card-body">
+          <div class="field-row">
+            <div class="form-group"><label>Full Name</label><input id="f-name" value="${me.name||''}" placeholder="Full name"></div>
+            <div class="form-group"><label>Phone</label><input id="f-phone" value="${me.phone||''}" placeholder="+91XXXXXXXXXX" readonly></div>
+          </div>
+          <div class="field-row">
+            <div class="form-group"><label>Email</label><input id="f-email" value="${me.email||''}" placeholder="Email address"></div>
+            <div class="form-group"><label>Role</label><input value="${me.role||'dealer'}" readonly></div>
+          </div>
+          <button class="save-btn" onclick="saveProfile()">Save Changes</button>
+          <div id="profile-msg"></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-head">Bank Account</div>
+        <div class="card-body">
+          <div class="field-row">
+            <div class="form-group"><label>Bank Name</label><input id="b-bank" value="${bank.bank||''}" placeholder="e.g. HDFC Bank"></div>
+            <div class="form-group"><label>Account Number</label><input id="b-account" value="${bank.account||''}" placeholder="Account number"></div>
+          </div>
+          <div class="field-row">
+            <div class="form-group"><label>IFSC Code</label><input id="b-ifsc" value="${bank.ifsc||''}" placeholder="e.g. HDFC0001234"></div>
+            <div class="form-group"><label>UPI ID (optional)</label><input id="b-upi" value="${bank.upi||''}" placeholder="yourname@upi"></div>
+          </div>
+          <button class="save-btn" onclick="saveBank()">Save Bank Details</button>
+          <div id="bank-msg"></div>
+        </div>
+      </div>
+    `;
+  } catch(e) { page.innerHTML = `<div style="padding:40px;color:#c62828;">Error: ${e.message}</div>`; }
+}
+
+async function saveProfile() {
+  const msg = document.getElementById('profile-msg');
+  try {
+    await apiFetch('/users/me', { method:'PATCH', body:{ name: document.getElementById('f-name').value, email: document.getElementById('f-email').value } });
+    msg.className='save-msg ok'; msg.textContent='Profile updated successfully.';
+  } catch(e) { msg.className='save-msg err'; msg.textContent=e.message; }
+}
+
+async function saveBank() {
+  const msg = document.getElementById('bank-msg');
+  const bankDetails = { bank: document.getElementById('b-bank').value, account: document.getElementById('b-account').value, ifsc: document.getElementById('b-ifsc').value, upi: document.getElementById('b-upi').value };
+  try {
+    const dealer = await apiFetch('/dealer/my');
+    await apiFetch(`/dealer/${dealer.id}`, { method:'PATCH', body:{ bankDetails } });
+    msg.className='save-msg ok'; msg.textContent='Bank details saved successfully.';
+  } catch(e) { msg.className='save-msg err'; msg.textContent=e.message; }
+}
+load();
+</script>
+</body>
+</html>

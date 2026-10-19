@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>My Bulk Orders — Dealer Panel</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Inter',sans-serif;background:#f1f3f6;color:#212121;display:flex;min-height:100vh;}
+a{text-decoration:none;color:inherit;}
+.sidebar{width:220px;background:#1C2B6B;min-height:100vh;display:flex;flex-direction:column;flex-shrink:0;}
+.sidebar-logo{padding:22px 20px 18px;border-bottom:1px solid rgba(255,255,255,.1);}
+.brand{font-size:20px;font-weight:700;color:#fff;}.brand span{color:#F07830;}
+.tagline{font-size:10.5px;color:rgba(255,255,255,.5);margin-top:3px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;}
+.nav-section{padding:16px 10px;flex:1;}
+.nav-group-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:rgba(255,255,255,.35);padding:10px 12px 4px;}
+.nav-item{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:8px;color:rgba(255,255,255,.65);font-size:13.5px;font-weight:500;margin-bottom:4px;transition:background .15s,color .15s;}
+.nav-item svg{width:18px;height:18px;flex-shrink:0;}
+.nav-item:hover,.nav-item.active{background:rgba(255,255,255,.1);color:#fff;}
+.nav-item.active{background:#F07830;color:#fff;}
+.sidebar-footer{padding:14px 10px;border-top:1px solid rgba(255,255,255,.1);}
+.user-row{display:flex;align-items:center;gap:10px;padding:8px 12px;}
+.avatar{width:34px;height:34px;border-radius:50%;background:#F07830;color:#fff;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;flex-shrink:0;}
+.user-name{font-size:13px;font-weight:600;color:#fff;}
+.logout-link{font-size:11.5px;color:rgba(255,255,255,.5);cursor:pointer;margin-top:1px;}
+.logout-link:hover{color:#fff;}
+.main{flex:1;display:flex;flex-direction:column;}
+.topbar{background:#fff;padding:14px 24px;border-bottom:1px solid #e0e0e0;display:flex;align-items:center;justify-content:space-between;}
+.topbar-title{font-size:17px;font-weight:700;}
+.new-order-btn{padding:9px 20px;background:#F07830;color:#fff;border:none;border-radius:6px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;}
+.new-order-btn:hover{background:#d9631f;}
+.page{padding:24px;display:flex;flex-direction:column;gap:18px;}
+.card{background:#fff;border-radius:8px;border:1px solid #e0e0e0;overflow:hidden;}
+.filter-row{padding:14px 20px;border-bottom:1px solid #f0f0f0;display:flex;gap:10px;align-items:center;flex-wrap:wrap;}
+.filter-row select,.filter-row input{padding:7px 12px;border:1px solid #e0e0e0;border-radius:6px;font-size:13px;font-family:inherit;outline:none;}
+.filter-row input{flex:1;min-width:180px;}
+table{width:100%;border-collapse:collapse;}
+thead th{font-size:11px;font-weight:700;color:#878787;text-transform:uppercase;letter-spacing:.05em;padding:11px 20px;text-align:left;background:#fafafa;border-bottom:1px solid #f0f0f0;}
+tbody td{padding:13px 20px;font-size:13.5px;border-bottom:1px solid #f5f5f5;}
+tbody tr:hover{background:#fafafa;}
+tbody tr:last-child td{border-bottom:none;}
+.chip{display:inline-block;padding:3px 10px;border-radius:12px;font-size:11.5px;font-weight:700;}
+.chip-delivered{background:#e8f5e9;color:#2e7d32;}
+.chip-shipped{background:#e3f2fd;color:#0d47a1;}
+.chip-processing{background:#e8eaf6;color:#283593;}
+.chip-confirmed{background:#f3e5f5;color:#4a148c;}
+.chip-pending{background:#fff8e1;color:#e65100;}
+.chip-cancelled{background:#ffebee;color:#c62828;}
+.chip-dealer{background:#e8f5e9;color:#1b5e20;}
+.empty{text-align:center;padding:60px 20px;color:#878787;}
+.empty svg{width:56px;height:56px;color:#e0e0e0;display:block;margin:0 auto 12px;}
+.order-amount{font-weight:700;color:#1C2B6B;}
+</style>
+</head>
+<body>
+<aside class="sidebar">
+  <div class="sidebar-logo"><div class="brand">d<span>bugg</span>s</div><div class="tagline">Dealer Panel</div></div>
+  <nav class="nav-section">
+    <div class="nav-group-label">Overview</div>
+    <a href="dashboard.html" class="nav-item"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"/></svg>Dashboard</a>
+    <div class="nav-group-label">Finance</div>
+    <a href="commissions.html" class="nav-item"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M11.8 10.9c-2.27-.59-3-1.2-3-2.15 0-1.09 1.01-1.85 2.7-1.85 1.78 0 2.44.85 2.5 2.1h2.21c-.07-1.72-1.12-3.3-3.21-3.81V3h-3v2.16c-1.94.42-3.5 1.68-3.5 3.61 0 2.31 1.91 3.46 4.7 4.13 2.5.6 3 1.48 3 2.41 0 .69-.49 1.79-2.7 1.79-2.06 0-2.87-.92-2.98-2.1h-2.2c.12 2.19 1.76 3.42 3.68 3.83V21h3v-2.15c1.95-.37 3.5-1.5 3.5-3.55 0-2.84-2.43-3.81-4.7-4.4z"/></svg>Commissions &amp; Payouts</a>
+    <a href="wallet.html" class="nav-item"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M21 18v1a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h14a2 2 0 012 2v1h-9a2 2 0 00-2 2v8a2 2 0 002 2h9zm-9-2h10V8H12v8zm4-2.5a1.5 1.5 0 110-3 1.5 1.5 0 010 3z"/></svg>Wallet &amp; Payouts</a>
+    <div class="nav-group-label">Orders</div>
+    <a href="bulk-orders.html" class="nav-item active"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 3H5c-1.1 0-2 .9-2 2v14a2 2 0 002 2h14a2 2 0 002-2V5c0-1.1-.9-2-2-2zm-7 3c1.93 0 3.5 1.57 3.5 3.5S13.93 13 12 13s-3.5-1.57-3.5-3.5S10.07 6 12 6zm7 13H5v-.23c0-.62.28-1.2.76-1.58C7.47 15.82 9.64 15 12 15s4.53.82 6.24 2.19c.48.38.76.97.76 1.58V19z"/></svg>My Bulk Orders</a>
+    <a href="../index.html" class="nav-item"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M15.55 13c.75 0 1.41-.41 1.75-1.03l3.58-6.49A1 1 0 0020 4H5.21L4 1H1v2h2l3.6 7.59L5.25 13c-.16.28-.25.61-.25.95C5 15.1 5.9 16 7 16h12v-2H7.42c-.14 0-.25-.11-.25-.25l.03-.12.9-1.63H15.55zM7 17c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm10 0c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/></svg>Place Bulk Order</a>
+    <div class="nav-group-label">Account</div>
+    <a href="profile.html" class="nav-item"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z"/></svg>My Profile</a>
+    <a href="support.html" class="nav-item"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-2 12H6v-2h12v2zm0-3H6V9h12v2zm0-3H6V6h12v2z"/></svg>Support</a>
+  </nav>
+  <div class="sidebar-footer">
+    <div class="user-row"><div class="avatar" id="avatar">D</div><div><div class="user-name" id="uname">Loading…</div><div class="logout-link" onclick="logout()">Logout</div></div></div>
+  </div>
+</aside>
+<div class="main">
+  <header class="topbar">
+    <div class="topbar-title">My Bulk Orders</div>
+    <button class="new-order-btn" onclick="window.location='../index.html'">+ New Bulk Order</button>
+  </header>
+  <div class="page">
+    <div class="card">
+      <div class="filter-row">
+        <input type="text" id="search" placeholder="Search order number or laptop…" oninput="filterOrders()">
+        <select id="status-filter" onchange="filterOrders()">
+          <option value="">All Status</option>
+          <option value="pending">Pending</option>
+          <option value="confirmed">Confirmed</option>
+          <option value="processing">Processing</option>
+          <option value="shipped">Shipped</option>
+          <option value="delivered">Delivered</option>
+          <option value="cancelled">Cancelled</option>
+        </select>
+      </div>
+      <div id="orders-table"><div class="empty"><p>Loading orders…</p></div></div>
+    </div>
+  </div>
+</div>
+<script src="../shop-api.js"></script>
+<script>
+if (!getToken()) window.location.href = '/login.html';
+const user = getUser();
+if (user) { document.getElementById('uname').textContent = user.name||user.email; document.getElementById('avatar').textContent=(user.name||'D')[0].toUpperCase(); }
+
+let allOrders = [];
+const chipClass = {
+  delivered:'chip-delivered', shipped:'chip-shipped', processing:'chip-processing',
+  confirmed:'chip-confirmed', pending:'chip-pending', cancelled:'chip-cancelled'
+};
+
+async function load() {
+  const el = document.getElementById('orders-table');
+  try {
+    const data = await apiFetch('/orders');
+    const all = Array.isArray(data) ? data : (data.data || []);
+    allOrders = all.filter(o=>o.type==='dealer'||o.type==='b2b');
+    renderOrders(allOrders);
+  } catch(e) {
+    el.innerHTML = `<div class="empty"><p>No bulk orders yet.</p></div>`;
+  }
+}
+
+function filterOrders() {
+  const search = document.getElementById('search').value.toLowerCase();
+  const status = document.getElementById('status-filter').value;
+  let orders = allOrders;
+  if (status) orders = orders.filter(o=>o.status===status);
+  if (search) orders = orders.filter(o=>(o.orderNumber||'').toLowerCase().includes(search)||(o.laptop?.brand||'').toLowerCase().includes(search)||(o.laptop?.model||'').toLowerCase().includes(search));
+  renderOrders(orders);
+}
+
+function renderOrders(orders) {
+  const el = document.getElementById('orders-table');
+  if (!orders.length) {
+    el.innerHTML = `<div class="empty"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 3H5c-1.1 0-2 .9-2 2v14a2 2 0 002 2h14a2 2 0 002-2V5c0-1.1-.9-2-2-2zm-7 3c1.93 0 3.5 1.57 3.5 3.5S13.93 13 12 13s-3.5-1.57-3.5-3.5S10.07 6 12 6zm7 13H5v-.23c0-.62.28-1.2.76-1.58C7.47 15.82 9.64 15 12 15s4.53.82 6.24 2.19c.48.38.76.97.76 1.58V19z"/></svg><p>No bulk orders yet.</p><p style="margin-top:8px;font-size:12.5px;"><a href="../index.html" style="color:#F07830;font-weight:600;">Browse shop to place your first bulk order →</a></p></div>`;
+    return;
+  }
+  el.innerHTML = `<table>
+    <thead><tr><th>Order #</th><th>Laptop</th><th>Amount</th><th>GST</th><th>Status</th><th>Date</th></tr></thead>
+    <tbody>
+      ${orders.map(o=>`<tr>
+        <td style="font-family:monospace;font-size:13px;">${o.orderNumber||o.id?.slice(0,8)||'—'}</td>
+        <td>${o.laptop ? `<div style="font-weight:600">${o.laptop.brand} ${o.laptop.model}</div><div style="font-size:11.5px;color:#878787;">${o.laptop.serialNo||''}</div>` : '—'}</td>
+        <td class="order-amount">${money(o.amount)}</td>
+        <td style="color:#878787;">${money(o.gstAmount||0)}</td>
+        <td><span class="chip ${chipClass[o.status]||'chip-pending'}">${o.status}</span></td>
+        <td style="color:#878787;">${new Date(o.createdAt).toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'})}</td>
+      </tr>`).join('')}
+    </tbody>
+  </table>`;
+}
+load();
+</script>
+</body>
+</html>
