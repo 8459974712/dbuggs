@@ -4,150 +4,583 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Cart — dbuggs</title>
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@600;700&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-:root{--navy:#1C2B6B;--accent:#F07830;--accent-hover:#d9631f;--bg:#F7F8FC;--card:#fff;--border:#E5E7EB;--text:#111827;--text-sec:#6B7280;}
 *{box-sizing:border-box;margin:0;padding:0;}
-body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);}
-h1,h2,h3{font-family:'Space Grotesk',sans-serif;}
+body{font-family:'Inter',sans-serif;background:#f1f3f6;color:#212121;font-size:14px;}
 a{text-decoration:none;color:inherit;}
-.topbar{background:var(--navy);padding:14px 28px;display:flex;align-items:center;gap:24px;}
-.brand{font-family:'Space Grotesk',sans-serif;font-size:21px;font-weight:700;color:#fff;}
-.brand span{color:var(--accent);}
-.back-link{color:rgba(255,255,255,0.8);font-size:13px;}
-.container{max-width:700px;margin:30px auto;padding:0 20px;}
-h2{margin-bottom:18px;}
-.item{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:14px 16px;display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;}
-.item-name{font-weight:600;font-size:14.5px;}
-.item-sub{font-size:11.5px;color:var(--text-sec);font-family:monospace;}
-.item-price{font-weight:700;color:var(--navy);}
-.remove-btn{background:none;border:none;color:#991B1B;font-size:12.5px;cursor:pointer;margin-left:14px;}
-.summary{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:18px;margin-top:20px;}
-.row{display:flex;justify-content:space-between;font-size:14px;padding:6px 0;}
-.row.total{font-weight:700;font-size:17px;border-top:1px solid var(--border);margin-top:8px;padding-top:12px;}
-.form-field{margin-top:14px;}
-label{font-size:12.5px;font-weight:600;display:block;margin-bottom:6px;}
-input,select{width:100%;padding:10px 12px;border:1px solid var(--border);border-radius:8px;font-size:14px;font-family:inherit;}
-.btn{width:100%;padding:13px;border-radius:9px;font-weight:700;font-size:14.5px;border:none;cursor:pointer;margin-top:16px;background:var(--accent);color:#fff;}
-.btn:hover{background:var(--accent-hover);}
-.empty{text-align:center;padding:50px 20px;color:var(--text-sec);}
-.msg{font-size:13px;margin-top:10px;text-align:center;}
+.header{background:#2874f0;padding:0 24px;height:56px;display:flex;align-items:center;gap:20px;position:sticky;top:0;z-index:100;}
+.brand{font-size:22px;font-weight:800;color:#fff;font-style:italic;}
+.brand span{color:#f9a825;}
+.back-link{color:rgba(255,255,255,.85);font-size:13px;display:flex;align-items:center;gap:4px;}
+.steps-bar{background:#fff;border-bottom:1px solid #e0e0e0;padding:0 24px;}
+.steps{max-width:1100px;margin:0 auto;display:flex;gap:0;height:52px;align-items:center;}
+.step{display:flex;align-items:center;gap:6px;font-size:12.5px;font-weight:700;color:#d0d0d0;padding:0 20px;}
+.step.active{color:#2874f0;}.step.done{color:#388e3c;}
+.step-num{width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;background:#d0d0d0;color:#fff;flex-shrink:0;}
+.step.active .step-num{background:#2874f0;}.step.done .step-num{background:#388e3c;}
+.step-sep{flex:1;height:2px;background:#e0e0e0;min-width:40px;}
+.page{max-width:1100px;margin:0 auto;padding:20px 20px 40px;display:grid;grid-template-columns:1fr 340px;gap:16px;align-items:start;}
+.cart-card{background:#fff;border:1px solid #e0e0e0;border-radius:4px;overflow:hidden;margin-bottom:12px;}
+.cart-header{padding:14px 20px;background:#fff;border-bottom:1px solid #f0f0f0;display:flex;align-items:center;justify-content:space-between;}
+.cart-header-title{font-size:16px;font-weight:700;}.cart-header-count{font-size:13px;color:#878787;}
+.cart-item{padding:16px 20px;border-bottom:1px solid #f5f5f5;display:flex;gap:16px;align-items:flex-start;}
+.cart-item:last-child{border-bottom:none;}
+.item-img-wrap{width:84px;height:74px;flex-shrink:0;display:flex;align-items:center;justify-content:center;background:#f9f9f9;border:1px solid #f0f0f0;border-radius:4px;}
+.item-img-wrap img{max-width:72px;max-height:64px;object-fit:contain;}
+.item-details{flex:1;min-width:0;}
+.item-brand{font-size:12px;color:#878787;margin-bottom:2px;}
+.item-name{font-size:14px;font-weight:600;margin-bottom:4px;}
+.item-serial{font-size:11.5px;color:#b0b0b0;font-family:monospace;}
+.item-grade{display:inline-block;margin-top:5px;padding:2px 8px;border-radius:3px;font-size:11.5px;font-weight:700;}
+.item-price-row{display:flex;align-items:baseline;gap:8px;margin-top:10px;}
+.item-price{font-size:16px;font-weight:700;}
+.item-mrp{font-size:13px;color:#878787;text-decoration:line-through;}
+.item-off{font-size:13px;color:#388e3c;font-weight:600;}
+.item-actions{display:flex;border-top:1px solid #f0f0f0;margin-top:12px;}
+.item-action-btn{flex:1;padding:9px 0;border:none;background:none;font-size:13px;font-weight:600;cursor:pointer;color:#212121;}
+.item-action-btn:hover{background:#f5f5f5;}.item-action-btn.remove{color:#ef4444;}
+.item-action-sep{width:1px;background:#f0f0f0;}
+.empty-cart{padding:60px 20px;text-align:center;}
+.empty-cart svg{width:80px;height:80px;color:#d0d0d0;display:block;margin:0 auto 16px;}
+.empty-cart h3{font-size:18px;margin-bottom:8px;}.empty-cart p{font-size:13.5px;color:#878787;margin-bottom:20px;}
+.empty-cart a{display:inline-block;padding:10px 24px;background:#2874f0;color:#fff;border-radius:4px;font-weight:700;}
+
+/* ADDRESS CARD */
+.addr-card{background:#fff;border:1px solid #e0e0e0;border-radius:4px;overflow:hidden;}
+.addr-card-header{padding:14px 20px;background:#fff;border-bottom:1px solid #f0f0f0;display:flex;align-items:center;gap:10px;}
+.addr-card-title{font-size:15px;font-weight:700;}
+.addr-body{padding:18px 20px;}
+.form-row2{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.fgroup{margin-bottom:13px;}
+.fgroup label{font-size:11.5px;font-weight:700;color:#555;display:block;margin-bottom:5px;text-transform:uppercase;letter-spacing:.04em;}
+.fgroup input,.fgroup select{width:100%;padding:10px 12px;border:1.5px solid #e0e0e0;border-radius:4px;font-size:13.5px;font-family:inherit;color:#212121;outline:none;transition:border .15s;}
+.fgroup input:focus,.fgroup select:focus{border-color:#2874f0;}
+.fgroup input.auto{background:#f0fdf4;border-color:#86efac;}
+.pin-wrap{position:relative;}
+.pin-spinner{position:absolute;right:10px;top:50%;transform:translateY(-50%);font-size:16px;display:none;}
+
+/* SUMMARY CARD */
+.summary-card{background:#fff;border:1px solid #e0e0e0;border-radius:4px;overflow:hidden;position:sticky;top:72px;}
+.summary-header{padding:14px 18px;border-bottom:1px solid #f0f0f0;}
+.summary-header-title{font-size:13px;font-weight:700;color:#878787;text-transform:uppercase;letter-spacing:.06em;}
+.summary-body{padding:16px 18px;display:flex;flex-direction:column;gap:10px;}
+.summ-row{display:flex;justify-content:space-between;font-size:13.5px;}
+.summ-row.discount{color:#388e3c;}.summ-row.coupon-row{color:#7c3aed;}
+.summ-row.total{font-size:16px;font-weight:700;padding-top:10px;border-top:1px dashed #e0e0e0;margin-top:4px;}
+.summ-savings{background:#e8f5e9;color:#256029;font-size:12.5px;font-weight:600;padding:8px 12px;border-radius:4px;text-align:center;}
+
+/* COUPON */
+.coupon-section{padding:14px 18px;border-top:1px solid #f0f0f0;}
+.coupon-label{font-size:13px;font-weight:700;margin-bottom:10px;display:flex;align-items:center;gap:6px;}
+.coupon-input-wrap{display:flex;gap:8px;}
+.coupon-input{flex:1;padding:9px 12px;border:1.5px dashed #e0e0e0;border-radius:4px;font-size:13px;font-family:inherit;outline:none;text-transform:uppercase;}
+.coupon-input:focus{border-color:#7c3aed;border-style:solid;}
+.coupon-btn{padding:9px 16px;background:#2874f0;color:#fff;border:none;border-radius:4px;font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap;}
+.coupon-btn:hover{background:#1a5fd1;}
+.coupon-msg{font-size:12px;margin-top:6px;}
+.coupon-msg.ok{color:#16a34a;}.coupon-msg.err{color:#b91c1c;}
+.coupon-applied{display:flex;align-items:center;justify-content:space-between;background:#f3f0ff;border:1px solid #c4b5fd;border-radius:4px;padding:8px 12px;margin-top:8px;}
+.coupon-applied-code{font-size:13px;font-weight:700;color:#7c3aed;}
+.coupon-remove{font-size:12px;color:#ef4444;cursor:pointer;font-weight:600;}
+
+.place-order-btn{width:100%;padding:14px;background:#fb641b;color:#fff;border:none;border-radius:4px;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;}
+.place-order-btn:hover{background:#e05510;}.place-order-btn:disabled{background:#f0b896;cursor:not-allowed;}
+.login-btn{width:100%;padding:14px;background:#2874f0;color:#fff;border:none;border-radius:4px;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;}
+.trust-section{padding:14px 18px;border-top:1px solid #f0f0f0;display:flex;flex-direction:column;gap:8px;}
+.trust-row{display:flex;align-items:center;gap:8px;font-size:12.5px;}
+.trust-row svg{width:16px;height:16px;color:#388e3c;flex-shrink:0;}
+.msg{font-size:13px;padding:8px 12px;border-radius:4px;font-weight:600;margin:0 18px 12px;}
+.msg.ok{background:#e8f5e9;color:#256029;}.msg.err{background:#ffebee;color:#b71c1c;}
+/* PAYMENT METHOD */
+.pay-section{padding:14px 18px;border-top:1px solid #f0f0f0;display:flex;flex-direction:column;gap:8px;}
+.pay-title{font-size:13px;font-weight:700;margin-bottom:2px;}
+.pay-opt{display:flex;align-items:flex-start;gap:10px;padding:10px 12px;border:1.5px solid #e0e0e0;border-radius:6px;cursor:pointer;transition:border-color .15s,background .15s;}
+.pay-opt:has(input:checked){border-color:#2874f0;background:#f5f9ff;}
+.pay-opt.disabled{opacity:.55;cursor:not-allowed;}
+.pay-opt input{margin-top:3px;accent-color:#2874f0;}
+.pay-opt b{display:block;font-size:13.5px;}
+.pay-opt small{display:block;font-size:12px;color:#878787;margin-top:2px;}
+.summ-row.gst{font-size:12.5px;color:#878787;}
+@media(max-width:768px){.page{grid-template-columns:1fr;}.summary-card{position:static;}.steps-bar{display:none;}.form-row2{grid-template-columns:1fr;gap:0;}}
+@media(max-width:480px){
+  .header{padding:0 12px;height:48px;}
+  .brand{font-size:18px;}
+  .page-wrap{padding:0 10px 30px;}
+  .cart-item-row{gap:8px;}
+  .item-img{width:60px;height:48px;}
+  .qty-control button{width:28px;height:28px;}
+  .summary-card{padding:14px;}
+}
+
+/* ── BOTTOM NAV (mobile only) ── */
+.bottom-nav{display:none;position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid #e0e0e0;z-index:500;}
+.bottom-nav-inner{display:flex;}
+.bn-item{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;font-size:11px;font-weight:600;color:#555;text-decoration:none;padding:8px 4px 10px;cursor:pointer;position:relative;}
+.bn-item.active{color:#2874f0;}
+.bn-item svg{width:24px;height:24px;}
+.bn-pos{position:relative;display:inline-flex;}
+.bn-badge{position:absolute;top:-5px;right:-8px;background:#ff6161;color:#fff;font-size:9px;font-weight:700;min-width:16px;height:16px;border-radius:8px;display:none;align-items:center;justify-content:center;padding:0 3px;}
+@media(max-width:640px){
+  .bottom-nav{display:block;}
+  body{padding-bottom:62px;}
+}
 </style>
 </head>
 <body>
-<div class="topbar">
+
+<header class="header">
   <a href="/index.html" class="brand">d<span>bugg</span>s</a>
-  <a href="/index.html" class="back-link">← Continue shopping</a>
+  <a href="/index.html" class="back-link">
+    <svg viewBox="0 0 24 24" fill="currentColor" width="15" height="15"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg>
+    Continue shopping
+  </a>
+</header>
+
+<div class="steps-bar">
+  <div class="steps">
+    <div class="step active"><span class="step-num">1</span>Cart</div>
+    <div class="step-sep"></div>
+    <div class="step"><span class="step-num">2</span>Address</div>
+    <div class="step-sep"></div>
+    <div class="step"><span class="step-num">3</span>Payment</div>
+    <div class="step-sep"></div>
+    <div class="step"><span class="step-num">4</span>Summary</div>
+  </div>
 </div>
-<div class="container">
-  <h2>Your Cart</h2>
-  <div id="cart-items"></div>
-  <div id="summary-section"></div>
+
+<div class="page">
+  <!-- LEFT -->
+  <div>
+    <div id="cart-section">
+      <div class="cart-card">
+        <div class="empty-cart">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M7 18c-1.1 0-1.99.9-1.99 2S5.9 22 7 22s2-.9 2-2-.9-2-2-2zM1 2v2h2l3.6 7.59-1.35 2.45c-.16.28-.25.61-.25.96C5 16.1 5.9 17 7 17h12v-2H7.42c-.14 0-.25-.11-.25-.25l.03-.12.9-1.63H19c.75 0 1.41-.41 1.75-1.03l3.58-6.49A1 1 0 0023 4H5.21L4 1H1zm16 16c-1.1 0-1.99.9-1.99 2s.89 2 1.99 2 2-.9 2-2-.9-2-2-2z"/></svg>
+          <h3>Your cart is empty!</h3>
+          <p>Add items to it now</p>
+          <a href="/index.html">Shop now</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- ADDRESS FORM -->
+    <div class="addr-card" id="addr-card" style="display:none;">
+      <div class="addr-card-header">
+        <svg viewBox="0 0 24 24" fill="#2874f0" width="18" height="18"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+        <div class="addr-card-title">Delivery Address</div>
+      </div>
+      <div class="addr-body">
+        <div class="form-row2">
+          <div class="fgroup">
+            <label>Full Name *</label>
+            <input type="text" id="addr-name" placeholder="Rahul Sharma">
+          </div>
+          <div class="fgroup">
+            <label>Mobile Number *</label>
+            <input type="tel" id="addr-phone" placeholder="9876543210" maxlength="10">
+          </div>
+        </div>
+        <div class="form-row2">
+          <div class="fgroup">
+            <label>Pincode *</label>
+            <div class="pin-wrap">
+              <input type="text" id="addr-pin" placeholder="6-digit pincode" maxlength="6" oninput="onPinChange(this.value)">
+              <span class="pin-spinner" id="pin-spinner">⏳</span>
+            </div>
+          </div>
+          <div class="fgroup">
+            <label>State</label>
+            <input type="text" id="addr-state" placeholder="Auto-filled from pincode" class="auto">
+          </div>
+        </div>
+        <div class="fgroup">
+          <label>City / Town *</label>
+          <input type="text" id="addr-city" placeholder="City or town name">
+        </div>
+        <div class="fgroup">
+          <label>Flat, House No., Building, Apartment *</label>
+          <input type="text" id="addr-flat" placeholder="e.g. 3B, Sunshine Apartments">
+        </div>
+        <div class="fgroup">
+          <label>Area, Street, Sector, Village *</label>
+          <input type="text" id="addr-area" placeholder="e.g. Andheri West, MG Road">
+        </div>
+        <div class="fgroup">
+          <label>Landmark <span style="color:#999;font-weight:400;text-transform:none;">(optional)</span></label>
+          <input type="text" id="addr-landmark" placeholder="e.g. Near D-Mart">
+        </div>
+        <div class="fgroup">
+          <label>Address Type</label>
+          <select id="addr-type">
+            <option value="home">🏠 Home</option>
+            <option value="work">🏢 Work / Office</option>
+            <option value="other">📍 Other</option>
+          </select>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- RIGHT: Summary -->
+  <div id="summary-col" style="display:none;">
+    <div class="summary-card">
+      <div class="summary-header"><div class="summary-header-title">Price Details</div></div>
+      <div class="summary-body">
+        <div class="summ-row"><span id="summ-qty-label">Price (1 item)</span><span id="summ-mrp-total">—</span></div>
+        <div class="summ-row discount"><span>Discount</span><span id="summ-discount">—</span></div>
+        <div class="summ-row"><span>Delivery Charges</span><span style="color:#388e3c;font-weight:600;">FREE</span></div>
+        <div class="summ-row total"><span>Total Amount</span><span id="summ-total">—</span></div>
+        <div class="summ-row gst"><span>Includes GST (18%)</span><span id="summ-gst">—</span></div>
+        <div class="summ-row gst" id="summ-b2b-note" hidden><span>B2B slab discount is applied when you place the order</span></div>
+      </div>
+      <div class="summ-savings" id="summ-savings" style="margin:0 18px 14px;"></div>
+
+      <div class="pay-section" id="pay-section">
+        <div class="pay-title">Payment Method</div>
+        <label class="pay-opt" id="pm-online-wrap">
+          <input type="radio" name="paym" value="online" id="pm-online">
+          <span><b>Pay Online</b><small id="pm-online-note">UPI, Cards, Netbanking &amp; Wallets via Razorpay</small></span>
+        </label>
+        <label class="pay-opt">
+          <input type="radio" name="paym" value="cod" id="pm-cod" checked>
+          <span><b>Cash on Delivery</b><small>Pay in cash or UPI when your laptop is delivered</small></span>
+        </label>
+        <label class="pay-opt" id="pm-credit-wrap" hidden>
+          <input type="radio" name="paym" value="credit" id="pm-credit">
+          <span><b>Business Credit (PO)</b><small id="pm-credit-note">Bill to your approved B2B credit line</small></span>
+        </label>
+        <div class="fgroup" id="po-wrap" hidden style="margin:0;">
+          <label for="po-number">Purchase Order No. *</label>
+          <input type="text" id="po-number" maxlength="50" placeholder="e.g. PO/2026/0142">
+        </div>
+      </div>
+
+      <div style="padding:0 18px 14px;" id="btn-area"></div>
+      <div class="msg" id="msg" style="display:none;"></div>
+
+      <div class="trust-section">
+        <div class="trust-row"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2z"/></svg>Safe &amp; Secure Payments</div>
+        <div class="trust-row"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"/></svg>100% Authentic Products</div>
+        <div class="trust-row"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 5V1L7 6l5 5V7c3.31 0 6 2.69 6 6s-2.69 6-6 6-6-2.69-6-6H4c0 4.42 3.58 8 8 8s8-3.58 8-8-3.58-8-8-8z"/></svg>Easy 7-Day Returns</div>
+      </div>
+    </div>
+  </div>
 </div>
 
 <script src="shop-api.js"></script>
 <script>
-function render() {
-  const cart = getCart();
-  const itemsEl = document.getElementById('cart-items');
-  const summaryEl = document.getElementById('summary-section');
+/* ── HELPERS ── */
+function money(n){ return '₹'+Number(n||0).toLocaleString('en-IN'); }
+function calcMrp(price){
+  price = Number(price)||0;
+  const pcts=[.18,.22,.25,.28,.30];
+  const off=pcts[Math.round(price/10000)%pcts.length]||.2;
+  return Math.round(price/(1-off));
+}
+const gradeStyle={'A+':'background:#1C2B6B;color:#fff','A':'background:#e8f5e9;color:#1b5e20','B':'background:#fff8e1;color:#e65100','C':'background:#ffebee;color:#b71c1c'};
 
-  if (cart.length === 0) {
-    itemsEl.innerHTML = '<div class="empty">Your cart is empty. <a href="/index.html" style="color:var(--accent);font-weight:600;">Browse laptops →</a></div>';
-    summaryEl.innerHTML = '';
+/* ── PINCODE → STATE mapping (India PIN prefixes) ── */
+const PIN_STATE={
+  '11':'Delhi','12':'Haryana','13':'Haryana','14':'Punjab','15':'Punjab','16':'Punjab',
+  '17':'Himachal Pradesh','18':'Jammu & Kashmir','19':'Jammu & Kashmir',
+  '20':'Uttar Pradesh','21':'Uttar Pradesh','22':'Uttar Pradesh','23':'Uttar Pradesh',
+  '24':'Uttar Pradesh','25':'Uttar Pradesh','26':'Uttar Pradesh','27':'Uttar Pradesh',
+  '28':'Rajasthan','30':'Rajasthan','31':'Rajasthan','32':'Rajasthan','33':'Rajasthan','34':'Rajasthan',
+  '36':'Gujarat','37':'Gujarat','38':'Gujarat','39':'Gujarat',
+  '40':'Maharashtra','41':'Maharashtra','42':'Maharashtra','43':'Maharashtra','44':'Maharashtra',
+  '45':'Madhya Pradesh','46':'Madhya Pradesh','47':'Madhya Pradesh','48':'Madhya Pradesh','49':'Madhya Pradesh',
+  '50':'Telangana','51':'Telangana','52':'Telangana','53':'Andhra Pradesh','54':'Andhra Pradesh',
+  '55':'Andhra Pradesh','56':'Karnataka','57':'Karnataka','58':'Karnataka','59':'Karnataka',
+  '60':'Tamil Nadu','61':'Tamil Nadu','62':'Tamil Nadu','63':'Tamil Nadu','64':'Tamil Nadu',
+  '67':'Kerala','68':'Kerala','69':'Kerala',
+  '70':'West Bengal','71':'West Bengal','72':'West Bengal','73':'West Bengal','74':'West Bengal',
+  '75':'Odisha','76':'Odisha','77':'Odisha',
+  '78':'Assam','79':'Assam','80':'Bihar','81':'Bihar','82':'Bihar','83':'Bihar',
+  '84':'Bihar','85':'Jharkhand','82':'Jharkhand'
+};
+function stateFromPin(pin){
+  if(pin.length<2) return '';
+  return PIN_STATE[pin.substring(0,2)] || PIN_STATE[pin.substring(0,1)+'0'] || '';
+}
+function onPinChange(val){
+  val=val.replace(/\D/g,'');
+  document.getElementById('addr-pin').value=val;
+  if(val.length===6){
+    const st=stateFromPin(val);
+    document.getElementById('addr-state').value=st||'';
+    document.getElementById('addr-state').style.background=st?'#f0fdf4':'#fff';
+  } else {
+    document.getElementById('addr-state').value='';
+  }
+}
+
+/* ── PAYMENT CONFIG ── */
+let onlineEnabled=false;
+async function loadPaymentConfig(){
+  const wrap=document.getElementById('pm-online-wrap');
+  const radio=document.getElementById('pm-online');
+  try{
+    const r=await fetch(API_BASE+'/payments/config');
+    const cfg=r.ok?await r.json():{};
+    onlineEnabled=!!cfg.onlineEnabled;
+  }catch{ onlineEnabled=false; }
+  radio.disabled=!onlineEnabled;
+  wrap.classList.toggle('disabled',!onlineEnabled);
+  if(!onlineEnabled){
+    document.getElementById('pm-online-note').textContent='Coming soon — use Cash on Delivery for now';
+    document.getElementById('pm-cod').checked=true;
+  }
+}
+function selectedPayment(){
+  const el=document.querySelector('input[name="paym"]:checked');
+  return el?el.value:'cod';
+}
+let creditAvailable=0;
+async function loadB2bCredit(){
+  if(getUser()?.role!=='b2b'||!getToken()) return;
+  try{
+    const b=await apiFetch('/b2b/my');
+    if(!b||!b.isApproved) return;
+    creditAvailable=Number(b.creditLimit||0)-Number(b.creditUsed||0);
+    document.getElementById('pm-credit-wrap').hidden=false;
+    document.getElementById('pm-credit-note').textContent=`Available credit: ${money(creditAvailable)} · ${b.companyName||''}`;
+  }catch{}
+}
+document.addEventListener('change',e=>{
+  if(e.target.name==='paym') document.getElementById('po-wrap').hidden=e.target.value!=='credit';
+});
+
+function esc(v){return String(v==null?'':v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+
+/* ── RENDER ── */
+function render(){
+  const cart=getCart();
+  const user=getUser();
+  const cartSection=document.getElementById('cart-section');
+  const summaryCol=document.getElementById('summary-col');
+  const addrCard=document.getElementById('addr-card');
+
+  if(!cart.length){
+    cartSection.innerHTML=`<div class="cart-card"><div class="empty-cart">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M7 18c-1.1 0-1.99.9-1.99 2S5.9 22 7 22s2-.9 2-2-.9-2-2-2zM1 2v2h2l3.6 7.59-1.35 2.45c-.16.28-.25.61-.25.96C5 16.1 5.9 17 7 17h12v-2H7.42c-.14 0-.25-.11-.25-.25l.03-.12.9-1.63H19c.75 0 1.41-.41 1.75-1.03l3.58-6.49A1 1 0 0023 4H5.21L4 1H1zm16 16c-1.1 0-1.99.9-1.99 2s.89 2 1.99 2 2-.9 2-2-.9-2-2-2z"/></svg>
+      <h3>Your cart is empty!</h3><p>Add items to it now</p><a href="/index.html">Shop now</a>
+    </div></div>`;
+    summaryCol.style.display='none'; addrCard.style.display='none'; return;
+  }
+
+  cartSection.innerHTML=`<div class="cart-card">
+    <div class="cart-header">
+      <span class="cart-header-title">My Cart</span>
+      <span class="cart-header-count">${cart.length} item${cart.length>1?'s':''}</span>
+    </div>
+    ${cart.map(i=>{
+      const sell=Number(i.sellingPrice)||0;
+      const mrp=calcMrp(sell);
+      const off=mrp>0?Math.round((mrp-sell)/mrp*100):0;
+      return `<div class="cart-item">
+        <div class="item-img-wrap"><img src="${esc(i.imageUrl||'images/laptop-placeholder.svg')}" alt="${esc((i.brand||'')+' '+(i.model||''))}"></div>
+        <div class="item-details">
+          <div class="item-brand">${esc(i.brand)}</div>
+          <div class="item-name">${esc(i.brand)} ${esc(i.model)}</div>
+          <div class="item-serial">SN: ${esc(i.serialNo||'—')}</div>
+          ${i.grade?`<span class="item-grade" style="${gradeStyle[i.grade]||'background:#e0e0e0;color:#424242'}">Grade ${esc(i.grade)}</span>`:''}
+          <div class="item-price-row">
+            <span class="item-price">${money(sell)}</span>
+            <span class="item-mrp">${money(mrp)}</span>
+            <span class="item-off">${off}% off</span>
+          </div>
+          <div class="item-actions">
+            <button class="item-action-btn remove" data-remove="${esc(i.id)}">Remove</button>
+            <div class="item-action-sep"></div>
+            <a class="item-action-btn" style="text-align:center" href="/product.html?id=${encodeURIComponent(i.id)}">View Details</a>
+          </div>
+        </div>
+      </div>`;
+    }).join('')}
+  </div>`;
+  cartSection.querySelectorAll('[data-remove]').forEach(b=>b.addEventListener('click',()=>{removeFromCart(b.dataset.remove);render();}));
+
+  summaryCol.style.display='block';
+  addrCard.style.display=user?'block':'none';
+  updateSummary();
+
+  const btnArea=document.getElementById('btn-area');
+  if(user){
+    btnArea.innerHTML=`<button class="place-order-btn" onclick="checkout()">PLACE ORDER</button>`;
+  } else {
+    btnArea.innerHTML=`<button class="login-btn" onclick="window.location.href='/login.html'">LOGIN TO CHECKOUT</button>`;
+  }
+}
+
+function updateSummary(){
+  const cart=getCart();
+  const totalSell=cart.reduce((s,i)=>s+Number(i.sellingPrice||0),0);
+  const totalMrp=cart.reduce((s,i)=>s+calcMrp(Number(i.sellingPrice)||0),0);
+  const discount=totalMrp-totalSell;
+  const gst=totalSell-Math.round(totalSell/1.18);
+  document.getElementById('summ-qty-label').textContent=`Price (${cart.length} item${cart.length>1?'s':''})`;
+  document.getElementById('summ-mrp-total').textContent=money(totalMrp);
+  document.getElementById('summ-discount').textContent='−'+money(discount);
+  document.getElementById('summ-total').textContent=money(totalSell);
+  document.getElementById('summ-gst').textContent=money(gst);
+  document.getElementById('summ-savings').textContent=`You save ${money(discount)} on this order!`;
+  document.getElementById('summ-b2b-note').hidden=getUser()?.role!=='b2b';
+}
+
+function showMsg(txt,type='ok'){
+  const el=document.getElementById('msg');
+  el.textContent=txt; el.className='msg '+type; el.style.display='block';
+  clearTimeout(showMsg.t);
+  if(type==='ok') showMsg.t=setTimeout(()=>el.style.display='none',4000);
+}
+
+function buildAddress(){
+  const f=id=>document.getElementById(id).value.trim();
+  const name=f('addr-name'), phone=f('addr-phone').replace(/\D/g,''), pin=f('addr-pin');
+  const flat=f('addr-flat'), area=f('addr-area'), city=f('addr-city'), state=f('addr-state');
+  const landmark=f('addr-landmark'), type=f('addr-type');
+  if(!name){showMsg('Enter delivery name.','err');return null;}
+  if(!/^[6-9]\d{9}$/.test(phone)){showMsg('Enter a valid 10-digit mobile number.','err');return null;}
+  if(!/^\d{6}$/.test(pin)){showMsg('Enter a valid 6-digit pincode.','err');return null;}
+  if(!flat){showMsg('Enter flat/house number.','err');return null;}
+  if(!area){showMsg('Enter area/street.','err');return null;}
+  if(!city){showMsg('Enter city/town.','err');return null;}
+  const line=[flat,area,landmark?('Near '+landmark):'',city,state].filter(Boolean).join(', ');
+  return {name,phone,text:`${name}, ${phone} | ${line} - ${pin} (${type||'home'})`};
+}
+
+async function postJson(path,body){
+  const res=await fetch(API_BASE+path,{method:'POST',headers:{'Content-Type':'application/json',Authorization:'Bearer '+getToken()},body:JSON.stringify(body||{})});
+  const data=await res.json().catch(()=>({}));
+  if(res.status===401){logout();throw new Error('Session expired. Please log in again.');}
+  if(!res.ok){
+    const m=data.message;
+    const err=new Error(Array.isArray(m)?m.join(', '):(m&&m.message)||m||'Something went wrong. Please try again.');
+    err.data=(m&&typeof m==='object'&&!Array.isArray(m))?m:data;
+    throw err;
+  }
+  return data;
+}
+
+function loadRazorpay(){
+  if(window.Razorpay) return Promise.resolve();
+  return new Promise((ok,fail)=>{
+    const s=document.createElement('script');
+    s.src='https://checkout.razorpay.com/v1/checkout.js';
+    s.onload=ok; s.onerror=()=>fail(new Error('Could not load payment window. Check your internet and try again.'));
+    document.head.appendChild(s);
+  });
+}
+
+function orderPlaced(ref){
+  clearCart();
+  showMsg('✓ Order placed! Redirecting to your orders…','ok');
+  setTimeout(()=>window.location.href='/orders.html?placed='+encodeURIComponent(ref),1500);
+}
+
+function payOnline(result,addr,btn){
+  const user=getUser()||{};
+  const rp=result.razorpay;
+  let settled=false;
+  const reset=()=>{btn.disabled=false;btn.textContent='PLACE ORDER';};
+  const rzp=new Razorpay({
+    key:rp.key, order_id:rp.orderId, amount:rp.amountPaise, currency:'INR',
+    name:'dbuggs', description:`${result.orders.length} refurbished laptop${result.orders.length>1?'s':''}`,
+    prefill:{name:addr.name, contact:addr.phone, email:user.email||''},
+    theme:{color:'#2874f0'},
+    handler:async(resp)=>{
+      settled=true;
+      btn.textContent='Confirming payment…';
+      try{
+        await postJson('/orders/checkout/verify',resp);
+        orderPlaced(result.checkoutRef);
+      }catch(e){
+        reset();
+        showMsg('Payment received but confirmation failed. Do not pay again — contact support with ref '+result.checkoutRef+'.','err');
+      }
+    },
+    modal:{ondismiss:async()=>{
+      if(settled) return;
+      try{ await postJson('/orders/checkout/'+encodeURIComponent(result.checkoutRef)+'/cancel'); }catch{}
+      reset();
+      showMsg('Payment cancelled. Your cart is still here.','err');
+    }}
+  });
+  rzp.on('payment.failed',r=>showMsg('Payment failed: '+(r.error?.description||'please try again')+'.','err'));
+  rzp.open();
+}
+
+async function checkout(){
+  const UUID=/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+  const stale=getCart().filter(i=>!UUID.test(String(i.id||'')));
+  if(stale.length){
+    stale.forEach(i=>removeFromCart(i.id));
+    render();
+    showMsg(`${stale.length} item${stale.length>1?'s are':' is'} no longer available and ${stale.length>1?'were':'was'} removed from your cart. Please review and place the order again.`,'err');
     return;
   }
-
-  itemsEl.innerHTML = cart.map(i => `
-    <div class="item">
-      <div>
-        <div class="item-name">${i.brand} ${i.model} ${i.grade ? '— Grade ' + i.grade : ''}</div>
-        <div class="item-sub">${i.serialNo}</div>
-      </div>
-      <div style="display:flex;align-items:center;">
-        <div class="item-price">${money(i.sellingPrice)}</div>
-        <button class="remove-btn" onclick="removeFromCart('${i.id}'); render(); showDiscountPreview();">Remove</button>
-      </div>
-    </div>
-  `).join('');
-
-  const total = cart.reduce((s, i) => s + Number(i.sellingPrice || 0), 0);
-  const user = getUser();
-
-  summaryEl.innerHTML = `
-    <div class="summary">
-      <div class="row"><span>Subtotal (${cart.length} item${cart.length > 1 ? 's' : ''})</span><span>${money(total)}</span></div>
-      <div id="discount-row"></div>
-      <div class="row total" id="total-row"><span>Total</span><span>${money(total)}</span></div>
-      ${user ? `
-        <div class="form-field">
-          <label>Shipping Address</label>
-          <input type="text" id="address" placeholder="Flat/House no, street, city, pincode">
-        </div>
-        <button class="btn" onclick="checkout()">Place Order</button>
-      ` : `
-        <button class="btn" onclick="window.location.href='/login.html'">Login to Checkout</button>
-      `}
-      <div class="msg" id="msg"></div>
-    </div>
-  `;
-}
-
-async function getB2bDiscount(qty) {
-  const user = getUser();
-  if (!user || user.role !== 'b2b') return 0;
-  try {
-    const profile = await apiFetch('/b2b/my');
-    if (!profile || !profile.isApproved) return 0;
-    const slabs = await apiFetch('/b2b/slabs');
-    const slab = slabs.find(s => qty >= s.minQty && qty <= s.maxQty);
-    return slab ? slab.discountPercent : 0;
-  } catch { return 0; }
-}
-
-async function checkout() {
-  const cart = getCart();
-  const address = document.getElementById('address').value.trim();
-  const msg = document.getElementById('msg');
-  if (!address) { msg.style.color = '#991B1B'; msg.textContent = 'Please enter a shipping address.'; return; }
-  msg.style.color = '#6B7280';
-  msg.textContent = 'Placing order...';
-  try {
-    const discount = await getB2bDiscount(cart.length);
-    const orderType = discount > 0 ? 'b2b' : 'b2c';
-    for (const item of cart) {
-      const amount = Math.round(Number(item.sellingPrice) * (1 - discount / 100));
-      await apiFetch('/orders', {
-        method: 'POST',
-        body: { laptopId: item.id, type: orderType, amount, shippingAddress: address },
-      });
+  const cart=getCart();
+  if(!cart.length) return;
+  const addr=buildAddress();
+  if(!addr) return;
+  const method=selectedPayment();
+  if(method==='online'&&!onlineEnabled){showMsg('Online payment is not available yet. Choose Cash on Delivery.','err');return;}
+  const poNumber=document.getElementById('po-number').value.trim();
+  if(method==='credit'&&poNumber.length<2){showMsg('Enter your Purchase Order number.','err');return;}
+  const btn=document.querySelector('.place-order-btn');
+  btn.disabled=true; btn.textContent=method==='online'?'Opening payment…':'Placing order…';
+  try{
+    if(method==='online') await loadRazorpay();
+    const result=await postJson('/orders/checkout',{
+      laptopIds:cart.map(i=>i.id), shippingAddress:addr.text, paymentMethod:method,
+      ...(method==='credit'?{poNumber}:{})
+    });
+    if(method==='online') payOnline(result,addr,btn);
+    else orderPlaced(result.checkoutRef);
+  }catch(e){
+    btn.disabled=false; btn.textContent='PLACE ORDER';
+    const gone=e.data&&e.data.unavailableIds;
+    if(Array.isArray(gone)&&gone.length){
+      gone.forEach(id=>removeFromCart(id));
+      render();
+      showMsg(e.message+' It has been removed from your cart.','err');
+    } else {
+      showMsg(e.message,'err');
     }
-    clearCart();
-    msg.style.color = '#065F46';
-    msg.textContent = discount > 0
-      ? `Order placed with ${discount}% wholesale discount! Redirecting...`
-      : 'Order placed successfully! Redirecting...';
-    setTimeout(() => window.location.href = '/orders.html', 1200);
-  } catch (e) {
-    msg.style.color = '#991B1B';
-    msg.textContent = 'Error: ' + e.message;
-  }
-}
-
-async function showDiscountPreview() {
-  const cart = getCart();
-  if (cart.length === 0) return;
-  const discount = await getB2bDiscount(cart.length);
-  if (discount > 0) {
-    const total = cart.reduce((s, i) => s + Number(i.sellingPrice || 0), 0);
-    const discounted = Math.round(total * (1 - discount / 100));
-    document.getElementById('discount-row').innerHTML = `<div class="row" style="color:#065F46;"><span>Wholesale discount (${discount}%)</span><span>-${money(total - discounted)}</span></div>`;
-    document.getElementById('total-row').innerHTML = `<span>Total</span><span>${money(discounted)}</span>`;
   }
 }
 
 render();
-showDiscountPreview();
+loadPaymentConfig();
+loadB2bCredit();
+</script>
+
+<!-- BOTTOM NAV -->
+<nav class="bottom-nav">
+  <div class="bottom-nav-inner">
+    <a href="/index.html" class="bn-item ">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+      Home
+    </a>
+    <a href="/index.html#products" class="bn-item ">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M4 8h4V4H4v4zm6 12h4v-4h-4v4zm-6 0h4v-4H4v4zm0-6h4v-4H4v4zm6 0h4v-4h-4v4zm6-10v4h4V4h-4zm-6 4h4V4h-4v4zm6 6h4v-4h-4v4zm0 6h4v-4h-4v4z"/></svg>
+      Categories
+    </a>
+    <a href="/account.html" class="bn-item ">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.54 0 3 1.46 3 3s-1.46 3-3 3-3-1.46-3-3 1.46-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z"/></svg>
+      Account
+    </a>
+    <a href="/cart.html" class="bn-item active">
+      <span class="bn-pos">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M7 18c-1.1 0-1.99.9-1.99 2S5.9 22 7 22s2-.9 2-2-.9-2-2-2zM1 2v2h2l3.6 7.59-1.35 2.45c-.16.28-.25.61-.25.96C5 16.1 5.9 17 7 17h12v-2H7.42c-.14 0-.25-.11-.25-.25l.03-.12.9-1.63H19c.75 0 1.41-.41 1.75-1.03l3.58-6.49A1 1 0 0023.25 4H5.21l-.94-2H1zm16 16c-1.1 0-1.99.9-1.99 2s.89 2 1.99 2 2-.9 2-2-.9-2-2-2z"/></svg>
+        <span class="bn-badge" id="bn-cart-ct"></span>
+      </span>
+      Cart
+    </a>
+  </div>
+</nav>
+<script>
+(function(){try{const c=JSON.parse(localStorage.getItem('cartItems')||'[]').reduce((s,i)=>s+(i.qty||1),0);const el=document.getElementById('bn-cart-ct');if(el&&c>0){el.textContent=c;el.style.display='flex';}}catch(e){}}());
 </script>
 </body>
 </html>

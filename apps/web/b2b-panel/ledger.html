@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Credit Ledger — B2B Panel</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@600;700&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../panel-shared.css">
+<link rel="stylesheet" href="b2b-panel.css">
+</head>
+<body>
+<aside class="sidebar">
+  <div class="sidebar-logo"><div class="brand">d<span>bugg</span>s</div><div class="tagline">B2B Partner Panel</div></div>
+  <nav class="nav-section">
+    <a href="dashboard.html" class="nav-item"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"/></svg>Dashboard</a>
+    <a href="orders.html" class="nav-item"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M7 4h-2l-3 9v2h18v-2l-3-9h-2l1 4H6L7 4z"/></svg>My Orders</a>
+    <a href="bulk-order.html" class="nav-item"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M3 13h2v-2H3v2zm0 4h2v-2H3v2zm0-8h2V7H3v2zm4 4h14v-2H7v2zm0 4h14v-2H7v2zM7 7v2h14V7H7z"/></svg>Bulk Order</a>
+    <a href="rfq.html" class="nav-item"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6z"/></svg>RFQ / Quotations</a>
+    <a href="ledger.html" class="nav-item active"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM7 7h2v2H7V7zm0 4h2v2H7v-2zm0 4h2v2H7v-2zm10 2h-6v-2h6v2zm0-4h-6v-2h6v2zm0-4h-6V7h6v2z"/></svg>Credit Ledger</a>
+    <a href="../index.html" class="nav-item"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M20 4H4c-1.11 0-2 .89-2 2v12c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V6c0-1.11-.89-2-2-2z"/></svg>Browse Shop</a>
+  </nav>
+  <div class="sidebar-footer">
+    <div class="user-info"><div class="avatar" id="avatar">B</div><div><div class="user-name" id="uname">Loading</div><div class="logout-link" onclick="logout()">Logout</div></div></div>
+  </div>
+</aside>
+<div class="main-wrapper">
+  <header class="topbar"><div class="topbar-title">Credit Ledger</div></header>
+  <main class="page-content" id="content"><div class="empty">Loading…</div></main>
+</div>
+
+<script src="../shop-api.js"></script>
+<script>
+if (!getToken()) window.location.href = '/login.html';
+const user = getUser();
+if (user) { document.getElementById('uname').textContent = user.name || user.email; document.getElementById('avatar').textContent = (user.name || 'B')[0].toUpperCase(); }
+function esc(v) { return String(v == null ? '' : v).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c])); }
+
+async function load() {
+  const el = document.getElementById('content');
+  try {
+    const { buyer, summary, entries } = await apiFetch('/b2b/ledger');
+    if (!buyer.isApproved) {
+      el.innerHTML = '<div class="status-banner status-pending">⏳ Your B2B account is awaiting approval. Your credit line and ledger appear here once approved.</div>';
+      return;
+    }
+    el.innerHTML = `
+      <div class="status-banner status-approved">${esc(buyer.companyName)} · GSTIN ${esc(buyer.gstin || '—')}</div>
+      <div class="stat-grid">
+        <div class="stat-tile"><div class="label">Credit Limit</div><div class="value">${money(summary.creditLimit)}</div><div class="sub">Sanctioned by dbuggs</div></div>
+        <div class="stat-tile"><div class="label">Outstanding</div><div class="value">${money(summary.creditUsed)}</div><div class="sub">Payable to dbuggs</div></div>
+        <div class="stat-tile"><div class="label">Available Credit</div><div class="value">${money(summary.creditAvailable)}</div><div class="sub">For new PO orders</div></div>
+        <div class="stat-tile"><div class="label">GST on Purchases</div><div class="value">${money(summary.gstOnPurchases)}</div><div class="sub">Net of cancellations (ITC)</div></div>
+      </div>
+      <div class="card">
+        <div class="card-header"><div class="card-title">Transactions</div><span class="muted">Debits: ${money(summary.totalDebits)} · Credits: ${money(summary.totalCredits)}</span></div>
+        <div class="table-wrap">${entries.length ? `<table><thead><tr><th>Date</th><th>Type</th><th>Reference</th><th>PO No.</th><th>Details</th><th style="text-align:right;">Amount</th><th style="text-align:right;">GST</th><th style="text-align:right;">Balance</th></tr></thead><tbody>
+          ${entries.map(e => `<tr>
+            <td style="white-space:nowrap;">${new Date(e.createdAt).toLocaleString('en-IN', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' })}</td>
+            <td><span class="chip chip-${e.type}">${e.type === 'debit' ? 'Purchase' : 'Credit'}</span></td>
+            <td style="font-family:monospace;font-size:12px;">${esc(e.reference)}</td>
+            <td>${esc(e.poNumber || '—')}</td>
+            <td style="font-size:12.5px;">${esc(e.note || '')}</td>
+            <td style="text-align:right;" class="amount-${e.type}">${e.type === 'debit' ? '+' : '−'}${money(e.amount)}</td>
+            <td style="text-align:right;">${Number(e.gstAmount) ? money(e.gstAmount) : '—'}</td>
+            <td style="text-align:right;font-weight:600;">${money(e.balanceAfter)}</td>
+          </tr>`).join('')}</tbody></table>` : '<div class="empty">No transactions yet. Orders placed with "Business Credit (PO)" at checkout appear here.</div>'}</div>
+      </div>`;
+  } catch (e) {
+    el.innerHTML = /not registered/i.test(e.message)
+      ? '<div class="empty">You are not registered as a B2B buyer. <a href="/b2b-register.html" style="color:var(--accent);font-weight:600;">Register your business →</a></div>'
+      : `<div class="empty">Error: ${esc(e.message)}</div>`;
+  }
+}
+load();
+</script>
+</body>
+</html>

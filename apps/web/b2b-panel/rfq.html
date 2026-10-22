@@ -6,11 +6,7 @@
 <title>RFQ — B2B Panel</title>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@600;700&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="../panel-shared.css">
-<style>
-label{font-size:12.5px;font-weight:600;display:block;margin:12px 0 6px;}
-textarea,input{width:100%;padding:10px 12px;border:1px solid var(--border);border-radius:8px;font-size:14px;font-family:inherit;}
-.msg{font-size:13px;margin-top:10px;}
-</style>
+<link rel="stylesheet" href="b2b-panel.css">
 </head>
 <body>
 <aside class="sidebar">
@@ -18,7 +14,9 @@ textarea,input{width:100%;padding:10px 12px;border:1px solid var(--border);borde
   <nav class="nav-section">
     <a href="dashboard.html" class="nav-item"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"/></svg>Dashboard</a>
     <a href="orders.html" class="nav-item"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M7 4h-2l-3 9v2h18v-2l-3-9h-2l1 4H6L7 4z"/></svg>My Orders</a>
+    <a href="bulk-order.html" class="nav-item"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M3 13h2v-2H3v2zm0 4h2v-2H3v2zm0-8h2V7H3v2zm4 4h14v-2H7v2zm0 4h14v-2H7v2zM7 7v2h14V7H7z"/></svg>Bulk Order</a>
     <a href="rfq.html" class="nav-item active"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6z"/></svg>RFQ / Quotations</a>
+    <a href="ledger.html" class="nav-item"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM7 7h2v2H7V7zm0 4h2v2H7v-2zm0 4h2v2H7v-2zm10 2h-6v-2h6v2zm0-4h-6v-2h6v2zm0-4h-6V7h6v2z"/></svg>Credit Ledger</a>
     <a href="../index.html" class="nav-item"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M20 4H4c-1.11 0-2 .89-2 2v12c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V6c0-1.11-.89-2-2-2z"/></svg>Browse Shop</a>
   </nav>
   <div class="sidebar-footer">
@@ -29,20 +27,28 @@ textarea,input{width:100%;padding:10px 12px;border:1px solid var(--border);borde
   <header class="topbar"><div class="topbar-title">RFQ / Quotations</div></header>
   <main class="page-content">
     <div class="card">
-      <div class="card-header"><div class="card-title">Wholesale Price Slabs</div></div>
-      <div id="slabs-table"><div class="empty">Loading...</div></div>
-    </div>
-    <div class="card">
       <div class="card-header"><div class="card-title">Request a Custom Quotation</div></div>
-      <div style="padding:18px;">
-        <div style="font-size:12.5px;color:var(--text-secondary);">For large or custom bulk orders, submit requirements and get a PDF quotation within 24 hours.</div>
-        <form onsubmit="submitRfq(event)">
-          <label>Requirements</label>
-          <textarea id="rfq-details" rows="3" placeholder="e.g. 30x Grade A laptops, i5/8GB preferred, needed by 15 Oct" required></textarea>
-          <button type="submit" class="btn btn-primary" style="margin-top:14px;">Submit RFQ</button>
+      <div class="pad">
+        <div class="muted">For large or custom orders, describe models, specs, grades, quantity and delivery timeline. We reply with a PDF quotation within 24 hours.</div>
+        <form id="rfq-form" style="margin-top:12px;">
+          <div class="field">
+            <label for="rfq-details">Requirements</label>
+            <textarea id="rfq-details" rows="4" minlength="10" maxlength="3000" placeholder="e.g. 30 x Grade A laptops, i5 / 8GB / 256GB SSD, delivery to Pune by 15 Nov" required></textarea>
+          </div>
+          <button type="submit" class="btn btn-primary" id="rfq-submit" style="margin-top:12px;">Submit RFQ</button>
         </form>
-        <div class="msg" id="rfq-msg"></div>
+        <div id="rfq-msg"></div>
       </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header"><div class="card-title">My RFQs &amp; Quotations</div></div>
+      <div class="table-wrap" id="rfq-list"><div class="empty">Loading…</div></div>
+    </div>
+
+    <div class="card">
+      <div class="card-header"><div class="card-title">Wholesale Price Slabs</div></div>
+      <div id="slabs-table"><div class="empty">Loading…</div></div>
     </div>
   </main>
 </div>
@@ -53,32 +59,87 @@ if (!getToken()) window.location.href = '/login.html';
 const user = getUser();
 if (user) { document.getElementById('uname').textContent = user.name || user.email; document.getElementById('avatar').textContent = (user.name || 'B')[0].toUpperCase(); }
 
+function esc(v) { return String(v == null ? '' : v).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c])); }
+function fmtDate(d) { return d ? new Date(d).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' }) : '—'; }
+
 async function loadSlabs() {
   const el = document.getElementById('slabs-table');
   try {
     const slabs = await apiFetch('/b2b/slabs');
     el.innerHTML = `<table><thead><tr><th>Quantity</th><th>Discount</th></tr></thead>
-      <tbody>${slabs.map(s => `<tr><td>${s.label}</td><td style="font-weight:700;color:#065F46;">${s.discountPercent}% off</td></tr>`).join('')}</tbody></table>`;
+      <tbody>${slabs.map(s => `<tr><td>${esc(s.label)}</td><td style="font-weight:700;color:#065F46;">${Number(s.discountPercent)}% off</td></tr>`).join('')}</tbody></table>`;
   } catch (e) {
-    el.innerHTML = `<div class="empty">Error: ${e.message}</div>`;
+    el.innerHTML = `<div class="empty">Error: ${esc(e.message)}</div>`;
   }
 }
 
-async function submitRfq(e) {
+async function loadRfqs() {
+  const el = document.getElementById('rfq-list');
+  try {
+    const list = await apiFetch('/b2b/rfq');
+    if (!list.length) { el.innerHTML = '<div class="empty">No RFQs yet. Submit your first requirement above.</div>'; return; }
+    el.innerHTML = `<table><thead><tr><th>RFQ No.</th><th>Date</th><th>Requirement</th><th>Status</th><th>Quoted Total</th><th>Valid Until</th><th>Actions</th></tr></thead><tbody>
+      ${list.map(r => {
+        const quoted = r.status === 'quoted';
+        const hasPdf = ['quoted', 'accepted', 'declined', 'expired'].includes(r.status) && r.total;
+        return `<tr>
+          <td style="font-weight:600;color:var(--accent);white-space:nowrap;">${esc(r.rfqNumber)}</td>
+          <td style="white-space:nowrap;">${fmtDate(r.createdAt)}</td>
+          <td style="max-width:280px;font-size:12.5px;">${esc(r.details.length > 120 ? r.details.slice(0, 120) + '…' : r.details)}</td>
+          <td><span class="chip chip-${esc(r.status)}">${esc(r.status)}</span></td>
+          <td style="font-weight:600;white-space:nowrap;">${r.total ? money(r.total) + '<div class="muted">incl. GST</div>' : '—'}</td>
+          <td style="white-space:nowrap;">${fmtDate(r.validUntil)}</td>
+          <td><div class="btn-row">
+            ${hasPdf ? `<button class="btn btn-outline btn-sm" data-pdf="${esc(r.id)}" data-no="${esc(r.rfqNumber)}">Quotation PDF</button>` : ''}
+            ${quoted ? `<button class="btn btn-primary btn-sm" data-accept="${esc(r.id)}">Accept</button><button class="btn btn-outline btn-sm" data-decline="${esc(r.id)}">Decline</button>` : ''}
+            ${r.status === 'open' ? '<span class="muted">Awaiting quote</span>' : ''}
+          </div></td>
+        </tr>`;
+      }).join('')}</tbody></table>`;
+  } catch (e) {
+    el.innerHTML = `<div class="empty">Error: ${esc(e.message)}</div>`;
+  }
+}
+
+document.getElementById('rfq-list').addEventListener('click', async (e) => {
+  const b = e.target.closest('button');
+  if (!b) return;
+  if (b.dataset.pdf) return openDoc(`/b2b/rfq/${b.dataset.pdf}/quotation.pdf`, `Quotation-${b.dataset.no}.pdf`);
+  const id = b.dataset.accept || b.dataset.decline;
+  if (!id) return;
+  const accept = !!b.dataset.accept;
+  if (!confirm(accept ? 'Accept this quotation? Our sales team will contact you to confirm the order.' : 'Decline this quotation?')) return;
+  b.disabled = true;
+  try {
+    await apiFetch(`/b2b/rfq/${id}/${accept ? 'accept' : 'decline'}`, { method: 'POST' });
+    loadRfqs();
+  } catch (err) { alert(err.message); b.disabled = false; }
+});
+
+document.getElementById('rfq-form').addEventListener('submit', async (e) => {
   e.preventDefault();
-  const details = document.getElementById('rfq-details').value.trim();
+  const box = document.getElementById('rfq-details');
+  const details = box.value.trim();
   const msg = document.getElementById('rfq-msg');
-  msg.style.color = '#6B7280'; msg.textContent = 'Submitting...';
+  const btn = document.getElementById('rfq-submit');
+  if (details.length < 10) { msg.className = 'msg-err'; msg.textContent = 'Please describe your requirement (at least 10 characters).'; return; }
+  btn.disabled = true; msg.className = 'muted'; msg.textContent = 'Submitting…';
   try {
     const res = await apiFetch('/b2b/rfq', { method: 'POST', body: { details } });
-    msg.style.color = '#065F46';
-    msg.textContent = `RFQ submitted (${res.rfqId}). ${res.message}`;
-    document.getElementById('rfq-details').value = '';
-  } catch (e) {
-    msg.style.color = '#991B1B'; msg.textContent = e.message;
-  }
-}
+    msg.className = 'msg-ok'; msg.textContent = `RFQ ${res.rfqId} submitted. ${res.message}`;
+    box.value = '';
+    loadRfqs();
+  } catch (err) {
+    msg.className = 'msg-err'; msg.textContent = err.message;
+  } finally { btn.disabled = false; }
+});
 
+try {
+  const pre = sessionStorage.getItem('dbugg_rfq_prefill');
+  if (pre) { document.getElementById('rfq-details').value = pre; sessionStorage.removeItem('dbugg_rfq_prefill'); }
+} catch {}
+
+loadRfqs();
 loadSlabs();
 </script>
 </body>

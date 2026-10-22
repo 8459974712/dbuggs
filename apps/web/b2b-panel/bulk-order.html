@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bulk Order — B2B Panel</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@600;700&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../panel-shared.css">
+<link rel="stylesheet" href="b2b-panel.css">
+</head>
+<body>
+<aside class="sidebar">
+  <div class="sidebar-logo"><div class="brand">d<span>bugg</span>s</div><div class="tagline">B2B Partner Panel</div></div>
+  <nav class="nav-section">
+    <a href="dashboard.html" class="nav-item"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"/></svg>Dashboard</a>
+    <a href="orders.html" class="nav-item"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M7 4h-2l-3 9v2h18v-2l-3-9h-2l1 4H6L7 4z"/></svg>My Orders</a>
+    <a href="bulk-order.html" class="nav-item active"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M3 13h2v-2H3v2zm0 4h2v-2H3v2zm0-8h2V7H3v2zm4 4h14v-2H7v2zm0 4h14v-2H7v2zM7 7v2h14V7H7z"/></svg>Bulk Order</a>
+    <a href="rfq.html" class="nav-item"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6z"/></svg>RFQ / Quotations</a>
+    <a href="ledger.html" class="nav-item"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM7 7h2v2H7V7zm0 4h2v2H7v-2zm0 4h2v2H7v-2zm10 2h-6v-2h6v2zm0-4h-6v-2h6v2zm0-4h-6V7h6v2z"/></svg>Credit Ledger</a>
+    <a href="../index.html" class="nav-item"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M20 4H4c-1.11 0-2 .89-2 2v12c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V6c0-1.11-.89-2-2-2z"/></svg>Browse Shop</a>
+  </nav>
+  <div class="sidebar-footer">
+    <div class="user-info"><div class="avatar" id="avatar">B</div><div><div class="user-name" id="uname">Loading</div><div class="logout-link" onclick="logout()">Logout</div></div></div>
+  </div>
+</aside>
+<div class="main-wrapper">
+  <header class="topbar"><div class="topbar-title">Bulk Order</div></header>
+  <main class="page-content">
+    <div class="card">
+      <div class="card-header"><div class="card-title">1 · Upload your order list</div>
+        <button type="button" class="btn btn-outline btn-sm" id="tpl-btn">Download CSV template</button></div>
+      <div class="pad">
+        <div class="muted">Upload a <b>.csv</b> or <b>.xlsx</b> file with columns <b>brand, model, grade, qty</b> (model and grade are optional), or add lines by hand below. Slab discounts apply automatically: 5–9 units 8%, 10–24 units 13%, 25+ units 18%.</div>
+        <div class="btn-row" style="margin-top:12px;">
+          <input type="file" id="file" accept=".csv,.xlsx,.xls" style="font-size:13px;">
+          <span class="muted" id="file-msg"></span>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header"><div class="card-title">2 · Order lines</div>
+        <button type="button" class="btn btn-outline btn-sm" id="add-line">+ Add line</button></div>
+      <div class="pad">
+        <div id="lines"></div>
+        <div class="btn-row" style="margin-top:10px;">
+          <button type="button" class="btn btn-primary" id="match-btn">Find matching laptops</button>
+          <span id="match-msg"></span>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" id="result-card" hidden>
+      <div class="card-header"><div class="card-title">3 · Available units</div></div>
+      <div class="pad" id="results"></div>
+      <div class="summary-bar" id="summary"></div>
+    </div>
+  </main>
+</div>
+
+<datalist id="brands"><option value="Dell"><option value="HP"><option value="Lenovo"><option value="Apple"><option value="Asus"><option value="Acer"></datalist>
+
+<script src="../shop-api.js"></script>
+<script>
+if (!getToken()) window.location.href = '/login.html';
+const user = getUser();
+if (user) { document.getElementById('uname').textContent = user.name || user.email; document.getElementById('avatar').textContent = (user.name || 'B')[0].toUpperCase(); }
+function esc(v) { return String(v == null ? '' : v).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c])); }
+
+const MAX_CHECKOUT = 50;
+const linesEl = document.getElementById('lines');
+let lastResult = null;
+
+function addLine(v = {}) {
+  const row = document.createElement('div');
+  row.className = 'line-row';
+  row.innerHTML = `
+    <div class="field"><label>Brand *</label><input list="brands" class="l-brand" maxlength="60" value="${esc(v.brand || '')}" placeholder="Dell"></div>
+    <div class="field"><label>Model (optional)</label><input class="l-model" maxlength="120" value="${esc(v.model || '')}" placeholder="Latitude 5420"></div>
+    <div class="field"><label>Grade</label><select class="l-grade">${['', 'A+', 'A', 'B', 'C'].map(g => `<option value="${g}" ${String(v.grade || '').toUpperCase() === g ? 'selected' : ''}>${g || 'Any'}</option>`).join('')}</select></div>
+    <div class="field"><label>Qty *</label><input type="number" class="l-qty" min="1" max="100" value="${esc(v.qty || 1)}"></div>
+    <button type="button" class="x" title="Remove line" aria-label="Remove line">×</button>`;
+  row.querySelector('.x').onclick = () => { row.remove(); if (!linesEl.children.length) addLine(); };
+  linesEl.appendChild(row);
+}
+
+function readLines() {
+  return [...linesEl.querySelectorAll('.line-row')].map(r => ({
+    brand: r.querySelector('.l-brand').value.trim(),
+    model: r.querySelector('.l-model').value.trim(),
+    grade: r.querySelector('.l-grade').value,
+    qty: parseInt(r.querySelector('.l-qty').value, 10),
+  })).filter(l => l.brand || l.model);
+}
+
+function setLines(list) {
+  linesEl.innerHTML = '';
+  list.slice(0, 50).forEach(addLine);
+  if (!list.length) addLine();
+}
+
+document.getElementById('add-line').onclick = () => addLine();
+document.getElementById('tpl-btn').onclick = () => {
+  const csv = 'brand,model,grade,qty\nDell,Latitude 5420,A,10\nHP,EliteBook,A,5\nLenovo,,B,3\n';
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv' }));
+  a.download = 'dbuggs-bulk-order-template.csv';
+  document.body.appendChild(a); a.click(); a.remove();
+};
+
+function parseCsv(text) {
+  const rows = [];
+  let cur = [''], q = false;
+  for (let i = 0; i < text.length; i++) {
+    const c = text[i];
+    if (q) { if (c === '"' && text[i + 1] === '"') { cur[cur.length - 1] += '"'; i++; } else if (c === '"') q = false; else cur[cur.length - 1] += c; }
+    else if (c === '"') q = true;
+    else if (c === ',' || c === ';' || c === '\t') cur.push('');
+    else if (c === '\n' || c === '\r') { if (c === '\r' && text[i + 1] === '\n') i++; rows.push(cur); cur = ['']; }
+    else cur[cur.length - 1] += c;
+  }
+  if (cur.length > 1 || cur[0]) rows.push(cur);
+  return rows.filter(r => r.some(x => String(x).trim()));
+}
+
+function rowsToLines(rows) {
+  if (!rows.length) return [];
+  const head = rows[0].map(h => String(h).trim().toLowerCase());
+  const idx = k => head.findIndex(h => h === k || h.startsWith(k));
+  const hasHead = idx('brand') !== -1;
+  const bi = hasHead ? idx('brand') : 0, mi = hasHead ? idx('model') : 1, gi = hasHead ? idx('grade') : 2, qi = hasHead ? Math.max(idx('qty'), idx('quantity')) : 3;
+  return rows.slice(hasHead ? 1 : 0).map(r => ({
+    brand: String(r[bi] ?? '').trim(),
+    model: mi >= 0 ? String(r[mi] ?? '').trim() : '',
+    grade: gi >= 0 ? String(r[gi] ?? '').trim().toUpperCase() : '',
+    qty: Math.min(100, Math.max(1, parseInt(r[qi], 10) || 1)),
+  })).filter(l => l.brand);
+}
+
+function loadScript(src) {
+  return new Promise((ok, fail) => { const s = document.createElement('script'); s.src = src; s.onload = ok; s.onerror = () => fail(new Error('Could not load the Excel reader. Save the file as CSV and try again.')); document.head.appendChild(s); });
+}
+
+document.getElementById('file').addEventListener('change', async (e) => {
+  const f = e.target.files[0];
+  const msg = document.getElementById('file-msg');
+  if (!f) return;
+  if (f.size > 2 * 1024 * 1024) { msg.textContent = 'File is too large (max 2 MB).'; return; }
+  try {
+    let rows;
+    if (/\.xlsx?$/i.test(f.name)) {
+      if (!window.XLSX) await loadScript('https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js');
+      const wb = XLSX.read(await f.arrayBuffer(), { type: 'array' });
+      rows = XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]], { header: 1, raw: false });
+    } else {
+      rows = parseCsv(await f.text());
+    }
+    const lines = rowsToLines(rows);
+    if (!lines.length) { msg.textContent = 'No order lines found. Use the template columns: brand, model, grade, qty.'; return; }
+    setLines(lines);
+    msg.textContent = `Loaded ${lines.length} line${lines.length > 1 ? 's' : ''} from ${f.name}${lines.length > 50 ? ' (first 50 used)' : ''}.`;
+  } catch (err) { msg.textContent = err.message; }
+});
+
+document.getElementById('match-btn').onclick = async () => {
+  const items = readLines();
+  const msg = document.getElementById('match-msg');
+  const bad = items.find(l => !l.brand || !(l.qty >= 1 && l.qty <= 100));
+  if (!items.length || bad) { msg.className = 'msg-err'; msg.textContent = 'Each line needs a brand and a quantity between 1 and 100.'; return; }
+  const btn = document.getElementById('match-btn');
+  btn.disabled = true; msg.className = 'muted'; msg.textContent = 'Checking stock…';
+  try {
+    lastResult = await apiFetch('/b2b/bulk-match', { method: 'POST', body: { items } });
+    msg.textContent = '';
+    renderResult(lastResult);
+  } catch (err) { msg.className = 'msg-err'; msg.textContent = err.message; }
+  finally { btn.disabled = false; }
+};
+
+function renderResult(r) {
+  document.getElementById('result-card').hidden = false;
+  const short = r.lines.filter(l => l.shortBy > 0);
+  document.getElementById('results').innerHTML = r.lines.map(l => {
+    const label = [l.input.brand, l.input.model, l.input.grade ? 'Grade ' + l.input.grade : ''].filter(Boolean).join(' · ');
+    return `<div class="match-line"><h4>${esc(label)} — ${l.matched.length} of ${l.input.qty} available</h4>
+      ${l.matched.length ? `<div class="table-wrap"><table><thead><tr><th>Model</th><th>Serial</th><th>Grade</th><th>Specs</th><th style="text-align:right;">Price</th></tr></thead><tbody>
+        ${l.matched.map(m => `<tr><td>${esc(m.brand)} ${esc(m.model)}</td><td style="font-family:monospace;font-size:12px;">${esc(m.serialNo)}</td><td>${esc(m.grade || '—')}</td><td style="font-size:12px;">${esc([m.processor, m.ram, m.storage].filter(Boolean).join(' · '))}</td><td style="text-align:right;">${money(m.sellingPrice)}</td></tr>`).join('')}
+      </tbody></table></div>` : ''}
+      ${l.shortBy > 0 ? `<div class="short">${l.shortBy} unit${l.shortBy > 1 ? 's' : ''} not in stock right now — request a quotation and we will source them.</div>` : ''}</div>`;
+  }).join('');
+  const tooMany = r.units > MAX_CHECKOUT;
+  document.getElementById('summary').innerHTML = `
+    <div><b>${r.units}</b> unit${r.units === 1 ? '' : 's'} · List price ${money(r.listTotal)}${r.discountPercent ? ` · <b style="color:#065F46;">${r.discountPercent}% slab discount</b>` : ''}<br>
+      <span class="muted">${r.approved ? 'Estimated total ' + money(r.estimatedTotal) + ' incl. GST (final price confirmed at checkout)' : 'Slab discount applies once your B2B account is approved.'}</span>
+      ${tooMany ? `<div class="msg-err">Online checkout supports up to ${MAX_CHECKOUT} units per order. Request a quotation for larger orders.</div>` : ''}</div>
+    <div class="btn-row">
+      ${short.length || tooMany ? '<button type="button" class="btn btn-outline" id="rfq-btn">Request quotation</button>' : ''}
+      <button type="button" class="btn btn-primary" id="cart-btn" ${!r.units || tooMany ? 'disabled' : ''}>Add ${r.units} to cart &amp; checkout</button>
+    </div>`;
+  const cartBtn = document.getElementById('cart-btn');
+  if (cartBtn) cartBtn.onclick = () => {
+    r.lines.forEach(l => l.matched.forEach(m => addToCart(m)));
+    window.location.href = '/cart.html';
+  };
+  const rfqBtn = document.getElementById('rfq-btn');
+  if (rfqBtn) rfqBtn.onclick = () => {
+    const text = r.lines.map(l => `${l.input.qty} x ${[l.input.brand, l.input.model, l.input.grade ? 'Grade ' + l.input.grade : ''].filter(Boolean).join(' ')}`).join('\n');
+    try { sessionStorage.setItem('dbugg_rfq_prefill', 'Bulk requirement:\n' + text); } catch {}
+    window.location.href = 'rfq.html';
+  };
+}
+
+addLine();
+</script>
+</body>
+</html>

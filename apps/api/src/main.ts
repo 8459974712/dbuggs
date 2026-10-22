@@ -7,7 +7,12 @@ import { json, urlencoded } from 'express';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
-  app.use(json({ limit: '50mb' }));
+  app.use(json({
+    limit: '50mb',
+    verify: (req: any, _res, buf) => {
+      if (req.originalUrl?.startsWith('/payments/webhook')) req.rawBody = buf;
+    },
+  }));
   app.use(urlencoded({ limit: '50mb', extended: true }));
 
   app.useGlobalPipes(new ValidationPipe({ whitelist: true, transform: true }));

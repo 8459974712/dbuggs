@@ -1,36 +1,47 @@
-import { Controller, Get, Post, Body, Param, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Param, UseGuards, Res, ParseIntPipe, ParseUUIDPipe } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
-import { GstService } from './gst.service';
+import { Response } from 'express';
 import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
+import { RolesGuard } from '../../common/guards/roles.guard';
+import { Roles } from '../../common/decorators/roles.decorator';
+import { DocumentsService } from '../documents/documents.service';
+import { sendCsv } from '../../common/send-file';
 
 @ApiTags('gst')
 @ApiBearerAuth()
-@UseGuards(JwtAuthGuard)
+@UseGuards(JwtAuthGuard, RolesGuard)
+@Roles('admin', 'super_admin')
 @Controller('gst')
 export class GstController {
-  constructor(private readonly gstService: GstService) {}
+  constructor(private readonly documents: DocumentsService) {}
 
   @Post('invoice/:orderId')
-  @ApiOperation({ summary: 'Generate GST invoice for order' })
-  generateInvoice(@Param('orderId') orderId: string) {
-    return this.gstService.generateInvoice(orderId);
+  @ApiOperation({ summary: 'Admin: generate (or fetch) the GST invoice for an order' })
+  generateInvoice(@Param('orderId', ParseUUIDPipe) orderId: string) {
+    return this.documents.ensureInvoice(orderId);
   }
 
   @Post('credit-note/:orderId')
-  @ApiOperation({ summary: 'Generate credit note for return/refund' })
-  creditNote(@Param('orderId') orderId: string, @Body() body: any) {
-    return this.gstService.generateCreditNote(orderId, body.refundAmount);
+  @ApiOperation({ summary: 'Admin: generate (or fetch) the credit note for a cancelled/returned order' })
+  creditNote(@Param('orderId', ParseUUIDPipe) orderId: string) {
+    return this.documents.ensureCreditNote(orderId);
   }
 
   @Get('summary/:month/:year')
-  @ApiOperation({ summary: 'Get monthly GST summary' })
-  summary(@Param('month') month: string, @Param('year') year: string) {
-    return this.gstService.getMonthlySummary(parseInt(month), parseInt(year));
+  @ApiOperation({ summary: 'Admin: monthly GST summary (invoices minus credit notes)' })
+  summary(@Param('month', ParseIntPipe) month: number, @Param('year', ParseIntPipe) year: number) {
+    return this.documents.monthlySummary(month, year);
+  }
+
+  @Get('invoices/:month/:year')
+  @ApiOperation({ summary: 'Admin: invoices and credit notes issued in a month' })
+  invoices(@Param('month', ParseIntPipe) month: number, @Param('year', ParseIntPipe) year: number) {
+    return this.documents.listInvoices(month, year);
   }
 
   @Get('export/tally/:month/:year')
-  @ApiOperation({ summary: 'Export GST data for Tally' })
-  tallyExport(@Param('month') month: string, @Param('year') year: string) {
-    return this.gstService.exportForTally(parseInt(month), parseInt(year));
+  @ApiOperation({ summary: 'Admin: download month invoices & credit notes as CSV for Tally' })
+  async tallyExport(@Param('month', ParseIntPipe) month: number, @Param('year', ParseIntPipe) year: number, @Res() res: Response) {
+    sendCsv(res, await this.documents.tallyCsv(month, year));
   }
 }

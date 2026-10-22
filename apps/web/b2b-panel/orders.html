@@ -6,6 +6,7 @@
 <title>My Orders — B2B Panel</title>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@600;700&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="../panel-shared.css">
+<link rel="stylesheet" href="b2b-panel.css">
 </head>
 <body>
 <aside class="sidebar">
@@ -13,7 +14,9 @@
   <nav class="nav-section">
     <a href="dashboard.html" class="nav-item"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"/></svg>Dashboard</a>
     <a href="orders.html" class="nav-item active"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M7 4h-2l-3 9v2h18v-2l-3-9h-2l1 4H6L7 4z"/></svg>My Orders</a>
+    <a href="bulk-order.html" class="nav-item"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M3 13h2v-2H3v2zm0 4h2v-2H3v2zm0-8h2V7H3v2zm4 4h14v-2H7v2zm0 4h14v-2H7v2zM7 7v2h14V7H7z"/></svg>Bulk Order</a>
     <a href="rfq.html" class="nav-item"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6z"/></svg>RFQ / Quotations</a>
+    <a href="ledger.html" class="nav-item"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM7 7h2v2H7V7zm0 4h2v2H7v-2zm0 4h2v2H7v-2zm10 2h-6v-2h6v2zm0-4h-6v-2h6v2zm0-4h-6V7h6v2z"/></svg>Credit Ledger</a>
     <a href="../index.html" class="nav-item"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M20 4H4c-1.11 0-2 .89-2 2v12c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V6c0-1.11-.89-2-2-2z"/></svg>Browse Shop</a>
   </nav>
   <div class="sidebar-footer">
@@ -47,8 +50,11 @@ async function load() {
   try {
     const orders = (await apiFetch('/orders')).filter(o => o.type === 'b2b');
     if (orders.length === 0) { el.innerHTML = '<div class="empty">No B2B orders yet.</div>'; return; }
-    el.innerHTML = `<table><thead><tr><th>Order No.</th><th>Date</th><th>Amount</th><th>Status</th></tr></thead>
-      <tbody>${orders.map(o => `<tr><td style="font-weight:600;color:var(--accent);">${o.orderNumber}</td><td>${new Date(o.createdAt).toLocaleDateString('en-IN')}</td><td style="font-weight:600;">${money(o.amount)}</td><td><span class="chip" style="${chipStyle[o.status]||''}">${o.status}</span></td></tr>`).join('')}</tbody></table>`;
+    const INV = ['confirmed','processing','shipped','delivered','return_requested'];
+    const po = o => (o.paymentId || '').startsWith('CREDIT:') ? o.paymentId.split(':').slice(2).join(':') : '—';
+    el.innerHTML = `<div class="table-wrap"><table><thead><tr><th>Order No.</th><th>Date</th><th>PO No.</th><th>Amount</th><th>Status</th><th>Documents</th></tr></thead>
+      <tbody>${orders.map(o => `<tr><td style="font-weight:600;color:var(--accent);">${o.orderNumber}</td><td>${new Date(o.createdAt).toLocaleDateString('en-IN')}</td><td>${po(o).replace(/[<>&"']/g,'')}</td><td style="font-weight:600;">${money(o.amount)}</td><td><span class="chip" style="${chipStyle[o.status]||''}">${o.status}</span></td>
+        <td><div class="btn-row">${INV.includes(o.status) ? `<button class="btn btn-outline btn-sm" onclick="openDoc('/orders/${o.id}/invoice.pdf','Invoice-${o.orderNumber}.pdf')">GST Invoice</button>` : ''}${['cancelled','returned'].includes(o.status) && o.gstInvoiceUrl ? `<button class="btn btn-outline btn-sm" onclick="openDoc('/orders/${o.id}/credit-note.pdf','CreditNote-${o.orderNumber}.pdf')">Credit Note</button>` : ''}</div></td></tr>`).join('')}</tbody></table></div>`;
   } catch (e) {
     el.innerHTML = `<div class="empty">Error: ${e.message}</div>`;
   }

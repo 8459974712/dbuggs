@@ -148,37 +148,80 @@ tbody td{padding:11px 16px;font-size:13.5px;color:var(--text-primary);font-varia
 .main, .main-wrapper { margin-left: 240px !important; }
 /* ─── END CANONICAL SIDEBAR ─── */
 </style>
+<link rel="stylesheet" href="admin-extra.css">
 </head>
 <body>
-<aside class="sidebar">
-  <div class="sidebar-logo"><div class="brand">d<span>bugg</span>s</div><div class="tagline">Admin Panel</div></div>
-  <nav class="nav-section">
-    <a href="dashboard.html" class="nav-item"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"/></svg>Dashboard</a>
-    <a href="inventory.html" class="nav-item"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M20 6h-2.18c.07-.44.18-.88.18-1.34C18 2.54 15.46 0 12 0S6 2.54 6 4.66C6 5.12 6.11 5.56 6.18 6H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2z"/></svg>Inventory Units</a>
-    <a href="qc-grading.html" class="nav-item"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"/></svg>QC &amp; Grading</a>
-    <a href="b2c-orders.html" class="nav-item"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M7 4h-2l-3 9v2h18v-2l-3-9h-2l1 4H6L7 4zm0 8H5.5l.67-2H7v2zm2 0v-2h.5l-.5 2zm3 0h-1l.5-2h.5v2zm2 0v-2h.5l.5 2h-1zm3 0l-.67-2H18v2h-1zM3 17v2h18v-2H3z"/></svg>B2C Orders</a>
-    <a href="returns.html" class="nav-item"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 5V1L7 6l5 5V7c3.31 0 6 2.69 6 6s-2.69 6-6 6-6-2.69-6-6H4c0 4.42 3.58 8 8 8s8-3.58 8-8-3.58-8-8-8z"/></svg>Returns &amp; Refunds</a>
-    <a href="b2b-approvals.html" class="nav-item"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>B2B Approvals</a>
-    <a href="quotations.html" class="nav-item active"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg>Quotations &amp; POs</a>
-    <a href="kyc-queue.html" class="nav-item"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>KYC Queue</a>
-    <a href="rentals.html" class="nav-item"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M20 4H4c-1.11 0-2 .89-2 2v12c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V6c0-1.11-.89-2-2-2zm0 14H4v-6h16v6zm0-10H4V6h16v2z"/></svg>Rentals &amp; Deposits</a>
-    <a href="dealer-applications.html" class="nav-item"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 14l-5-5 1.41-1.41L12 14.17l7.59-7.59L21 8l-9 9z"/></svg>Dealer Applications</a>
-    <a href="dealers-tiers.html" class="nav-item"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>Dealers &amp; Tiers</a>
-    <a href="commission.html" class="nav-item"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M11.8 10.9c-2.27-.59-3-1.2-3-2.15 0-1.09 1.01-1.85 2.7-1.85 1.78 0 2.44.85 2.5 2.1h2.21c-.07-1.72-1.12-3.3-3.21-3.81V3h-3v2.16c-1.94.42-3.5 1.68-3.5 3.61 0 2.31 1.91 3.46 4.7 4.13 2.5.6 3 1.48 3 2.41 0 .69-.49 1.79-2.7 1.79-2.06 0-2.87-.92-2.98-2.1h-2.2c.12 2.19 1.76 3.42 3.68 3.83V21h3v-2.15c1.95-.37 3.5-1.5 3.5-3.55 0-2.84-2.43-3.81-4.7-4.4z"/></svg>Commission &amp; Payouts</a>
-    <a href="warranty.html" class="nav-item"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 4l5 2.18V11c0 3.5-2.33 6.79-5 7.93-2.67-1.14-5-4.43-5-7.93V7.18L12 5z"/></svg>Warranty &amp; Support</a>
-    <a href="marketing.html" class="nav-item"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/></svg>Marketing &amp; CMS</a>
-    <a href="finance.html" class="nav-item"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM7 7h2v2H7V7zm0 4h2v2H7v-2zm0 4h2v2H7v-2zm10 2h-6v-2h6v2zm0-4h-6v-2h6v2zm0-4h-6V7h6v2z"/></svg>Finance &amp; GST</a>
-    <a href="reports.html" class="nav-item"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg>Reports</a>
-  </nav>
-  <div style="padding:4px 20px;"><div class="nav-section-label">Super Admin</div></div>
-  <nav class="nav-section" style="padding-top:4px;">
-    <a href="admins-roles.html" class="nav-item"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1s3.1 1.39 3.1 3.1v2z"/></svg>Admins &amp; Roles</a>
-    <a href="pricing-rules.html" class="nav-item"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.63 5.84C17.27 5.33 16.67 5 16 5L5 5.01C3.9 5.01 3 5.9 3 7v10c0 1.1.9 1.99 2 1.99L16 19c.67 0 1.27-.33 1.63-.84L22 12l-4.37-6.16z"/></svg>Pricing &amp; Rules</a>
-    <a href="integrations.html" class="nav-item"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg>Integrations</a>
-    <a href="audit-log.html" class="nav-item"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M13 3c-4.97 0-9 4.03-9 9H1l3.89 3.89.07.14L9 12H6c0-3.87 3.13-7 7-7s7 3.13 7 7-3.13 7-7 7c-1.93 0-3.68-.79-4.94-2.06l-1.42 1.42C8.27 19.99 10.51 21 13 21c4.97 0 9-4.03 9-9s-4.03-9-9-9zm-1 5v5l4.28 2.54.72-1.21-3.5-2.08V8H12z"/></svg>Audit Log</a>
-  </nav>
-  <div class="sidebar-footer"><div class="user-info"><div class="avatar">SA</div><div><div class="user-name">Super Admin</div><div class="user-role">admin@dbuggs.in</div></div></div></div>
+<style>
+.dbugg-sidebar{width:240px;min-width:220px;background:#1C2B6B;display:flex;flex-direction:column;position:fixed;top:0;left:0;height:100vh;overflow-y:auto;z-index:1000;flex-shrink:0;}
+.dbugg-sidebar::-webkit-scrollbar{width:4px;}
+.dbugg-sidebar::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.2);border-radius:4px;}
+.dbugg-sidebar .sb-logo{padding:20px 20px 14px;border-bottom:1px solid rgba(255,255,255,0.08);}
+.dbugg-sidebar .sb-brand{font-family:"Space Grotesk",sans-serif;font-size:20px;font-weight:700;color:#fff;}
+.dbugg-sidebar .sb-brand span{color:#F07830;}
+.dbugg-sidebar .sb-tagline{font-size:11px;color:rgba(255,255,255,0.5);margin-top:2px;}
+.sb-nav{flex:1;padding:8px 0 16px;}
+.sb-section-label{font-size:10px;font-weight:700;letter-spacing:0.1em;color:rgba(255,255,255,0.55);text-transform:uppercase;padding:14px 20px 5px;display:block!important;}
+.sb-item{display:flex!important;align-items:center;gap:10px;padding:9px 20px;color:rgba(255,255,255,0.72);text-decoration:none;font-size:13.5px;font-weight:500;transition:background 0.15s,color 0.15s;border:none;background:none;width:100%;cursor:pointer;font-family:inherit;white-space:nowrap;}
+.sb-item:hover{background:rgba(255,255,255,0.08);color:#fff;}
+.sb-item.sb-active{background:rgba(240,120,48,0.18);color:#fff;border-right:3px solid #F07830;}
+.sb-item svg{width:16px;height:16px;flex-shrink:0;opacity:0.8;}
+.sb-item.sb-active svg{opacity:1;}
+.sb-footer{padding:14px 20px;border-top:1px solid rgba(255,255,255,0.08);margin-top:auto;}
+.sb-footer .sb-user{display:flex;align-items:center;gap:10px;}
+.sb-footer .sb-avatar{width:34px;height:34px;border-radius:50%;background:#F07830;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;color:#fff;flex-shrink:0;}
+.sb-footer .sb-name{font-size:13px;font-weight:600;color:#fff;}
+.sb-footer .sb-role{font-size:11px;color:rgba(255,255,255,0.5);}
+</style>
+<aside class="dbugg-sidebar">
+  <div class="sb-logo">
+    <div class="sb-brand">d<span>bugg</span>s</div>
+    <div class="sb-tagline">Admin Panel</div>
+  </div>
+  <nav class="sb-nav">
+  <span class="sb-section-label">Overview</span>
+  <a href="dashboard.html" class="sb-item"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"/></svg>Dashboard</a>
+  <span class="sb-section-label">Inventory</span>
+  <a href="inventory.html" class="sb-item"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M20 6h-2.18c.07-.44.18-.88.18-1.34C18 2.54 15.46 0 12 0S6 2.54 6 4.66C6 5.12 6.11 5.56 6.18 6H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zM12 2c1.35 0 2 1.03 2 2.66 0 .73-.16 1.47-.44 2.07-.44.95-1.32 1.27-1.56 1.27s-1.12-.32-1.56-1.27C10.16 6.13 10 5.39 10 4.66 10 3.03 10.65 2 12 2zm0 10c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2z"/></svg>Inventory Units</a>
+  <a href="qc-grading.html" class="sb-item"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"/></svg>QC &amp; Grading</a>
+  <span class="sb-section-label">Orders</span>
+  <a href="b2c-orders.html" class="sb-item"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M7 4h-2l-3 9v2h18v-2l-3-9h-2l1 4H6L7 4zm0 8H5.5l.67-2H7v2zm2 0v-2h.5l-.5 2zm3 0h-1l.5-2h.5v2zm2 0v-2h.5l.5 2h-1zm3 0l-.67-2H18v2h-1zM3 17v2h18v-2H3z"/></svg>B2C Orders</a>
+  <a href="returns.html" class="sb-item"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 5V1L7 6l5 5V7c3.31 0 6 2.69 6 6s-2.69 6-6 6-6-2.69-6-6H4c0 4.42 3.58 8 8 8s8-3.58 8-8-3.58-8-8-8z"/></svg>Returns &amp; Refunds</a>
+  <span class="sb-section-label">B2B</span>
+  <a href="b2b-approvals.html" class="sb-item"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>B2B Approvals</a>
+  <a href="quotations.html" class="sb-item sb-active"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg>Quotations &amp; POs</a>
+  <span class="sb-section-label">Rental</span>
+  <a href="kyc-queue.html" class="sb-item"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>KYC Queue</a>
+  <a href="rentals.html" class="sb-item"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M20 4H4c-1.11 0-2 .89-2 2v12c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V6c0-1.11-.89-2-2-2zm0 14H4v-6h16v6zm0-10H4V6h16v2z"/></svg>Rentals &amp; Deposits</a>
+  <span class="sb-section-label">Dealers</span>
+  <a href="dealer-applications.html" class="sb-item"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 14l-5-5 1.41-1.41L12 14.17l7.59-7.59L21 8l-9 9z"/></svg>Dealer Applications</a>
+  <a href="dealers-tiers.html" class="sb-item"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>Dealers &amp; Tiers</a>
+  <a href="commission.html" class="sb-item"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M11.8 10.9c-2.27-.59-3-1.2-3-2.15 0-1.09 1.01-1.85 2.7-1.85 1.78 0 2.44.85 2.5 2.1h2.21c-.07-1.72-1.12-3.3-3.21-3.81V3h-3v2.16c-1.94.42-3.5 1.68-3.5 3.61 0 2.31 1.91 3.46 4.7 4.13 2.5.6 3 1.48 3 2.41 0 .69-.49 1.79-2.7 1.79-2.06 0-2.87-.92-2.98-2.1h-2.2c.12 2.19 1.76 3.42 3.68 3.83V21h3v-2.15c1.95-.37 3.5-1.5 3.5-3.55 0-2.84-2.43-3.81-4.7-4.4z"/></svg>Commission &amp; Payouts</a>
+  <span class="sb-section-label">Support</span>
+  <a href="warranty.html" class="sb-item"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 4l5 2.18V11c0 3.5-2.33 6.79-5 7.93-2.67-1.14-5-4.43-5-7.93V7.18L12 5z"/></svg>Warranty &amp; Support</a>
+  <span class="sb-section-label">Marketing &amp; Finance</span>
+  <a href="marketing.html" class="sb-item"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/></svg>Marketing &amp; CMS</a>
+  <a href="finance.html" class="sb-item"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM7 7h2v2H7V7zm0 4h2v2H7v-2zm0 4h2v2H7v-2zm10 2h-6v-2h6v2zm0-4h-6v-2h6v2zm0-4h-6V7h6v2z"/></svg>Finance &amp; GST</a>
+  <a href="reports.html" class="sb-item"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg>Reports</a>
+  <span class="sb-section-label">Super Admin</span>
+  <a href="admins-roles.html" class="sb-item"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1s3.1 1.39 3.1 3.1v2z"/></svg>Admins &amp; Roles</a>
+  <a href="pricing-rules.html" class="sb-item"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.63 5.84C17.27 5.33 16.67 5 16 5L5 5.01C3.9 5.01 3 5.9 3 7v10c0 1.1.9 1.99 2 1.99L16 19c.67 0 1.27-.33 1.63-.84L22 12l-4.37-6.16z"/></svg>Pricing &amp; Rules</a>
+  <a href="integrations.html" class="sb-item"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg>Integrations</a>
+  <a href="audit-log.html" class="sb-item"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M13 3c-4.97 0-9 4.03-9 9H1l3.89 3.89.07.14L9 12H6c0-3.87 3.13-7 7-7s7 3.13 7 7-3.13 7-7 7c-1.93 0-3.68-.79-4.94-2.06l-1.42 1.42C8.27 19.99 10.51 21 13 21c4.97 0 9-4.03 9-9s-4.03-9-9-9zm-1 5v5l4.28 2.54.72-1.21-3.5-2.08V8H12z"/></svg>Audit Log</a>
+  <a href="banner-offers.html" class="sb-item"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M21 3H3c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H3V5h18v14zm-10-7h9v5h-9zm-4-3c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm3.75 3H2.85l2.9-3.65L7.65 14l2.1-2.64L12.25 14H6.75z"/></svg>Banner &amp; Offers</a>
+  <a href="coupons.html" class="sb-item"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M21.41 11.58l-9-9C12.05 2.22 11.55 2 11 2H4c-1.1 0-2 .9-2 2v7c0 .55.22 1.05.59 1.42l9 9c.36.36.86.58 1.41.58s1.05-.22 1.41-.59l7-7c.37-.36.59-.86.59-1.41s-.23-1.06-.59-1.42zM5.5 7C4.67 7 4 6.33 4 5.5S4.67 4 5.5 4 7 4.67 7 5.5 6.33 7 5.5 7z"/></svg>Coupon Management</a>
+  <a href="login-activity.html" class="sb-item"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 4l5 2.18V11c0 3.5-2.33 6.79-5 7.93-2.67-1.14-5-4.43-5-7.93V7.18L12 5z"/></svg>Login Activity &amp; IP</a>
+</nav>
+  <div class="sb-footer">
+    <div class="sb-user">
+      <div class="sb-avatar">SA</div>
+      <div>
+        <div class="sb-name">Super Admin</div>
+        <div class="sb-role">admin@dbuggs.in</div>
+      </div>
+    </div>
+  </div>
 </aside>
+<style>.main-wrapper,.main{margin-left:240px!important;}</style>
 
 
 <div class="main-wrapper">
@@ -192,103 +235,280 @@ tbody td{padding:11px 16px;font-size:13.5px;color:var(--text-primary);font-varia
   <main class="page-content">
     <div class="page-header">
       <div class="page-header-title">Quotations &amp; POs</div>
-      <button class="btn btn-primary"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>New Quotation</button>
+      <button class="btn btn-outline" id="refresh-btn">Refresh</button>
     </div>
     <div class="stat-grid">
-      <div class="stat-tile"><div class="stat-icon" style="background:var(--orange-bg);"><svg width="20" height="20" viewBox="0 0 24 24" fill="#F59E0B"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg></div><div class="label">Open RFQs</div><div class="value">14</div><div class="sub">Awaiting quotation</div></div>
-      <div class="stat-tile"><div class="stat-icon" style="background:var(--blue-bg);"><svg width="20" height="20" viewBox="0 0 24 24" fill="#3B82F6"><path d="M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg></div><div class="label">Quotations Sent</div><div class="value">38</div><div class="sub">This month</div></div>
-      <div class="stat-tile"><div class="stat-icon" style="background:var(--green-bg);"><svg width="20" height="20" viewBox="0 0 24 24" fill="#10B981"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"/></svg></div><div class="label">POs Received</div><div class="value">22</div><div class="sub">Confirmed orders</div></div>
-      <div class="stat-tile"><div class="stat-icon" style="background:var(--navy-bg);"><svg width="20" height="20" viewBox="0 0 24 24" fill="#1C2B6B"><path d="M11.8 10.9c-2.27-.59-3-1.2-3-2.15 0-1.09 1.01-1.85 2.7-1.85 1.78 0 2.44.85 2.5 2.1h2.21c-.07-1.72-1.12-3.3-3.21-3.81V3h-3v2.16c-1.94.42-3.5 1.68-3.5 3.61 0 2.31 1.91 3.46 4.7 4.13 2.5.6 3 1.48 3 2.41 0 .69-.49 1.79-2.7 1.79-2.06 0-2.87-.92-2.98-2.1h-2.2c.12 2.19 1.76 3.42 3.68 3.83V21h3v-2.15c1.95-.37 3.5-1.5 3.5-3.55 0-2.84-2.43-3.81-4.7-4.4z"/></svg></div><div class="label">PO Value MTD</div><div class="value">₹12.8L</div><div class="sub">October 2026</div></div>
+      <div class="stat-tile"><div class="stat-icon" style="background:var(--orange-bg);"><svg width="20" height="20" viewBox="0 0 24 24" fill="#F59E0B"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg></div><div class="label">Open RFQs</div><div class="value" id="st-open">—</div><div class="sub">Awaiting quotation</div></div>
+      <div class="stat-tile"><div class="stat-icon" style="background:var(--blue-bg);"><svg width="20" height="20" viewBox="0 0 24 24" fill="#3B82F6"><path d="M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg></div><div class="label">Quotations Sent</div><div class="value" id="st-quoted">—</div><div class="sub">Awaiting buyer response</div></div>
+      <div class="stat-tile"><div class="stat-icon" style="background:var(--green-bg);"><svg width="20" height="20" viewBox="0 0 24 24" fill="#10B981"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"/></svg></div><div class="label">POs Received</div><div class="value" id="st-po">—</div><div class="sub">Orders placed on credit</div></div>
+      <div class="stat-tile"><div class="stat-icon" style="background:var(--navy-bg);"><svg width="20" height="20" viewBox="0 0 24 24" fill="#1C2B6B"><path d="M11.8 10.9c-2.27-.59-3-1.2-3-2.15 0-1.09 1.01-1.85 2.7-1.85 1.78 0 2.44.85 2.5 2.1h2.21c-.07-1.72-1.12-3.3-3.21-3.81V3h-3v2.16c-1.94.42-3.5 1.68-3.5 3.61 0 2.31 1.91 3.46 4.7 4.13 2.5.6 3 1.48 3 2.41 0 .69-.49 1.79-2.7 1.79-2.06 0-2.87-.92-2.98-2.1h-2.2c.12 2.19 1.76 3.42 3.68 3.83V21h3v-2.15c1.95-.37 3.5-1.5 3.5-3.55 0-2.84-2.43-3.81-4.7-4.4z"/></svg></div><div class="label">Credit Outstanding</div><div class="value" id="st-out">—</div><div class="sub">Across all B2B buyers</div></div>
     </div>
+
+    <div class="card" style="margin-bottom:20px;">
+      <div class="card-header"><div class="card-title">RFQ / Quotations</div>
+        <select class="form-select" id="rfq-filter" style="width:auto;padding:5px 10px;font-size:12.5px;">
+          <option value="">All</option><option value="open">Open</option><option value="quoted">Quoted</option><option value="accepted">Accepted</option><option value="declined">Declined</option><option value="expired">Expired</option>
+        </select></div>
+      <div style="overflow-x:auto;"><table>
+        <thead><tr><th>RFQ No.</th><th>Company</th><th>Requirement</th><th>Received</th><th>Quote Total</th><th>Status</th><th>Action</th></tr></thead>
+        <tbody id="rfq-tbody"><tr><td colspan="7" class="empty-row">Loading…</td></tr></tbody>
+      </table></div>
+    </div>
+
     <div class="two-col">
-      <!-- RFQ / QUOTATIONS -->
       <div class="card">
-        <div class="card-header"><div class="card-title">RFQ / Quotations</div><a href="#" style="font-size:13px;color:var(--accent);font-weight:600;text-decoration:none;">View All</a></div>
-        <div style="overflow-x:auto;">
-          <table>
-            <thead><tr><th>RFQ ID</th><th>Company</th><th>Items</th><th>Est. Value</th><th>Status</th><th>Action</th></tr></thead>
-            <tbody>
-              <tr>
-                <td style="font-weight:700;color:var(--accent);">#RFQ-218</td>
-                <td style="font-size:13px;font-weight:500;">TechCorp Solutions</td>
-                <td style="font-size:12.5px;color:var(--text-secondary);">12 × Dell i5 A</td>
-                <td style="font-weight:600;">₹3.84L</td>
-                <td><span class="chip chip-open">Open</span></td>
-                <td><button class="btn-xs">Quote</button></td>
-              </tr>
-              <tr>
-                <td style="font-weight:700;color:var(--accent);">#RFQ-217</td>
-                <td style="font-size:13px;font-weight:500;">Synergy Infra Ltd</td>
-                <td style="font-size:12.5px;color:var(--text-secondary);">20 × HP 840 G8 A+</td>
-                <td style="font-weight:600;">₹9.70L</td>
-                <td><span class="chip chip-sent">Sent</span></td>
-                <td><button class="btn-xs">View</button></td>
-              </tr>
-              <tr>
-                <td style="font-weight:700;color:var(--accent);">#RFQ-216</td>
-                <td style="font-size:13px;font-weight:500;">Apex Digital Pvt</td>
-                <td style="font-size:12.5px;color:var(--text-secondary);">8 × MacBook Air A+</td>
-                <td style="font-weight:600;">₹5.44L</td>
-                <td><span class="chip chip-accepted">Accepted</span></td>
-                <td><button class="btn-xs">View</button></td>
-              </tr>
-              <tr>
-                <td style="font-weight:700;color:var(--accent);">#RFQ-215</td>
-                <td style="font-size:13px;font-weight:500;">Horizon Tech Co.</td>
-                <td style="font-size:12.5px;color:var(--text-secondary);">5 × Lenovo T14 A</td>
-                <td style="font-weight:600;">₹1.90L</td>
-                <td><span class="chip chip-expired">Expired</span></td>
-                <td><button class="btn-xs">Renew</button></td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
+        <div class="card-header"><div class="card-title">Purchase Orders (Credit)</div></div>
+        <div style="overflow-x:auto;"><table>
+          <thead><tr><th>PO No.</th><th>Company</th><th>Order</th><th>Value</th><th>Status</th><th></th></tr></thead>
+          <tbody id="po-tbody"><tr><td colspan="6" class="empty-row">Loading…</td></tr></tbody>
+        </table></div>
       </div>
-      <!-- PURCHASE ORDERS -->
       <div class="card">
-        <div class="card-header"><div class="card-title">Purchase Orders</div><a href="#" style="font-size:13px;color:var(--accent);font-weight:600;text-decoration:none;">View All</a></div>
-        <div style="overflow-x:auto;">
-          <table>
-            <thead><tr><th>PO No.</th><th>Company</th><th>Units</th><th>Value</th><th>Credit</th><th>Status</th></tr></thead>
-            <tbody>
-              <tr>
-                <td style="font-weight:700;color:var(--navy);">#PO-1042</td>
-                <td style="font-size:13px;font-weight:500;">Apex Digital Pvt</td>
-                <td style="font-size:13px;">8 units</td>
-                <td style="font-weight:600;">₹5.44L</td>
-                <td><span class="credit-chip-ok">30-day</span></td>
-                <td><span class="chip chip-processing">Processing</span></td>
-              </tr>
-              <tr>
-                <td style="font-weight:700;color:var(--navy);">#PO-1041</td>
-                <td style="font-size:13px;font-weight:500;">Delta Infotech</td>
-                <td style="font-size:13px;">15 units</td>
-                <td style="font-weight:600;">₹6.75L</td>
-                <td><span class="credit-chip-ok">45-day</span></td>
-                <td><span class="chip chip-fulfilled">Fulfilled</span></td>
-              </tr>
-              <tr>
-                <td style="font-weight:700;color:var(--navy);">#PO-1040</td>
-                <td style="font-size:13px;font-weight:500;">Synergy Infra Ltd</td>
-                <td style="font-size:13px;">20 units</td>
-                <td style="font-weight:600;">₹9.70L</td>
-                <td><span class="credit-chip-warn">60-day</span></td>
-                <td><span class="chip chip-processing">Processing</span></td>
-              </tr>
-              <tr>
-                <td style="font-weight:700;color:var(--navy);">#PO-1039</td>
-                <td style="font-size:13px;font-weight:500;">BrightPath Corp</td>
-                <td style="font-size:13px;">6 units</td>
-                <td style="font-weight:600;">₹2.58L</td>
-                <td><span class="credit-chip-ok">30-day</span></td>
-                <td><span class="chip chip-pending">Payment Pending</span></td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
+        <div class="card-header"><div class="card-title">B2B Credit Accounts</div></div>
+        <div style="overflow-x:auto;"><table>
+          <thead><tr><th>Company</th><th>Limit</th><th>Outstanding</th><th>Available</th><th>Action</th></tr></thead>
+          <tbody id="buyer-tbody"><tr><td colspan="5" class="empty-row">Loading…</td></tr></tbody>
+        </table></div>
       </div>
     </div>
   </main>
 </div>
+
+<div class="modal-backdrop" id="quote-modal" hidden>
+  <form class="modal" id="quote-form" novalidate>
+    <div class="modal-head"><h3 id="quote-title">Issue Quotation</h3><button type="button" class="modal-close" data-close aria-label="Close">×</button></div>
+    <div class="modal-body">
+      <div class="form-field"><label class="form-label">Buyer requirement</label><div id="quote-req" style="background:var(--page-bg);border-radius:6px;padding:10px 12px;font-size:13px;white-space:pre-wrap;"></div></div>
+      <label class="form-label">Line items (unit price excludes GST)</label>
+      <div class="qi-row" style="font-size:11.5px;color:var(--text-secondary);font-weight:600;"><span>Description</span><span>Qty</span><span>Unit price (Rs.)</span><span></span></div>
+      <div id="qi-lines"></div>
+      <button type="button" class="btn-xs" id="qi-add">+ Add line</button>
+      <div class="totals-box" id="qi-totals"></div>
+      <div class="grid-2" style="margin-top:12px;">
+        <div class="form-field"><label class="form-label" for="q-valid">Valid for (days)</label><input class="form-input" id="q-valid" type="number" min="1" max="90" value="15"></div>
+      </div>
+      <div class="form-field"><label class="form-label" for="q-notes">Notes / terms for buyer</label><textarea class="form-textarea" id="q-notes" maxlength="2000" placeholder="e.g. Delivery within 7 working days of PO. 30-day credit."></textarea></div>
+      <div class="form-error" id="quote-error"></div>
+    </div>
+    <div class="modal-foot"><button type="button" class="btn btn-outline" data-close>Cancel</button><button type="submit" class="btn btn-primary" id="quote-save">Send Quotation</button></div>
+  </form>
+</div>
+
+<div class="modal-backdrop" id="pay-modal" hidden>
+  <form class="modal" id="pay-form" novalidate style="max-width:440px;">
+    <div class="modal-head"><h3>Record Payment Received</h3><button type="button" class="modal-close" data-close aria-label="Close">×</button></div>
+    <div class="modal-body">
+      <div id="pay-info" style="font-size:13px;margin-bottom:12px;"></div>
+      <div class="form-field"><label class="form-label" for="pay-amount">Amount (Rs.) *</label><input class="form-input" id="pay-amount" type="number" min="1" step="0.01"></div>
+      <div class="form-field"><label class="form-label" for="pay-ref">Reference (UTR / cheque no.) *</label><input class="form-input" id="pay-ref" maxlength="100" placeholder="e.g. NEFT UTR 123456789"></div>
+      <div class="form-field"><label class="form-label" for="pay-note">Note</label><input class="form-input" id="pay-note" maxlength="300"></div>
+      <div class="form-error" id="pay-error"></div>
+    </div>
+    <div class="modal-foot"><button type="button" class="btn btn-outline" data-close>Cancel</button><button type="submit" class="btn btn-primary" id="pay-save">Record Payment</button></div>
+  </form>
+</div>
+
+<div class="modal-backdrop" id="ledger-modal" hidden>
+  <div class="modal" style="max-width:860px;">
+    <div class="modal-head"><h3 id="ledger-title">Ledger</h3><button type="button" class="modal-close" data-close aria-label="Close">×</button></div>
+    <div class="modal-body" id="ledger-body"></div>
+  </div>
+</div>
+<div class="toast" id="toast" hidden></div>
+
+<script src="../admin-api.js"></script>
+<script>
+let rfqs = [], buyers = [], orders = [];
+let quoting = null, paying = null;
+const inr = n => '₹' + Number(n || 0).toLocaleString('en-IN', { maximumFractionDigits: 2 });
+const fmtDate = d => d ? new Date(d).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' }) : '—';
+function esc(v) { return String(v == null ? '' : v).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c])); }
+function toast(text, err) {
+  const t = document.getElementById('toast');
+  t.textContent = text; t.className = 'toast' + (err ? ' err' : ''); t.hidden = false;
+  clearTimeout(toast.t); toast.t = setTimeout(() => { t.hidden = true; }, 3500);
+}
+const poOf = o => (o.paymentId || '').split(':').slice(2).join(':');
+
+async function load() {
+  try {
+    const [r, b, o] = await Promise.all([apiFetch('/b2b/admin/rfqs'), apiFetch('/b2b/admin/buyers'), apiFetch('/orders/admin/all?type=b2b')]);
+    rfqs = r || []; buyers = b || []; orders = ((o && o.data) || []).filter(x => (x.paymentId || '').startsWith('CREDIT:'));
+  } catch (e) { toast(e.message, true); return; }
+  document.getElementById('st-open').textContent = rfqs.filter(x => x.status === 'open').length;
+  document.getElementById('st-quoted').textContent = rfqs.filter(x => x.status === 'quoted').length;
+  document.getElementById('st-po').textContent = new Set(orders.map(poOf)).size;
+  document.getElementById('st-out').textContent = inr(buyers.reduce((s, x) => s + Number(x.creditUsed || 0), 0));
+  renderRfqs(); renderPos(); renderBuyers();
+}
+
+function renderRfqs() {
+  const f = document.getElementById('rfq-filter').value;
+  const list = f ? rfqs.filter(r => r.status === f) : rfqs;
+  document.getElementById('rfq-tbody').innerHTML = list.length ? list.map(r => `
+    <tr>
+      <td style="font-weight:700;color:var(--accent);white-space:nowrap;">${esc(r.rfqNumber)}</td>
+      <td style="font-size:13px;font-weight:500;">${esc(r.companyName || '—')}</td>
+      <td style="font-size:12.5px;color:var(--text-secondary);max-width:280px;">${esc(r.details.length > 90 ? r.details.slice(0, 90) + '…' : r.details)}</td>
+      <td style="white-space:nowrap;font-size:12.5px;">${fmtDate(r.createdAt)}</td>
+      <td style="font-weight:600;white-space:nowrap;">${r.total ? inr(r.total) : '—'}</td>
+      <td><span class="chip chip-${esc(r.status)}">${esc(r.status)}</span></td>
+      <td><div class="actions">
+        ${['open', 'quoted', 'expired', 'declined'].includes(r.status) ? `<button class="btn-xs" data-quote="${esc(r.id)}">${r.status === 'open' ? 'Quote' : 'Re-quote'}</button>` : ''}
+        ${r.total ? `<button class="btn-xs" data-pdf="${esc(r.id)}" data-no="${esc(r.rfqNumber)}">PDF</button>` : ''}
+      </div></td>
+    </tr>`).join('') : '<tr><td colspan="7" class="empty-row">No RFQs yet.</td></tr>';
+}
+
+function renderPos() {
+  const company = uid => (buyers.find(b => b.userId === uid) || {}).companyName || '—';
+  document.getElementById('po-tbody').innerHTML = orders.length ? orders.map(o => `
+    <tr>
+      <td style="font-weight:700;color:var(--navy);">${esc(poOf(o))}</td>
+      <td style="font-size:13px;">${esc(company(o.userId))}</td>
+      <td style="font-size:12px;font-family:monospace;">${esc(o.orderNumber)}</td>
+      <td style="font-weight:600;">${inr(o.amount)}</td>
+      <td><span class="chip chip-${esc(o.status)}">${esc(o.status)}</span></td>
+      <td>${['confirmed', 'processing', 'shipped', 'delivered', 'return_requested'].includes(o.status) ? `<button class="btn-xs" data-inv="${esc(o.id)}" data-no="${esc(o.orderNumber)}">Invoice</button>` : ''}</td>
+    </tr>`).join('') : '<tr><td colspan="6" class="empty-row">No credit purchase orders yet.</td></tr>';
+}
+
+function renderBuyers() {
+  const approved = buyers.filter(b => b.isApproved);
+  document.getElementById('buyer-tbody').innerHTML = approved.length ? approved.map(b => `
+    <tr>
+      <td><div style="font-weight:600;font-size:13px;">${esc(b.companyName || '—')}</div><div style="font-size:11.5px;color:var(--text-secondary);font-family:monospace;">${esc(b.gstin || '')}</div></td>
+      <td>${inr(b.creditLimit)}</td>
+      <td style="font-weight:600;color:${Number(b.creditUsed) > 0 ? '#991B1B' : 'inherit'};">${inr(b.creditUsed)}</td>
+      <td>${inr(b.creditAvailable)}</td>
+      <td><div class="actions">
+        <button class="btn-xs" data-ledger="${esc(b.id)}">Ledger</button>
+        <button class="btn-xs" data-pay="${esc(b.id)}" ${Number(b.creditUsed) > 0 ? '' : 'disabled'}>Payment</button>
+      </div></td>
+    </tr>`).join('') : '<tr><td colspan="5" class="empty-row">No approved B2B buyers yet.</td></tr>';
+}
+
+// ── Quote modal ──
+function qiRow(v = {}) {
+  const row = document.createElement('div');
+  row.className = 'qi-row';
+  row.innerHTML = `<input class="form-input qi-desc" maxlength="300" placeholder="Model, specs, grade" value="${esc(v.description || '')}">
+    <input class="form-input qi-qty" type="number" min="1" max="10000" value="${esc(v.qty || 1)}">
+    <input class="form-input qi-price" type="number" min="0" step="0.01" value="${esc(v.unitPrice ?? '')}" placeholder="0.00">
+    <button type="button" class="x" aria-label="Remove line">×</button>`;
+  row.querySelector('.x').onclick = () => { row.remove(); if (!document.querySelector('#qi-lines .qi-row')) qiRow(); calcTotals(); };
+  row.addEventListener('input', calcTotals);
+  document.getElementById('qi-lines').appendChild(row);
+}
+function readItems() {
+  return [...document.querySelectorAll('#qi-lines .qi-row')].map(r => ({
+    description: r.querySelector('.qi-desc').value.trim(),
+    qty: parseInt(r.querySelector('.qi-qty').value, 10),
+    unitPrice: Number(r.querySelector('.qi-price').value),
+  }));
+}
+function calcTotals() {
+  const sub = readItems().reduce((s, i) => s + (i.qty > 0 && i.unitPrice >= 0 ? i.qty * i.unitPrice : 0), 0);
+  const gst = Math.round(sub * 0.18 * 100) / 100;
+  document.getElementById('qi-totals').innerHTML = `<span>Subtotal: ${inr(sub)}</span><span>GST @ 18%: ${inr(gst)}</span><b>Total: ${inr(sub + gst)}</b>`;
+}
+function openQuote(id) {
+  quoting = rfqs.find(r => r.id === id);
+  if (!quoting) return;
+  document.getElementById('quote-title').textContent = `${quoting.status === 'open' ? 'Issue' : 'Revise'} Quotation — ${quoting.rfqNumber}`;
+  document.getElementById('quote-req').textContent = `${quoting.companyName || ''}\n${quoting.details}`;
+  document.getElementById('qi-lines').innerHTML = '';
+  (quoting.quoteItems && quoting.quoteItems.length ? quoting.quoteItems : [{}]).forEach(qiRow);
+  document.getElementById('q-notes').value = quoting.adminNotes || '';
+  document.getElementById('q-valid').value = 15;
+  document.getElementById('quote-error').textContent = '';
+  calcTotals();
+  document.getElementById('quote-modal').hidden = false;
+}
+document.getElementById('qi-add').onclick = () => qiRow();
+document.getElementById('quote-form').addEventListener('submit', async e => {
+  e.preventDefault();
+  const err = document.getElementById('quote-error');
+  const items = readItems();
+  if (items.some(i => !i.description || !(i.qty >= 1) || !(i.unitPrice >= 0) || Number.isNaN(i.unitPrice))) { err.textContent = 'Every line needs a description, quantity of at least 1 and a unit price.'; return; }
+  const validDays = parseInt(document.getElementById('q-valid').value, 10);
+  if (!(validDays >= 1 && validDays <= 90)) { err.textContent = 'Validity must be between 1 and 90 days.'; return; }
+  const btn = document.getElementById('quote-save');
+  btn.disabled = true; err.textContent = '';
+  try {
+    const r = await apiFetch(`/b2b/rfq/${quoting.id}/quote`, { method: 'PUT', body: { items, validDays, notes: document.getElementById('q-notes').value.trim() } });
+    closeModals();
+    toast(`Quotation ${r.quotationNumber} sent · ${inr(r.total)}`);
+    load();
+  } catch (ex) { err.textContent = ex.message; }
+  finally { btn.disabled = false; }
+});
+
+// ── Payment modal ──
+function openPay(id) {
+  paying = buyers.find(b => b.id === id);
+  if (!paying) return;
+  document.getElementById('pay-info').innerHTML = `<b>${esc(paying.companyName)}</b><br>Outstanding: <b>${inr(paying.creditUsed)}</b>`;
+  document.getElementById('pay-amount').value = Number(paying.creditUsed) || '';
+  document.getElementById('pay-amount').max = Number(paying.creditUsed);
+  document.getElementById('pay-ref').value = '';
+  document.getElementById('pay-note').value = '';
+  document.getElementById('pay-error').textContent = '';
+  document.getElementById('pay-modal').hidden = false;
+}
+document.getElementById('pay-form').addEventListener('submit', async e => {
+  e.preventDefault();
+  const err = document.getElementById('pay-error');
+  const amount = Number(document.getElementById('pay-amount').value);
+  const reference = document.getElementById('pay-ref').value.trim();
+  if (!(amount > 0)) { err.textContent = 'Enter the amount received.'; return; }
+  if (amount > Number(paying.creditUsed)) { err.textContent = `Amount cannot exceed the outstanding ${inr(paying.creditUsed)}.`; return; }
+  if (reference.length < 2) { err.textContent = 'Enter the payment reference.'; return; }
+  const btn = document.getElementById('pay-save');
+  btn.disabled = true; err.textContent = '';
+  try {
+    await apiFetch(`/b2b/admin/${paying.id}/payment`, { method: 'POST', body: { amount, reference, note: document.getElementById('pay-note').value.trim() || undefined } });
+    closeModals();
+    toast(`Payment of ${inr(amount)} recorded for ${paying.companyName}`);
+    load();
+  } catch (ex) { err.textContent = ex.message; }
+  finally { btn.disabled = false; }
+});
+
+// ── Ledger modal ──
+async function openLedger(id) {
+  const body = document.getElementById('ledger-body');
+  body.innerHTML = 'Loading…';
+  document.getElementById('ledger-modal').hidden = false;
+  try {
+    const { buyer, summary, entries } = await apiFetch(`/b2b/admin/${id}/ledger`);
+    document.getElementById('ledger-title').textContent = `Ledger — ${buyer.companyName}`;
+    body.innerHTML = `<div style="display:flex;gap:18px;flex-wrap:wrap;font-size:13px;margin-bottom:12px;">
+        <span>Limit <b>${inr(summary.creditLimit)}</b></span><span>Outstanding <b style="color:#991B1B;">${inr(summary.creditUsed)}</b></span>
+        <span>Available <b>${inr(summary.creditAvailable)}</b></span><span>GST on purchases <b>${inr(summary.gstOnPurchases)}</b></span></div>
+      ${entries.length ? `<div style="overflow-x:auto;"><table><thead><tr><th>Date</th><th>Type</th><th>Reference</th><th>PO</th><th>Note</th><th style="text-align:right;">Amount</th><th style="text-align:right;">Balance</th></tr></thead><tbody>
+        ${entries.map(e => `<tr><td style="white-space:nowrap;font-size:12.5px;">${fmtDate(e.createdAt)}</td><td><span class="chip chip-${e.type}">${e.type}</span></td>
+          <td style="font-family:monospace;font-size:12px;">${esc(e.reference)}</td><td>${esc(e.poNumber || '—')}</td><td style="font-size:12.5px;">${esc(e.note || '')}</td>
+          <td style="text-align:right;font-weight:600;">${e.type === 'debit' ? '+' : '−'}${inr(e.amount)}</td><td style="text-align:right;">${inr(e.balanceAfter)}</td></tr>`).join('')}
+      </tbody></table></div>` : '<div class="empty-row">No transactions yet.</div>'}`;
+  } catch (ex) { body.innerHTML = `<div class="form-error">${esc(ex.message)}</div>`; }
+}
+
+function closeModals() { document.querySelectorAll('.modal-backdrop').forEach(m => { m.hidden = true; }); }
+document.querySelectorAll('.modal-backdrop').forEach(m => m.addEventListener('click', e => { if (e.target === m || e.target.dataset.close !== undefined) closeModals(); }));
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModals(); });
+document.getElementById('rfq-filter').onchange = renderRfqs;
+document.getElementById('refresh-btn').onclick = load;
+document.querySelector('.page-content').addEventListener('click', e => {
+  const b = e.target.closest('button');
+  if (!b || b.disabled) return;
+  if (b.dataset.quote) openQuote(b.dataset.quote);
+  if (b.dataset.pdf) openDoc(`/b2b/rfq/${b.dataset.pdf}/quotation.pdf`, `Quotation-${b.dataset.no}.pdf`);
+  if (b.dataset.inv) openDoc(`/orders/${b.dataset.inv}/invoice.pdf`, `Invoice-${b.dataset.no}.pdf`);
+  if (b.dataset.ledger) openLedger(b.dataset.ledger);
+  if (b.dataset.pay) openPay(b.dataset.pay);
+});
+load();
+</script>
 </body>
 </html>

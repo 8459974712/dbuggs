@@ -1,0 +1,36 @@
+.btn-outline{background:#fff;border:1px solid var(--border);color:var(--text-primary);}
+.btn-outline:hover{border-color:var(--accent);color:var(--accent);}
+.btn-sm{padding:6px 12px;font-size:12.5px;}
+.btn:disabled{opacity:.55;cursor:not-allowed;}
+.btn-row{display:flex;gap:8px;flex-wrap:wrap;align-items:center;}
+.form-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;}
+.field label{display:block;font-size:12.5px;font-weight:600;margin-bottom:6px;}
+.field input,.field select,.field textarea{width:100%;padding:9px 12px;border:1px solid var(--border);border-radius:8px;font:inherit;font-size:14px;background:#fff;}
+.field input:focus,.field select:focus,.field textarea:focus{outline:none;border-color:var(--accent);}
+.pad{padding:18px;}
+.muted{color:var(--text-secondary);font-size:12.5px;}
+.msg-ok{color:#065F46;font-size:13px;margin-top:10px;}
+.msg-err{color:#991B1B;font-size:13px;margin-top:10px;}
+.table-wrap{overflow-x:auto;}
+.chip-open{background:var(--orange-bg);color:#92400E;}
+.chip-quoted{background:var(--blue-bg);color:#1E40AF;}
+.chip-accepted{background:var(--green-bg);color:#065F46;}
+.chip-declined,.chip-expired{background:var(--gray-bg);color:#374151;}
+.chip-debit{background:var(--red-bg);color:#991B1B;}
+.chip-credit{background:var(--green-bg);color:#065F46;}
+.amount-debit{color:#991B1B;font-weight:700;}
+.amount-credit{color:#065F46;font-weight:700;}
+.line-row{display:grid;grid-template-columns:1.1fr 1.6fr .8fr .6fr auto;gap:8px;align-items:end;margin-bottom:8px;}
+.line-row .x{background:none;border:none;color:#991B1B;font-size:20px;cursor:pointer;padding:6px 8px;}
+.match-line{border:1px solid var(--border);border-radius:8px;padding:12px 14px;margin-bottom:10px;}
+.match-line h4{font-size:13.5px;margin-bottom:6px;}
+.short{color:#92400E;font-size:12.5px;font-weight:600;}
+.summary-bar{display:flex;gap:18px;flex-wrap:wrap;align-items:center;justify-content:space-between;padding:14px 18px;border-top:1px solid var(--border);background:#FAFAFB;}
+@media(max-width:760px){
+  .sidebar{position:static!important;width:100%!important;height:auto!important;min-height:0!important;}
+  .nav-section{display:flex;overflow-x:auto;padding:0 8px 8px;}
+  .nav-item{white-space:nowrap;}
+  .sidebar-footer{display:none;}
+  .main-wrapper{margin-left:0!important;}
+  .line-row{grid-template-columns:1fr 1fr;}
+}

@@ -520,10 +520,10 @@ async function savePersonalInfo() {
   const last  = document.getElementById('field-lastname').value.trim();
   const gender = document.querySelector('[name=gender]:checked')?.value || '';
   try {
-    await apiFetch('/users/me', { method: 'PATCH', body: JSON.stringify({ name: `${first} ${last}`.trim(), gender }) });
+    await apiFetch('/users/me', { method: 'PATCH', body: { name: `${first} ${last}`.trim() } });
     showMsg('info-msg', 'Saved successfully!', true);
     const u = getUser();
-    if (u) { u.name = `${first} ${last}`.trim(); localStorage.setItem('dbugg_user', JSON.stringify(u)); }
+    if (u) { u.name = `${first} ${last}`.trim(); localStorage.setItem('dbugg_shop_user', JSON.stringify(u)); }
     document.getElementById('sidebar-name').textContent = `${first} ${last}`.trim();
     toggleEdit('info');
   } catch(e) { showMsg('info-msg', e.message || 'Save failed.', false); }
@@ -533,7 +533,8 @@ async function saveEmail() {
   const email = document.getElementById('field-email').value.trim();
   if (!email || !email.includes('@')) { showMsg('email-msg', 'Enter a valid email.', false); return; }
   try {
-    await apiFetch('/users/me', { method: 'PATCH', body: JSON.stringify({ email }) });
+    const saved = await apiFetch('/users/me', { method: 'PATCH', body: { email } });
+    const ue = getUser(); if (ue) { ue.email = saved.email; localStorage.setItem('dbugg_shop_user', JSON.stringify(ue)); }
     showMsg('email-msg', 'Email updated!', true);
     toggleEdit('email');
   } catch(e) { showMsg('email-msg', e.message || 'Update failed.', false); }
@@ -542,7 +543,8 @@ async function saveEmail() {
 async function savePhone() {
   const phone = document.getElementById('field-phone').value.trim();
   try {
-    await apiFetch('/users/me', { method: 'PATCH', body: JSON.stringify({ phone }) });
+    const savedP = await apiFetch('/users/me', { method: 'PATCH', body: { phone } });
+    const up = getUser(); if (up) { up.phone = savedP.phone; localStorage.setItem('dbugg_shop_user', JSON.stringify(up)); }
     showMsg('phone-msg', 'Phone updated!', true);
     toggleEdit('phone');
   } catch(e) { showMsg('phone-msg', e.message || 'Update failed.', false); }

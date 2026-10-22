@@ -25,7 +25,7 @@ async function apiFetch(path, options = {}) {
   });
   if (!res.ok) {
     const err = await res.json().catch(() => ({ message: res.statusText }));
-    throw new Error(err.message || 'Request failed');
+    throw new Error(apiErrorMessage(err, 'Request failed'));
   }
   return res.json();
 }
@@ -50,3 +50,33 @@ function updateCartBadge() {
 document.addEventListener('DOMContentLoaded', updateCartBadge);
 
 function money(n) { return '₹' + Number(n || 0).toLocaleString('en-IN'); }
+
+function apiErrorMessage(err, fallback) {
+  const m = err && err.message;
+  if (Array.isArray(m)) return m.join(', ');
+  if (m && typeof m === 'object') return m.message || fallback;
+  return m || fallback;
+}
+
+// Opens an authenticated PDF/CSV from the API in a new tab (falls back to download).
+async function openDoc(path, filename) {
+  const win = window.open('', '_blank');
+  try {
+    const res = await fetch(API_BASE + path, { headers: getToken() ? { Authorization: `Bearer ${getToken()}` } : {} });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(apiErrorMessage(err, 'Document is not available'));
+    }
+    const url = URL.createObjectURL(await res.blob());
+    if (win) { win.location.href = url; }
+    else {
+      const a = document.createElement('a');
+      a.href = url; a.download = filename || 'document.pdf';
+      document.body.appendChild(a); a.click(); a.remove();
+    }
+    setTimeout(() => URL.revokeObjectURL(url), 60000);
+  } catch (e) {
+    if (win) win.close();
+    alert(e.message);
+  }
+}

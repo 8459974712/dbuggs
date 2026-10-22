@@ -1,6 +1,7 @@
-import { Controller, Get, Put, Body, UseGuards, Request } from '@nestjs/common';
+import { Controller, Get, Put, Patch, Body, UseGuards, Request } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 import { UsersService } from './users.service';
+import { UpdateMeDto } from './update-me.dto';
 import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
 
 @ApiTags('users')
@@ -17,9 +18,15 @@ export class UsersController {
   }
 
   @Put('me')
-  @ApiOperation({ summary: 'Update my profile' })
-  update(@Request() req, @Body() body: any) {
-    return this.usersService.update(req.user.id, body);
+  @ApiOperation({ summary: 'Update my profile (name, email, phone only)' })
+  update(@Request() req, @Body() dto: UpdateMeDto) {
+    return this.usersService.updateMe(req.user.id, dto);
+  }
+
+  @Patch('me')
+  @ApiOperation({ summary: 'Update my profile (name, email, phone only)' })
+  patch(@Request() req, @Body() dto: UpdateMeDto) {
+    return this.usersService.updateMe(req.user.id, dto);
   }
 
   @Put('me/fcm-token')
