@@ -133,6 +133,17 @@ footer a{color:var(--accent);text-decoration:underline;}
   .hero-art{display:none;}
   .cat-grid{grid-template-columns:repeat(3,1fr);}
 }
+
+/* Information links: inherit the existing storefront design. */
+.company-footer-links{display:flex;justify-content:center;flex-wrap:wrap;gap:8px 18px;margin:12px 0;}
+.company-menu{position:relative;color:rgba(255,255,255,.8);font-size:13.5px;font-weight:500;}
+.company-menu summary{cursor:pointer;list-style:none;white-space:nowrap;}
+.company-menu summary::-webkit-details-marker{display:none;}
+.company-menu summary::after{content:' ?';}
+.company-menu nav{position:absolute;top:calc(100% + 16px);right:0;min-width:190px;padding:8px;background:var(--card);border:1px solid var(--border);border-radius:8px;box-shadow:0 8px 24px rgba(0,0,0,.12);z-index:60;}
+.company-menu nav a{display:block;padding:9px 12px;color:var(--navy);white-space:nowrap;border-radius:5px;}
+.company-menu nav a:hover,.company-menu nav a:focus-visible{background:var(--bg);color:var(--accent);}
+@media(max-width:480px){.topbar{gap:9px;flex-wrap:wrap}.topbar .nav-links{gap:12px}.topbar-right{gap:8px}.company-menu nav{left:auto;right:0}}
 </style>
 </head>
 <body>
@@ -142,6 +153,7 @@ footer a{color:var(--accent);text-decoration:underline;}
     <a href="/index.html">Shop</a>
     <a href="/orders.html">My Orders</a>
     <a href="/emi-apply.html">Rent</a>
+    <details class="company-menu"><summary>More</summary><nav aria-label="Information pages"><a href="/about.html">About Us</a><a href="/contact.html">Contact Us</a><a href="/blog.html">Blog</a><a href="/status.html">System Status</a><a href="/careers.html">Careers</a><a href="/terms.html">Terms of Use</a><a href="/privacy.html">Privacy Policy</a></nav></details>
   </div>
   <div class="topbar-right">
     <a href="/cart.html" class="cart-btn">Cart <span class="cart-badge" id="cart-count">0</span></a>
@@ -242,11 +254,9 @@ footer a{color:var(--accent);text-decoration:underline;}
   </div>
 </div>
 
-<style>.footer-links{display:flex;justify-content:center;gap:12px 18px;flex-wrap:wrap;margin:14px 0 4px}.footer-links a{color:#fff;text-decoration:none}.footer-links a:hover{text-decoration:underline}</style>
 <footer>
   <strong>dbuggs</strong> — Certified Refurbished Laptops<br>
-  Appz Global Tech Pvt. Ltd. · <a href="https://www.appzglobaltech.com" rel="noopener">www.appzglobaltech.com</a>
-  <nav class="footer-links" aria-label="Company"><a href="/about.html">About us</a><a href="/contact.html">Contact us</a><a href="/blog.html">Blog</a><a href="/status.html">System status</a><a href="/careers.html">Careers</a><a href="/terms.html">Terms of Use</a><a href="/privacy.html">Privacy Policy</a></nav>
+  Appz Global Tech Pvt. Ltd. · <a href="https://www.appzglobaltech.com">www.appzglobaltech.com</a><br>
   © 2026 All rights reserved
 </footer>
 
