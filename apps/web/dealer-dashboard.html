@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Dealer Dashboard - Dbuggs</title>
+<meta name="description" content="Dbuggs dealer portal - manage stock, sales, leads and commissions">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Inter',sans-serif;background:#f5f7fa;color:#1a1a2e;min-height:100vh}
+.topbar{background:#1a1a2e;color:#fff;padding:12px 24px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:100}
+.topbar h1{font-size:18px;font-weight:700}
+.topbar .tier-badge{background:#f59e0b;color:#000;padding:4px 12px;border-radius:20px;font-size:12px;font-weight:600;text-transform:uppercase}
+.topbar .tier-badge.silver{background:#94a3b8}.topbar .tier-badge.platinum{background:#a78bfa;color:#fff}
+.topbar-right{display:flex;align-items:center;gap:12px}
+.topbar-right a{color:#94a3b8;text-decoration:none;font-size:13px}
+.topbar-right a:hover{color:#fff}
+.nav{background:#fff;border-bottom:1px solid #e2e8f0;padding:0 24px;display:flex;gap:0;overflow-x:auto}
+.nav a{padding:12px 16px;color:#64748b;text-decoration:none;font-size:13px;font-weight:500;white-space:nowrap;border-bottom:2px solid transparent}
+.nav a:hover{color:#1a1a2e}.nav a.active{color:#7c3aed;border-bottom-color:#7c3aed}
+.container{max-width:1200px;margin:0 auto;padding:24px}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin-bottom:24px}
+.stat-card{background:#fff;border-radius:12px;padding:20px;box-shadow:0 1px 3px rgba(0,0,0,.06)}
+.stat-card .label{font-size:12px;color:#64748b;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px}
+.stat-card .value{font-size:28px;font-weight:700;color:#1a1a2e}
+.stat-card .sub{font-size:12px;color:#94a3b8;margin-top:2px}
+.stat-card.accent{background:linear-gradient(135deg,#7c3aed,#6d28d9);color:#fff}
+.stat-card.accent .label{color:rgba(255,255,255,.7)}.stat-card.accent .value{color:#fff}.stat-card.accent .sub{color:rgba(255,255,255,.6)}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+@media(max-width:768px){.grid-2{grid-template-columns:1fr}}
+.card{background:#fff;border-radius:12px;padding:20px;box-shadow:0 1px 3px rgba(0,0,0,.06);margin-bottom:20px}
+.card h3{font-size:15px;font-weight:600;margin-bottom:12px;display:flex;justify-content:space-between;align-items:center}
+.card h3 a{font-size:12px;color:#7c3aed;text-decoration:none}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th{text-align:left;padding:8px 12px;background:#f8fafc;color:#64748b;font-weight:500;font-size:11px;text-transform:uppercase;letter-spacing:.5px}
+td{padding:8px 12px;border-top:1px solid #f1f5f9}
+.badge{display:inline-block;padding:2px 8px;border-radius:10px;font-size:11px;font-weight:500}
+.badge-green{background:#dcfce7;color:#166534}.badge-yellow{background:#fef3c7;color:#92400e}
+.badge-blue{background:#dbeafe;color:#1e40af}.badge-red{background:#fee2e2;color:#991b1b}
+.badge-purple{background:#ede9fe;color:#5b21b6}
+.progress-bar{height:8px;background:#e2e8f0;border-radius:4px;overflow:hidden;margin-top:8px}
+.progress-bar .fill{height:100%;background:linear-gradient(90deg,#7c3aed,#a78bfa);border-radius:4px;transition:width .3s}
+.target-card{border:2px solid #7c3aed;border-radius:12px;padding:20px;background:linear-gradient(135deg,#faf5ff,#ede9fe)}
+.target-card h3{color:#5b21b6;margin-bottom:16px}
+.target-row{display:flex;justify-content:space-between;margin-bottom:8px;font-size:14px}
+.target-row .lbl{color:#64748b}.target-row .val{font-weight:600}
+.scheme-box{margin-top:12px;background:#fff;border-radius:8px;padding:12px;border:1px solid #e9d5ff}
+.scheme-box .name{font-weight:600;color:#7c3aed;font-size:14px}.scheme-box .detail{font-size:12px;color:#64748b;margin-top:2px}
+.empty{text-align:center;color:#94a3b8;padding:24px;font-size:14px}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:8px;border:none;cursor:pointer;font-size:13px;font-weight:500;text-decoration:none}
+.btn-primary{background:#7c3aed;color:#fff}.btn-primary:hover{background:#6d28d9}
+.btn-outline{background:#fff;color:#7c3aed;border:1px solid #7c3aed}.btn-outline:hover{background:#faf5ff}
+#loading{position:fixed;inset:0;background:#f5f7fa;display:flex;align-items:center;justify-content:center;z-index:999;font-size:16px;color:#64748b}
+.hidden{display:none!important}
+</style>
+</head>
+<body>
+<div id="loading">Loading dealer dashboard...</div>
+
+<div class="topbar">
+  <div style="display:flex;align-items:center;gap:12px">
+    <h1>Dbuggs Dealer</h1>
+    <span id="tierBadge" class="tier-badge">Gold</span>
+  </div>
+  <div class="topbar-right">
+    <span id="companyName">-</span>
+    <a href="/" title="Back to Shop">Shop</a>
+    <a href="#" onclick="logout()">Logout</a>
+  </div>
+</div>
+
+<nav class="nav">
+  <a href="dealer-dashboard.html" class="active">Dashboard</a>
+  <a href="dealer-stock-orders.html">Stock Orders</a>
+  <a href="dealer-inventory.html">Inventory</a>
+  <a href="dealer-sales.html">Sales</a>
+  <a href="dealer-leads.html">Leads</a>
+  <a href="dealer-leaderboard.html">Leaderboard</a>
+</nav>
+
+<div class="container">
+  <div class="stats" id="statsGrid"></div>
+
+  <div class="grid-2">
+    <div id="targetSection"></div>
+    <div class="card">
+      <h3>Recent Sales <a href="dealer-sales.html">View All →</a></h3>
+      <div id="recentSales"><div class="empty">No sales yet</div></div>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <h3>Active Leads <a href="dealer-leads.html">View All →</a></h3>
+      <div id="recentLeads"><div class="empty">No leads yet</div></div>
+    </div>
+    <div class="card">
+      <h3>Quick Actions</h3>
+      <div style="display:flex;flex-wrap:wrap;gap:10px;margin-top:8px">
+        <a href="dealer-stock-orders.html?new=1" class="btn btn-primary">+ Order Stock</a>
+        <a href="dealer-sales.html?new=1" class="btn btn-primary">+ Record Sale</a>
+        <a href="dealer-leads.html?new=1" class="btn btn-outline">+ New Lead</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const API = window.location.hostname === 'localhost' ? 'http://localhost:4000' : 'http://200.234.39.146:4000';
+function getToken(){ return localStorage.getItem('dbugg_shop_token') }
+function logout(){ localStorage.removeItem('dbugg_shop_token'); window.location.href='/login.html' }
+async function api(path){
+  const r = await fetch(API+path, {headers:{'Authorization':'Bearer '+getToken(),'Content-Type':'application/json'}});
+  if(r.status===401){logout();return null}
+  return r.json();
+}
+
+async function load(){
+  const token = getToken();
+  if(!token){ window.location.href='/login.html'; return }
+
+  try {
+    const dash = await api('/dealer/dashboard');
+    if(!dash || dash.error){ document.getElementById('loading').innerHTML='<div style="text-align:center"><h2>Not a Dealer</h2><p style="margin-top:8px">Register as a dealer to access this portal.</p><a href="dealer-register.html" class="btn btn-primary" style="margin-top:16px">Register Now</a></div>'; return }
+
+    const d = dash.dealer || {};
+    const s = dash.stats || {};
+    const t = dash.currentTarget;
+
+    document.getElementById('companyName').textContent = d.companyName || 'Dealer';
+    const badge = document.getElementById('tierBadge');
+    badge.textContent = (d.tier||'silver').toUpperCase();
+    badge.className = 'tier-badge ' + (d.tier||'silver');
+
+    document.getElementById('statsGrid').innerHTML = `
+      <div class="stat-card accent"><div class="label">Wallet Balance</div><div class="value">₹${(d.walletBalance||0).toLocaleString('en-IN')}</div><div class="sub">Commission Rate: ${d.commissionRate||0}%</div></div>
+      <div class="stat-card"><div class="label">Total Sales</div><div class="value">${s.totalSales||0}</div><div class="sub">Total Revenue: ₹${(d.totalRevenue||0).toLocaleString('en-IN')}</div></div>
+      <div class="stat-card"><div class="label">Stock Orders</div><div class="value">${s.totalOrders||0}</div><div class="sub">Pending: ${s.pendingOrders||0}</div></div>
+      <div class="stat-card"><div class="label">Active Leads</div><div class="value">${s.activeLeads||0}</div><div class="sub">Total Commission: ₹${(s.totalCommission||0).toLocaleString('en-IN')}</div></div>
+      <div class="stat-card"><div class="label">Credit Used</div><div class="value">₹${(d.creditUsed||0).toLocaleString('en-IN')}</div><div class="sub">Limit: ₹${(d.creditLimit||0).toLocaleString('en-IN')}</div></div>
+    `;
+
+    // Target
+    if(t){
+      const pctUnits = t.targetUnits>0 ? Math.min(100, Math.round(t.achievedUnits/t.targetUnits*100)) : 0;
+      const pctRev = t.targetRevenue>0 ? Math.min(100, Math.round(t.achievedRevenue/t.targetRevenue*100)) : 0;
+      document.getElementById('targetSection').innerHTML = `
+        <div class="target-card">
+          <h3>Monthly Target — ${t.month}</h3>
+          <div class="target-row"><span class="lbl">Units</span><span class="val">${t.achievedUnits||0} / ${t.targetUnits}</span></div>
+          <div class="progress-bar"><div class="fill" style="width:${pctUnits}%"></div></div>
+          <div class="target-row" style="margin-top:12px"><span class="lbl">Revenue</span><span class="val">₹${(t.achievedRevenue||0).toLocaleString('en-IN')} / ₹${(t.targetRevenue||0).toLocaleString('en-IN')}</span></div>
+          <div class="progress-bar"><div class="fill" style="width:${pctRev}%"></div></div>
+          ${t.schemeName ? `<div class="scheme-box"><div class="name">${t.schemeName}</div><div class="detail">${t.schemeDetails||''}</div></div>` : ''}
+        </div>`;
+    } else {
+      document.getElementById('targetSection').innerHTML = '<div class="card"><h3>Monthly Target</h3><div class="empty">No target set for this month</div></div>';
+    }
+
+    // Recent sales
+    const sales = dash.recentSales || [];
+    if(sales.length){
+      document.getElementById('recentSales').innerHTML = '<table><thead><tr><th>Invoice</th><th>Customer</th><th>Amount</th><th>Commission</th></tr></thead><tbody>'+
+        sales.map(s=>`<tr><td>${s.invoiceNumber}</td><td>${s.customerName}</td><td>₹${Number(s.saleAmount).toLocaleString('en-IN')}</td><td style="color:#166534">₹${Number(s.commissionEarned).toLocaleString('en-IN')}</td></tr>`).join('')+
+        '</tbody></table>';
+    }
+
+    // Recent leads
+    const leads = dash.recentLeads || [];
+    if(leads.length){
+      const statusColors = {new:'badge-blue',contacted:'badge-yellow',interested:'badge-purple',converted:'badge-green',lost:'badge-red'};
+      document.getElementById('recentLeads').innerHTML = '<table><thead><tr><th>Name</th><th>Requirement</th><th>Status</th></tr></thead><tbody>'+
+        leads.map(l=>`<tr><td>${l.customerName}</td><td>${l.requirement||'-'}</td><td><span class="badge ${statusColors[l.status]||'badge-blue'}">${l.status}</span></td></tr>`).join('')+
+        '</tbody></table>';
+    }
+
+    document.getElementById('loading').classList.add('hidden');
+  } catch(e) {
+    document.getElementById('loading').innerHTML = '<div style="color:red">Error loading dashboard: '+e.message+'</div>';
+  }
+}
+load();
+</script>
+</body>
+</html>

@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Dealer Management - Admin</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Inter',sans-serif;background:#f5f7fa;color:#1a1a2e;min-height:100vh}
+.topbar{background:#1a1a2e;color:#fff;padding:12px 24px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:100}
+.topbar h1{font-size:18px;font-weight:700}
+.topbar-right{display:flex;align-items:center;gap:12px}
+.topbar-right a{color:#94a3b8;text-decoration:none;font-size:13px}.topbar-right a:hover{color:#fff}
+.tabs{background:#fff;border-bottom:1px solid #e2e8f0;padding:0 24px;display:flex;gap:0;overflow-x:auto}
+.tabs a{padding:12px 16px;color:#64748b;text-decoration:none;font-size:13px;font-weight:500;white-space:nowrap;border-bottom:2px solid transparent;cursor:pointer}
+.tabs a:hover{color:#1a1a2e}.tabs a.active{color:#7c3aed;border-bottom-color:#7c3aed}
+.container{max-width:1200px;margin:0 auto;padding:24px}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:16px;margin-bottom:24px}
+.stat{background:#fff;border-radius:12px;padding:16px;box-shadow:0 1px 3px rgba(0,0,0,.06);text-align:center}
+.stat .v{font-size:28px;font-weight:700}.stat .l{font-size:11px;color:#64748b;text-transform:uppercase;margin-top:2px}
+.card{background:#fff;border-radius:12px;padding:20px;box-shadow:0 1px 3px rgba(0,0,0,.06);margin-bottom:20px}
+.card h3{font-size:15px;font-weight:600;margin-bottom:16px}
+table{width:100%;border-collapse:collapse;font-size:12px}
+th{text-align:left;padding:8px 10px;background:#f8fafc;color:#64748b;font-weight:500;font-size:11px;text-transform:uppercase}
+td{padding:8px 10px;border-top:1px solid #f1f5f9}
+.badge{display:inline-block;padding:2px 8px;border-radius:10px;font-size:11px;font-weight:500}
+.badge-green{background:#dcfce7;color:#166534}.badge-yellow{background:#fef3c7;color:#92400e}
+.badge-blue{background:#dbeafe;color:#1e40af}.badge-red{background:#fee2e2;color:#991b1b}
+.badge-purple{background:#ede9fe;color:#5b21b6}.badge-gray{background:#f1f5f9;color:#475569}
+.tier-gold{background:#fef3c7;color:#92400e}.tier-silver{background:#e2e8f0;color:#475569}.tier-platinum{background:#ede9fe;color:#5b21b6}
+.btn{display:inline-flex;align-items:center;gap:4px;padding:4px 10px;border-radius:6px;border:none;cursor:pointer;font-size:11px;font-weight:500}
+.btn-green{background:#dcfce7;color:#166534}.btn-red{background:#fee2e2;color:#991b1b}
+.btn-blue{background:#dbeafe;color:#1e40af}.btn-purple{background:#ede9fe;color:#5b21b6}
+.modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:200;align-items:center;justify-content:center}
+.modal.show{display:flex}
+.modal-content{background:#fff;border-radius:16px;padding:24px;width:90%;max-width:600px;max-height:85vh;overflow-y:auto}
+.form-group{margin-bottom:12px}
+.form-group label{display:block;font-size:12px;font-weight:500;color:#64748b;margin-bottom:4px}
+.form-group input,.form-group select,.form-group textarea{width:100%;padding:8px 12px;border:1px solid #e2e8f0;border-radius:8px;font-size:13px;font-family:inherit}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.empty{text-align:center;color:#94a3b8;padding:24px;font-size:14px}
+.section{display:none}.section.active{display:block}
+</style>
+</head>
+<body>
+<div class="topbar">
+  <h1>Admin — Dealer Management</h1>
+  <div class="topbar-right"><a href="/admin/">← Back to Admin</a><a href="#" onclick="logout()">Logout</a></div>
+</div>
+<div class="tabs">
+  <a class="active" onclick="showTab('all',this)">All Dealers</a>
+  <a onclick="showTab('applications',this)">Applications</a>
+  <a onclick="showTab('stock-orders',this)">Stock Orders</a>
+  <a onclick="showTab('leads',this)">Leads</a>
+  <a onclick="showTab('targets',this)">Targets</a>
+  <a onclick="showTab('leaderboard',this)">Leaderboard</a>
+</div>
+<div class="container">
+  <div class="stats" id="statsRow"></div>
+
+  <div class="section active" id="sec-all">
+    <div class="card"><h3>All Dealers</h3><div id="dealerTable"><div class="empty">Loading...</div></div></div>
+  </div>
+  <div class="section" id="sec-applications">
+    <div class="card"><h3>Pending Applications</h3><div id="appTable"><div class="empty">Loading...</div></div></div>
+  </div>
+  <div class="section" id="sec-stock-orders">
+    <div class="card"><h3>All Stock Orders</h3><div id="soTable"><div class="empty">Loading...</div></div></div>
+  </div>
+  <div class="section" id="sec-leads">
+    <div class="card"><h3>All Dealer Leads</h3><div id="leadsTable"><div class="empty">Loading...</div></div></div>
+  </div>
+  <div class="section" id="sec-targets">
+    <div class="card">
+      <h3 style="display:flex;justify-content:space-between">Dealer Targets <button class="btn btn-purple" onclick="openTarget()">+ Set Target</button></h3>
+      <div id="targetsTable"><div class="empty">Loading...</div></div>
+    </div>
+  </div>
+  <div class="section" id="sec-leaderboard">
+    <div class="card"><h3>Dealer Leaderboard</h3><div id="lbTable"><div class="empty">Loading...</div></div></div>
+  </div>
+</div>
+
+<div class="modal" id="editModal"><div class="modal-content" id="editContent"></div></div>
+<div class="modal" id="targetModal">
+  <div class="modal-content">
+    <h3 style="font-size:16px;font-weight:600;margin-bottom:16px">Set/Update Target</h3>
+    <div class="form-group"><label>Dealer</label><select id="tDealer"></select></div>
+    <div class="form-row">
+      <div class="form-group"><label>Month</label><input id="tMonth" type="month" value="2026-10"></div>
+      <div class="form-group"><label>Target Units</label><input id="tUnits" type="number" value="20"></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label>Target Revenue (₹)</label><input id="tRevenue" type="number" value="500000"></div>
+      <div class="form-group"><label>Bonus Amount (₹)</label><input id="tBonus" type="number" value="5000"></div>
+    </div>
+    <div class="form-group"><label>Scheme Name</label><input id="tScheme" placeholder="e.g. Diwali Bonanza"></div>
+    <div class="form-group"><label>Scheme Details</label><input id="tDetails" placeholder="Bonus details"></div>
+    <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:16px">
+      <button class="btn" style="background:#e2e8f0;padding:8px 16px" onclick="closeTarget()">Cancel</button>
+      <button class="btn btn-purple" style="padding:8px 16px" onclick="submitTarget()">Save Target</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const API = window.location.hostname==='localhost'?'http://localhost:4000':'http://200.234.39.146:4000';
+function getToken(){return localStorage.getItem('dbugg_admin_token')}
+function logout(){localStorage.removeItem('dbugg_admin_token');window.location.href='/admin/'}
+async function api(path,opts={}){const r=await fetch(API+path,{headers:{'Authorization':'Bearer '+getToken(),'Content-Type':'application/json'},...opts});if(r.status===401){logout();return null}return r.json()}
+
+let allDealers=[];
+
+function showTab(name,el){
+  document.querySelectorAll('.tabs a').forEach(a=>a.classList.remove('active'));
+  if(el)el.classList.add('active');
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+  document.getElementById('sec-'+name).classList.add('active');
+}
+
+async function load(){
+  if(!getToken()){window.location.href='/admin/';return}
+  const [dealers, apps, orders, leads, targets, lb] = await Promise.all([
+    api('/dealer/admin/all'), api('/dealer/admin/applications'), api('/dealer/admin/stock-orders'),
+    api('/dealer/admin/leads'), api('/dealer/admin/targets'), api('/dealer/admin/leaderboard')
+  ]);
+  allDealers=dealers||[];
+
+  const active=(dealers||[]).filter(d=>d.status==='active').length;
+  const pending=(apps||[]).length;
+  document.getElementById('statsRow').innerHTML=`
+    <div class="stat"><div class="v">${(dealers||[]).length}</div><div class="l">Total Dealers</div></div>
+    <div class="stat"><div class="v" style="color:#166534">${active}</div><div class="l">Active</div></div>
+    <div class="stat"><div class="v" style="color:#92400e">${pending}</div><div class="l">Pending</div></div>
+    <div class="stat"><div class="v">${(orders||[]).length}</div><div class="l">Stock Orders</div></div>
+    <div class="stat"><div class="v">${(leads||[]).length}</div><div class="l">Total Leads</div></div>
+  `;
+
+  // All dealers
+  const tc={gold:'tier-gold',silver:'tier-silver',platinum:'tier-platinum'};
+  const sc={active:'badge-green',pending:'badge-yellow',rejected:'badge-red',suspended:'badge-gray'};
+  if((dealers||[]).length){
+    document.getElementById('dealerTable').innerHTML='<div style="overflow-x:auto"><table><thead><tr><th>Company</th><th>Contact</th><th>GSTIN</th><th>Tier</th><th>Status</th><th>Sales</th><th>Revenue</th><th>Credit</th><th>Action</th></tr></thead><tbody>'+
+      dealers.map(d=>`<tr><td><strong>${d.companyName||'N/A'}</strong><br><small>${d.territory||''}</small></td><td>${d.contactPerson||'-'}<br><small>${d.phone||''}</small></td><td><small>${d.gstin||'-'}</small></td><td><span class="badge ${tc[d.tier]||'tier-silver'}">${d.tier||'silver'}</span></td><td><span class="badge ${sc[d.status]||'badge-gray'}">${d.status}</span></td><td>${d.totalSales||0}</td><td>₹${Number(d.totalRevenue||0).toLocaleString('en-IN')}</td><td>₹${Number(d.creditUsed||0).toLocaleString('en-IN')}/${Number(d.creditLimit||0).toLocaleString('en-IN')}</td><td><button class="btn btn-blue" onclick="editDealer('${d.id}')">Edit</button></td></tr>`).join('')+
+      '</tbody></table></div>';
+  }
+
+  // Applications
+  if((apps||[]).length){
+    document.getElementById('appTable').innerHTML='<table><thead><tr><th>Company</th><th>Contact</th><th>GSTIN</th><th>Date</th><th>Action</th></tr></thead><tbody>'+
+      apps.map(d=>`<tr><td><strong>${d.companyName||'N/A'}</strong></td><td>${d.contactPerson||'-'} / ${d.phone||'-'}</td><td>${d.gstin||'-'}</td><td>${new Date(d.createdAt).toLocaleDateString('en-IN')}</td><td><button class="btn btn-green" onclick="approveDealer('${d.id}')">Approve</button> <button class="btn btn-red" onclick="rejectDealer('${d.id}')">Reject</button></td></tr>`).join('')+
+      '</tbody></table>';
+  } else {document.getElementById('appTable').innerHTML='<div class="empty">No pending applications</div>'}
+
+  // Stock orders
+  const osc={pending:'badge-yellow',approved:'badge-blue',shipped:'badge-purple',delivered:'badge-green',rejected:'badge-red'};
+  if((orders||[]).length){
+    document.getElementById('soTable').innerHTML='<div style="overflow-x:auto"><table><thead><tr><th>Order #</th><th>Dealer</th><th>Items</th><th>Amount</th><th>Status</th><th>Action</th></tr></thead><tbody>'+
+      orders.map(o=>`<tr><td>${o.orderNumber}</td><td>${o.dealerId?.slice(0,8)}...</td><td>${o.totalUnits} unit(s)</td><td>₹${Number(o.totalAmount).toLocaleString('en-IN')}</td><td><span class="badge ${osc[o.status]||'badge-gray'}">${o.status}</span></td><td>${o.status==='pending'?`<button class="btn btn-green" onclick="updateSO('${o.id}','approved')">Approve</button> <button class="btn btn-red" onclick="updateSO('${o.id}','rejected')">Reject</button>`:o.status==='approved'?`<button class="btn btn-purple" onclick="updateSO('${o.id}','shipped')">Ship</button>`:o.status==='shipped'?`<button class="btn btn-green" onclick="updateSO('${o.id}','delivered')">Deliver</button>`:'-'}</td></tr>`).join('')+
+      '</tbody></table></div>';
+  } else {document.getElementById('soTable').innerHTML='<div class="empty">No stock orders</div>'}
+
+  // Leads
+  const lsc={new:'badge-blue',contacted:'badge-yellow',interested:'badge-purple',converted:'badge-green',lost:'badge-red'};
+  if((leads||[]).length){
+    document.getElementById('leadsTable').innerHTML='<table><thead><tr><th>Customer</th><th>Phone</th><th>Requirement</th><th>Budget</th><th>Status</th><th>Dealer</th></tr></thead><tbody>'+
+      leads.map(l=>`<tr><td>${l.customerName}</td><td>${l.customerPhone}</td><td>${l.requirement||'-'}</td><td>${l.budget||'-'}</td><td><span class="badge ${lsc[l.status]}">${l.status}</span></td><td>${l.dealerId?.slice(0,8)}...</td></tr>`).join('')+
+      '</tbody></table>';
+  } else {document.getElementById('leadsTable').innerHTML='<div class="empty">No leads</div>'}
+
+  // Targets
+  if((targets||[]).length){
+    document.getElementById('targetsTable').innerHTML='<table><thead><tr><th>Dealer</th><th>Month</th><th>Units</th><th>Revenue</th><th>Achieved</th><th>Scheme</th></tr></thead><tbody>'+
+      targets.map(t=>`<tr><td>${t.dealerId?.slice(0,8)}...</td><td>${t.month}</td><td>${t.achievedUnits||0}/${t.targetUnits}</td><td>₹${Number(t.achievedRevenue||0).toLocaleString('en-IN')}/₹${Number(t.targetRevenue).toLocaleString('en-IN')}</td><td>${t.targetUnits>0?Math.round((t.achievedUnits||0)/t.targetUnits*100):0}%</td><td>${t.schemeName||'-'}</td></tr>`).join('')+
+      '</tbody></table>';
+  } else {document.getElementById('targetsTable').innerHTML='<div class="empty">No targets set</div>'}
+
+  // Leaderboard
+  if((lb||[]).length){
+    document.getElementById('lbTable').innerHTML='<table><thead><tr><th>#</th><th>Company</th><th>Tier</th><th>Sales</th><th>Revenue</th><th>Rate</th></tr></thead><tbody>'+
+      lb.map(d=>`<tr><td style="font-weight:800;color:${d.rank<=3?'#f59e0b':'#94a3b8'}">${d.rank}</td><td><strong>${d.companyName}</strong></td><td><span class="badge ${tc[d.tier]||'tier-silver'}">${d.tier}</span></td><td>${d.totalSales}</td><td style="font-weight:600">₹${Number(d.totalRevenue).toLocaleString('en-IN')}</td><td>${d.commissionRate}%</td></tr>`).join('')+
+      '</tbody></table>';
+  }
+
+  // Populate target dealer dropdown
+  const sel=document.getElementById('tDealer');
+  sel.innerHTML=(dealers||[]).filter(d=>d.status==='active').map(d=>`<option value="${d.id}">${d.companyName||d.id.slice(0,8)}</option>`).join('');
+}
+
+async function approveDealer(id){
+  const tier=prompt('Tier? (silver/gold/platinum)','gold');
+  if(!tier)return;
+  const credit=prompt('Credit limit?','200000');
+  await api('/dealer/admin/'+id+'/approve',{method:'PUT',body:JSON.stringify({tier,creditLimit:Number(credit)})});
+  load();
+}
+async function rejectDealer(id){
+  const reason=prompt('Rejection reason:');
+  if(!reason)return;
+  await api('/dealer/admin/'+id+'/reject',{method:'PUT',body:JSON.stringify({reason})});
+  load();
+}
+function editDealer(id){
+  const d=allDealers.find(x=>x.id===id);if(!d)return;
+  document.getElementById('editContent').innerHTML=`
+    <h3 style="font-size:16px;font-weight:600;margin-bottom:16px">Edit: ${d.companyName||'Dealer'}</h3>
+    <div class="form-row">
+      <div class="form-group"><label>Tier</label><select id="eTier"><option ${d.tier==='silver'?'selected':''}>silver</option><option ${d.tier==='gold'?'selected':''}>gold</option><option ${d.tier==='platinum'?'selected':''}>platinum</option></select></div>
+      <div class="form-group"><label>Status</label><select id="eStatus"><option ${d.status==='active'?'selected':''}>active</option><option ${d.status==='suspended'?'selected':''}>suspended</option><option ${d.status==='pending'?'selected':''}>pending</option></select></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label>Commission Rate %</label><input id="eComm" type="number" value="${d.commissionRate||6}"></div>
+      <div class="form-group"><label>Credit Limit (₹)</label><input id="eCredit" type="number" value="${d.creditLimit||100000}"></div>
+    </div>
+    <div class="form-group"><label>Territory</label><input id="eTerritory" value="${d.territory||''}"></div>
+    <div class="form-row">
+      <div class="form-group"><label>GSTIN Verified</label><select id="eGstin"><option value="true" ${d.gstinVerified?'selected':''}>Yes</option><option value="false" ${!d.gstinVerified?'selected':''}>No</option></select></div>
+      <div class="form-group"><label>Bank Verified</label><select id="eBank"><option value="true" ${d.bankVerified?'selected':''}>Yes</option><option value="false" ${!d.bankVerified?'selected':''}>No</option></select></div>
+    </div>
+    <div class="form-group"><label>KYC Status</label><select id="eKyc"><option ${d.kycStatus==='pending'?'selected':''}>pending</option><option ${d.kycStatus==='approved'?'selected':''}>approved</option><option ${d.kycStatus==='rejected'?'selected':''}>rejected</option></select></div>
+    <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:16px">
+      <button class="btn" style="background:#e2e8f0;padding:8px 16px" onclick="closeEdit()">Cancel</button>
+      <button class="btn btn-blue" style="padding:8px 16px" onclick="saveDealer('${id}')">Save</button>
+    </div>`;
+  document.getElementById('editModal').classList.add('show');
+}
+function closeEdit(){document.getElementById('editModal').classList.remove('show')}
+async function saveDealer(id){
+  await api('/dealer/admin/'+id,{method:'PUT',body:JSON.stringify({
+    tier:document.getElementById('eTier').value,
+    status:document.getElementById('eStatus').value,
+    commissionRate:Number(document.getElementById('eComm').value),
+    creditLimit:Number(document.getElementById('eCredit').value),
+    territory:document.getElementById('eTerritory').value,
+    gstinVerified:document.getElementById('eGstin').value==='true',
+    bankVerified:document.getElementById('eBank').value==='true',
+    kycStatus:document.getElementById('eKyc').value
+  })});
+  closeEdit();load();
+}
+async function updateSO(id,status){
+  const body={status};
+  if(status==='shipped'){body.trackingId=prompt('Tracking ID:','TRACK-'+Date.now().toString(36).toUpperCase())}
+  await api('/dealer/admin/stock-orders/'+id,{method:'PUT',body:JSON.stringify(body)});
+  load();
+}
+
+function openTarget(){document.getElementById('targetModal').classList.add('show')}
+function closeTarget(){document.getElementById('targetModal').classList.remove('show')}
+async function submitTarget(){
+  await api('/dealer/admin/targets',{method:'POST',body:JSON.stringify({
+    dealerId:document.getElementById('tDealer').value,
+    month:document.getElementById('tMonth').value,
+    targetUnits:Number(document.getElementById('tUnits').value),
+    targetRevenue:Number(document.getElementById('tRevenue').value),
+    bonusAmount:Number(document.getElementById('tBonus').value),
+    schemeName:document.getElementById('tScheme').value,
+    schemeDetails:document.getElementById('tDetails').value
+  })});
+  closeTarget();load();
+}
+load();
+</script>
+</body>
+</html>

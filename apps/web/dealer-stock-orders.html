@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Stock Orders - Dealer Portal</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Inter',sans-serif;background:#f5f7fa;color:#1a1a2e;min-height:100vh}
+.topbar{background:#1a1a2e;color:#fff;padding:12px 24px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:100}
+.topbar h1{font-size:18px;font-weight:700}
+.topbar-right{display:flex;align-items:center;gap:12px}
+.topbar-right a{color:#94a3b8;text-decoration:none;font-size:13px}.topbar-right a:hover{color:#fff}
+.nav{background:#fff;border-bottom:1px solid #e2e8f0;padding:0 24px;display:flex;gap:0;overflow-x:auto}
+.nav a{padding:12px 16px;color:#64748b;text-decoration:none;font-size:13px;font-weight:500;white-space:nowrap;border-bottom:2px solid transparent}
+.nav a:hover{color:#1a1a2e}.nav a.active{color:#7c3aed;border-bottom-color:#7c3aed}
+.container{max-width:1100px;margin:0 auto;padding:24px}
+.card{background:#fff;border-radius:12px;padding:20px;box-shadow:0 1px 3px rgba(0,0,0,.06);margin-bottom:20px}
+.card h3{font-size:15px;font-weight:600;margin-bottom:16px;display:flex;justify-content:space-between;align-items:center}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th{text-align:left;padding:8px 12px;background:#f8fafc;color:#64748b;font-weight:500;font-size:11px;text-transform:uppercase;letter-spacing:.5px}
+td{padding:10px 12px;border-top:1px solid #f1f5f9}
+.badge{display:inline-block;padding:2px 8px;border-radius:10px;font-size:11px;font-weight:500}
+.badge-green{background:#dcfce7;color:#166534}.badge-yellow{background:#fef3c7;color:#92400e}
+.badge-blue{background:#dbeafe;color:#1e40af}.badge-red{background:#fee2e2;color:#991b1b}
+.badge-purple{background:#ede9fe;color:#5b21b6}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:8px;border:none;cursor:pointer;font-size:13px;font-weight:500;text-decoration:none}
+.btn-primary{background:#7c3aed;color:#fff}.btn-primary:hover{background:#6d28d9}
+.btn-sm{padding:4px 10px;font-size:12px}
+.modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:200;align-items:center;justify-content:center}
+.modal.show{display:flex}
+.modal-content{background:#fff;border-radius:16px;padding:24px;width:90%;max-width:500px;max-height:80vh;overflow-y:auto}
+.modal-content h3{margin-bottom:16px}
+.form-group{margin-bottom:14px}
+.form-group label{display:block;font-size:12px;font-weight:500;color:#64748b;margin-bottom:4px}
+.form-group input,.form-group select{width:100%;padding:8px 12px;border:1px solid #e2e8f0;border-radius:8px;font-size:14px}
+.empty{text-align:center;color:#94a3b8;padding:32px;font-size:14px}
+.laptop-item{display:flex;justify-content:space-between;align-items:center;padding:10px;background:#f8fafc;border-radius:8px;margin-bottom:8px}
+.laptop-item .info{font-size:13px}.laptop-item .price{font-weight:600;color:#7c3aed}
+.laptop-item button{background:#ef4444;color:#fff;border:none;border-radius:4px;padding:2px 8px;cursor:pointer;font-size:11px}
+#selectedList{margin:12px 0}
+#totalAmount{font-size:18px;font-weight:700;color:#7c3aed}
+</style>
+</head>
+<body>
+<div class="topbar"><h1>Dbuggs Dealer</h1><div class="topbar-right"><a href="/">Shop</a><a href="#" onclick="logout()">Logout</a></div></div>
+<nav class="nav">
+  <a href="dealer-dashboard.html">Dashboard</a>
+  <a href="dealer-stock-orders.html" class="active">Stock Orders</a>
+  <a href="dealer-inventory.html">Inventory</a>
+  <a href="dealer-sales.html">Sales</a>
+  <a href="dealer-leads.html">Leads</a>
+  <a href="dealer-leaderboard.html">Leaderboard</a>
+</nav>
+
+<div class="container">
+  <div class="card">
+    <h3>My Stock Orders <button class="btn btn-primary" onclick="openNewOrder()">+ New Order</button></h3>
+    <div id="ordersList"><div class="empty">Loading...</div></div>
+  </div>
+</div>
+
+<div class="modal" id="newOrderModal">
+  <div class="modal-content">
+    <h3>New Stock Order</h3>
+    <div class="form-group">
+      <label>Select Laptops from Catalog</label>
+      <input type="text" id="searchLaptop" placeholder="Search by brand/model..." oninput="searchLaptops(this.value)">
+    </div>
+    <div id="catalogResults"></div>
+    <h4 style="font-size:13px;margin:12px 0 4px;color:#64748b">Selected Items</h4>
+    <div id="selectedList"><div class="empty" style="padding:12px">No items selected</div></div>
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-top:16px">
+      <div>Total: <span id="totalAmount">₹0</span></div>
+      <div style="display:flex;gap:8px">
+        <button class="btn" style="background:#e2e8f0" onclick="closeModal()">Cancel</button>
+        <button class="btn btn-primary" onclick="submitOrder()">Place Order</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const API = window.location.hostname === 'localhost' ? 'http://localhost:4000' : 'http://200.234.39.146:4000';
+function getToken(){ return localStorage.getItem('dbugg_shop_token') }
+function logout(){ localStorage.removeItem('dbugg_shop_token'); window.location.href='/login.html' }
+async function api(path, opts={}){
+  const r = await fetch(API+path, {headers:{'Authorization':'Bearer '+getToken(),'Content-Type':'application/json'}, ...opts});
+  if(r.status===401){logout();return null}
+  return r.json();
+}
+
+let selectedItems = [];
+let allLaptops = [];
+
+async function load(){
+  if(!getToken()){window.location.href='/login.html';return}
+  const orders = await api('/dealer/stock-orders');
+  if(!orders || !Array.isArray(orders)){document.getElementById('ordersList').innerHTML='<div class="empty">Could not load orders</div>';return}
+  if(!orders.length){document.getElementById('ordersList').innerHTML='<div class="empty">No stock orders yet. Place your first order!</div>';return}
+
+  const statusColors = {pending:'badge-yellow',approved:'badge-blue',shipped:'badge-purple',delivered:'badge-green',rejected:'badge-red',cancelled:'badge-red'};
+  document.getElementById('ordersList').innerHTML = '<table><thead><tr><th>Order #</th><th>Items</th><th>Amount</th><th>Status</th><th>Tracking</th><th>Date</th></tr></thead><tbody>'+
+    orders.map(o=>`<tr>
+      <td><strong>${o.orderNumber}</strong></td>
+      <td>${o.totalUnits} unit(s)<br><small style="color:#64748b">${(o.items||[]).map(i=>i.brand+' '+i.model).join(', ')}</small></td>
+      <td>₹${Number(o.totalAmount).toLocaleString('en-IN')}</td>
+      <td><span class="badge ${statusColors[o.status]||'badge-blue'}">${o.status}</span></td>
+      <td>${o.trackingId||'-'}</td>
+      <td>${new Date(o.createdAt).toLocaleDateString('en-IN')}</td>
+    </tr>`).join('')+
+    '</tbody></table>';
+
+  if(new URLSearchParams(location.search).get('new')==='1') openNewOrder();
+}
+
+async function openNewOrder(){
+  document.getElementById('newOrderModal').classList.add('show');
+  allLaptops = await api('/products') || [];
+  if(allLaptops.items) allLaptops = allLaptops.items;
+  renderCatalog(allLaptops);
+}
+function closeModal(){document.getElementById('newOrderModal').classList.remove('show')}
+
+function searchLaptops(q){
+  const filtered = allLaptops.filter(l=> (l.brand+' '+l.model).toLowerCase().includes(q.toLowerCase()));
+  renderCatalog(filtered);
+}
+
+function renderCatalog(list){
+  const avail = list.filter(l=>l.status==='available' && !selectedItems.find(s=>s.id===l.id));
+  document.getElementById('catalogResults').innerHTML = avail.slice(0,8).map(l=>
+    `<div class="laptop-item"><div class="info">${l.brand} ${l.model}<br><small>${l.processor||''} | ${l.ram||''}GB | ${l.storage||''}</small></div><div><span class="price">₹${Number(l.dealerPrice||l.sellingPrice).toLocaleString('en-IN')}</span> <button class="btn btn-sm btn-primary" onclick='addItem(${JSON.stringify(l).replace(/'/g,"\\'")})'> + </button></div></div>`
+  ).join('') || '<div class="empty" style="padding:8px">No laptops available</div>';
+}
+
+function addItem(l){
+  selectedItems.push(l);
+  renderSelected();
+  renderCatalog(allLaptops.filter(la=>(la.brand+' '+la.model).toLowerCase().includes(document.getElementById('searchLaptop').value.toLowerCase())));
+}
+function removeItem(id){
+  selectedItems = selectedItems.filter(s=>s.id!==id);
+  renderSelected();
+  renderCatalog(allLaptops);
+}
+function renderSelected(){
+  if(!selectedItems.length){document.getElementById('selectedList').innerHTML='<div class="empty" style="padding:12px">No items selected</div>';document.getElementById('totalAmount').textContent='₹0';return}
+  let total = 0;
+  document.getElementById('selectedList').innerHTML = selectedItems.map(l=>{
+    const p = Number(l.dealerPrice||l.sellingPrice);total+=p;
+    return `<div class="laptop-item"><div class="info">${l.brand} ${l.model}</div><div><span class="price">₹${p.toLocaleString('en-IN')}</span> <button onclick="removeItem('${l.id}')">✕</button></div></div>`;
+  }).join('');
+  document.getElementById('totalAmount').textContent = '₹'+total.toLocaleString('en-IN');
+}
+
+async function submitOrder(){
+  if(!selectedItems.length){alert('Select at least one laptop');return}
+  const res = await api('/dealer/stock-orders',{method:'POST',body:JSON.stringify({items:selectedItems.map(l=>({laptopId:l.id}))})});
+  if(res && res.orderNumber){
+    closeModal(); selectedItems=[]; load();
+  } else {
+    alert(res?.message || 'Error placing order');
+  }
+}
+
+load();
+</script>
+</body>
+</html>

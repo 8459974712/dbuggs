@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Leads - Dealer Portal</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Inter',sans-serif;background:#f5f7fa;color:#1a1a2e;min-height:100vh}
+.topbar{background:#1a1a2e;color:#fff;padding:12px 24px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:100}
+.topbar h1{font-size:18px;font-weight:700}
+.topbar-right{display:flex;align-items:center;gap:12px}
+.topbar-right a{color:#94a3b8;text-decoration:none;font-size:13px}.topbar-right a:hover{color:#fff}
+.nav{background:#fff;border-bottom:1px solid #e2e8f0;padding:0 24px;display:flex;gap:0;overflow-x:auto}
+.nav a{padding:12px 16px;color:#64748b;text-decoration:none;font-size:13px;font-weight:500;white-space:nowrap;border-bottom:2px solid transparent}
+.nav a:hover{color:#1a1a2e}.nav a.active{color:#7c3aed;border-bottom-color:#7c3aed}
+.container{max-width:1100px;margin:0 auto;padding:24px}
+.card{background:#fff;border-radius:12px;padding:20px;box-shadow:0 1px 3px rgba(0,0,0,.06);margin-bottom:20px}
+.card h3{font-size:15px;font-weight:600;margin-bottom:16px;display:flex;justify-content:space-between;align-items:center}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th{text-align:left;padding:8px 12px;background:#f8fafc;color:#64748b;font-weight:500;font-size:11px;text-transform:uppercase}
+td{padding:10px 12px;border-top:1px solid #f1f5f9}
+.badge{display:inline-block;padding:2px 8px;border-radius:10px;font-size:11px;font-weight:500}
+.badge-green{background:#dcfce7;color:#166534}.badge-yellow{background:#fef3c7;color:#92400e}
+.badge-blue{background:#dbeafe;color:#1e40af}.badge-red{background:#fee2e2;color:#991b1b}
+.badge-purple{background:#ede9fe;color:#5b21b6}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:8px;border:none;cursor:pointer;font-size:13px;font-weight:500}
+.btn-primary{background:#7c3aed;color:#fff}.btn-primary:hover{background:#6d28d9}
+.btn-sm{padding:4px 10px;font-size:12px}
+.modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:200;align-items:center;justify-content:center}
+.modal.show{display:flex}
+.modal-content{background:#fff;border-radius:16px;padding:24px;width:90%;max-width:480px}
+.form-group{margin-bottom:14px}
+.form-group label{display:block;font-size:12px;font-weight:500;color:#64748b;margin-bottom:4px}
+.form-group input,.form-group select,.form-group textarea{width:100%;padding:8px 12px;border:1px solid #e2e8f0;border-radius:8px;font-size:14px;font-family:inherit}
+.form-group textarea{resize:vertical;min-height:60px}
+.empty{text-align:center;color:#94a3b8;padding:32px;font-size:14px}
+.lead-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:12px;margin-bottom:20px}
+.ls{background:#fff;border-radius:10px;padding:14px;text-align:center;box-shadow:0 1px 3px rgba(0,0,0,.06)}
+.ls .n{font-size:22px;font-weight:700}.ls .l{font-size:11px;color:#64748b;text-transform:uppercase}
+</style>
+</head>
+<body>
+<div class="topbar"><h1>Dbuggs Dealer</h1><div class="topbar-right"><a href="/">Shop</a><a href="#" onclick="logout()">Logout</a></div></div>
+<nav class="nav">
+  <a href="dealer-dashboard.html">Dashboard</a>
+  <a href="dealer-stock-orders.html">Stock Orders</a>
+  <a href="dealer-inventory.html">Inventory</a>
+  <a href="dealer-sales.html">Sales</a>
+  <a href="dealer-leads.html" class="active">Leads</a>
+  <a href="dealer-leaderboard.html">Leaderboard</a>
+</nav>
+<div class="container">
+  <div class="lead-stats" id="leadStats"></div>
+  <div class="card">
+    <h3>My Leads <button class="btn btn-primary" onclick="openLead()">+ New Lead</button></h3>
+    <div id="leadsList"><div class="empty">Loading...</div></div>
+  </div>
+</div>
+
+<div class="modal" id="leadModal">
+  <div class="modal-content">
+    <h3 style="font-size:16px;font-weight:600;margin-bottom:16px" id="modalTitle">Add New Lead</h3>
+    <input type="hidden" id="editId">
+    <div class="form-group"><label>Customer Name *</label><input id="cName" placeholder="Customer name"></div>
+    <div class="form-group"><label>Phone *</label><input id="cPhone" placeholder="Phone number"></div>
+    <div class="form-group"><label>Requirement</label><input id="cReq" placeholder="e.g. Dell laptop for office"></div>
+    <div class="form-group"><label>Budget Range</label><input id="cBudget" placeholder="e.g. 25000-35000"></div>
+    <div class="form-group" id="statusGroup" style="display:none"><label>Status</label>
+      <select id="cStatus"><option value="new">New</option><option value="contacted">Contacted</option><option value="interested">Interested</option><option value="converted">Converted</option><option value="lost">Lost</option></select>
+    </div>
+    <div class="form-group"><label>Notes</label><textarea id="cNotes" placeholder="Any notes..."></textarea></div>
+    <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:16px">
+      <button class="btn" style="background:#e2e8f0" onclick="closeLead()">Cancel</button>
+      <button class="btn btn-primary" onclick="submitLead()">Save</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const API = window.location.hostname==='localhost'?'http://localhost:4000':'http://200.234.39.146:4000';
+function getToken(){return localStorage.getItem('dbugg_shop_token')}
+function logout(){localStorage.removeItem('dbugg_shop_token');window.location.href='/login.html'}
+async function api(path,opts={}){const r=await fetch(API+path,{headers:{'Authorization':'Bearer '+getToken(),'Content-Type':'application/json'},...opts});if(r.status===401){logout();return null}return r.json()}
+
+async function load(){
+  if(!getToken()){window.location.href='/login.html';return}
+  const leads = await api('/dealer/leads');
+  if(!leads||!Array.isArray(leads)){document.getElementById('leadsList').innerHTML='<div class="empty">Error loading leads</div>';return}
+
+  const counts={new:0,contacted:0,interested:0,converted:0,lost:0};
+  leads.forEach(l=>counts[l.status]=(counts[l.status]||0)+1);
+  document.getElementById('leadStats').innerHTML=`
+    <div class="ls"><div class="n">${leads.length}</div><div class="l">Total</div></div>
+    <div class="ls"><div class="n" style="color:#1e40af">${counts.new}</div><div class="l">New</div></div>
+    <div class="ls"><div class="n" style="color:#92400e">${counts.contacted}</div><div class="l">Contacted</div></div>
+    <div class="ls"><div class="n" style="color:#5b21b6">${counts.interested}</div><div class="l">Interested</div></div>
+    <div class="ls"><div class="n" style="color:#166534">${counts.converted}</div><div class="l">Converted</div></div>
+  `;
+
+  if(!leads.length){document.getElementById('leadsList').innerHTML='<div class="empty">No leads yet. Start adding potential customers!</div>';return}
+  const sc={new:'badge-blue',contacted:'badge-yellow',interested:'badge-purple',converted:'badge-green',lost:'badge-red'};
+  document.getElementById('leadsList').innerHTML='<table><thead><tr><th>Name</th><th>Phone</th><th>Requirement</th><th>Budget</th><th>Status</th><th>Notes</th><th>Action</th></tr></thead><tbody>'+
+    leads.map(l=>`<tr><td><strong>${l.customerName}</strong></td><td>${l.customerPhone}</td><td>${l.requirement||'-'}</td><td>${l.budget||'-'}</td><td><span class="badge ${sc[l.status]||'badge-blue'}">${l.status}</span></td><td><small>${l.notes||'-'}</small></td><td><button class="btn btn-sm" style="background:#ede9fe;color:#7c3aed" onclick="editLead('${l.id}','${l.customerName}','${l.customerPhone}','${(l.requirement||'').replace(/'/g,"\\'")}','${l.budget||''}','${l.status}','${(l.notes||'').replace(/'/g,"\\'")}')">Edit</button></td></tr>`).join('')+
+    '</tbody></table>';
+
+  if(new URLSearchParams(location.search).get('new')==='1') openLead();
+}
+
+function openLead(){
+  document.getElementById('editId').value='';
+  document.getElementById('modalTitle').textContent='Add New Lead';
+  document.getElementById('statusGroup').style.display='none';
+  ['cName','cPhone','cReq','cBudget','cNotes'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('leadModal').classList.add('show');
+}
+function editLead(id,name,phone,req,budget,status,notes){
+  document.getElementById('editId').value=id;
+  document.getElementById('modalTitle').textContent='Update Lead';
+  document.getElementById('statusGroup').style.display='block';
+  document.getElementById('cName').value=name;
+  document.getElementById('cPhone').value=phone;
+  document.getElementById('cReq').value=req;
+  document.getElementById('cBudget').value=budget;
+  document.getElementById('cStatus').value=status;
+  document.getElementById('cNotes').value=notes;
+  document.getElementById('leadModal').classList.add('show');
+}
+function closeLead(){document.getElementById('leadModal').classList.remove('show')}
+async function submitLead(){
+  const id=document.getElementById('editId').value;
+  const data={customerName:document.getElementById('cName').value,customerPhone:document.getElementById('cPhone').value,requirement:document.getElementById('cReq').value,budget:document.getElementById('cBudget').value,notes:document.getElementById('cNotes').value};
+  if(!data.customerName||!data.customerPhone){alert('Name and phone required');return}
+  if(id){data.status=document.getElementById('cStatus').value;await api('/dealer/leads/'+id,{method:'PUT',body:JSON.stringify(data)})}
+  else{await api('/dealer/leads',{method:'POST',body:JSON.stringify(data)})}
+  closeLead();load();
+}
+load();
+</script>
+</body>
+</html>

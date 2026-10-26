@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Leaderboard - Dealer Portal</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Inter',sans-serif;background:#f5f7fa;color:#1a1a2e;min-height:100vh}
+.topbar{background:#1a1a2e;color:#fff;padding:12px 24px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:100}
+.topbar h1{font-size:18px;font-weight:700}
+.topbar-right{display:flex;align-items:center;gap:12px}
+.topbar-right a{color:#94a3b8;text-decoration:none;font-size:13px}.topbar-right a:hover{color:#fff}
+.nav{background:#fff;border-bottom:1px solid #e2e8f0;padding:0 24px;display:flex;gap:0;overflow-x:auto}
+.nav a{padding:12px 16px;color:#64748b;text-decoration:none;font-size:13px;font-weight:500;white-space:nowrap;border-bottom:2px solid transparent}
+.nav a:hover{color:#1a1a2e}.nav a.active{color:#7c3aed;border-bottom-color:#7c3aed}
+.container{max-width:900px;margin:0 auto;padding:24px}
+.podium{display:flex;justify-content:center;align-items:flex-end;gap:16px;margin:32px 0;height:200px}
+.podium-item{background:#fff;border-radius:16px 16px 0 0;padding:16px;text-align:center;box-shadow:0 2px 8px rgba(0,0,0,.08);position:relative}
+.podium-item.first{height:180px;width:140px;background:linear-gradient(180deg,#fef3c7,#fff)}
+.podium-item.second{height:140px;width:120px;background:linear-gradient(180deg,#e2e8f0,#fff)}
+.podium-item.third{height:110px;width:120px;background:linear-gradient(180deg,#fed7aa,#fff)}
+.podium-item .rank{font-size:28px;font-weight:800;line-height:1}
+.podium-item .name{font-size:12px;font-weight:600;margin-top:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.podium-item .tier{font-size:10px;color:#64748b;text-transform:uppercase;letter-spacing:.5px}
+.podium-item .rev{font-size:14px;font-weight:700;color:#7c3aed;margin-top:4px}
+.rank-1{color:#f59e0b}.rank-2{color:#94a3b8}.rank-3{color:#f97316}
+.card{background:#fff;border-radius:12px;padding:20px;box-shadow:0 1px 3px rgba(0,0,0,.06)}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th{text-align:left;padding:8px 12px;background:#f8fafc;color:#64748b;font-weight:500;font-size:11px;text-transform:uppercase}
+td{padding:10px 12px;border-top:1px solid #f1f5f9}
+.tier-badge{display:inline-block;padding:2px 8px;border-radius:10px;font-size:11px;font-weight:500}
+.tier-gold{background:#fef3c7;color:#92400e}.tier-silver{background:#e2e8f0;color:#475569}.tier-platinum{background:#ede9fe;color:#5b21b6}
+.rank-col{font-size:18px;font-weight:800;color:#94a3b8;width:40px}
+tr:nth-child(1) .rank-col{color:#f59e0b}tr:nth-child(2) .rank-col{color:#94a3b8}tr:nth-child(3) .rank-col{color:#f97316}
+.empty{text-align:center;color:#94a3b8;padding:32px;font-size:14px}
+</style>
+</head>
+<body>
+<div class="topbar"><h1>Dbuggs Dealer</h1><div class="topbar-right"><a href="/">Shop</a><a href="#" onclick="logout()">Logout</a></div></div>
+<nav class="nav">
+  <a href="dealer-dashboard.html">Dashboard</a>
+  <a href="dealer-stock-orders.html">Stock Orders</a>
+  <a href="dealer-inventory.html">Inventory</a>
+  <a href="dealer-sales.html">Sales</a>
+  <a href="dealer-leads.html">Leads</a>
+  <a href="dealer-leaderboard.html" class="active">Leaderboard</a>
+</nav>
+<div class="container">
+  <div id="podium" class="podium"></div>
+  <div class="card">
+    <h3 style="font-size:15px;font-weight:600;margin-bottom:12px">All Dealers Ranking</h3>
+    <div id="boardList"><div class="empty">Loading...</div></div>
+  </div>
+</div>
+<script>
+const API = window.location.hostname==='localhost'?'http://localhost:4000':'http://200.234.39.146:4000';
+function getToken(){return localStorage.getItem('dbugg_shop_token')}
+function logout(){localStorage.removeItem('dbugg_shop_token');window.location.href='/login.html'}
+
+async function load(){
+  if(!getToken()){window.location.href='/login.html';return}
+  const r=await fetch(API+'/dealer/leaderboard',{headers:{'Authorization':'Bearer '+getToken()}});
+  if(r.status===401){logout();return}
+  const board=await r.json();
+  if(!board||!board.length){document.getElementById('boardList').innerHTML='<div class="empty">No dealers yet</div>';return}
+
+  const top3=board.slice(0,3);
+  const podiumOrder=[top3[1],top3[0],top3[2]].filter(Boolean);
+  const classes=['second','first','third'];
+  if(top3.length>=3){
+    document.getElementById('podium').innerHTML=[top3[1],top3[0],top3[2]].map((d,i)=>{
+      if(!d)return'';
+      const cls=classes[i];
+      return`<div class="podium-item ${cls}"><div class="rank rank-${d.rank}">#${d.rank}</div><div class="name">${d.companyName}</div><div class="tier">${d.tier}</div><div class="rev">₹${Number(d.totalRevenue).toLocaleString('en-IN')}</div></div>`;
+    }).join('');
+  }
+
+  const tierCls={gold:'tier-gold',silver:'tier-silver',platinum:'tier-platinum'};
+  document.getElementById('boardList').innerHTML='<table><thead><tr><th>#</th><th>Company</th><th>Tier</th><th>Sales</th><th>Revenue</th><th>Commission Rate</th></tr></thead><tbody>'+
+    board.map(d=>`<tr><td class="rank-col">${d.rank}</td><td><strong>${d.companyName}</strong></td><td><span class="tier-badge ${tierCls[d.tier]||'tier-silver'}">${d.tier}</span></td><td>${d.totalSales}</td><td style="font-weight:600">₹${Number(d.totalRevenue).toLocaleString('en-IN')}</td><td>${d.commissionRate}%</td></tr>`).join('')+
+    '</tbody></table>';
+}
+load();
+</script>
+</body>
+</html>
