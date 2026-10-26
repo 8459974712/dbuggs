@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Warranty Claims — dbuggs</title>
+<meta name="description" content="Raise and track warranty claims on your dbuggs purchases.">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Inter',sans-serif;background:#f1f3f6;color:#212121;font-size:14px;}
+a{text-decoration:none;color:inherit;}
+.header{background:#2874f0;padding:10px 20px;position:sticky;top:0;z-index:100;box-shadow:0 2px 4px rgba(0,0,0,.2);}
+.header-inner{max-width:1280px;margin:0 auto;display:flex;align-items:center;gap:16px;}
+.logo{font-size:20px;font-weight:700;color:#fff;}.logo span{color:#ffe500;}
+.header-actions{margin-left:auto;display:flex;gap:10px;}
+.hbtn{padding:8px 16px;border-radius:3px;font-size:13px;font-weight:600;cursor:pointer;border:none;font-family:inherit;background:rgba(255,255,255,.15);color:#fff;border:1px solid rgba(255,255,255,.4);}
+
+.page{max-width:900px;margin:20px auto;padding:0 20px;}
+h1{font-size:22px;font-weight:700;margin-bottom:20px;}
+
+.claims-table{width:100%;background:#fff;border-radius:8px;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,.08);margin-bottom:20px;}
+.claims-table th,.claims-table td{padding:12px 14px;text-align:left;border-bottom:1px solid #f0f0f0;font-size:13px;}
+.claims-table th{background:#f8f9fb;font-weight:600;color:#878787;}
+.chip{display:inline-block;padding:3px 8px;border-radius:4px;font-size:11px;font-weight:700;text-transform:uppercase;}
+.chip-open{background:#fff3e0;color:#e65100;}
+.chip-in_progress{background:#e3f2fd;color:#1565c0;}
+.chip-resolved{background:#e8f5e9;color:#2e7d32;}
+.chip-rejected{background:#fce4ec;color:#c62828;}
+
+.empty{text-align:center;padding:40px;color:#878787;}
+.note{font-size:12.5px;color:#878787;margin-top:4px;}
+</style>
+</head>
+<body>
+<div class="header"><div class="header-inner"><a href="/" class="logo">dbugg<span>s</span></a><div class="header-actions"><a href="/orders.html" class="hbtn">My Orders</a><a href="/cart.html" class="hbtn">Cart</a></div></div></div>
+
+<div class="page">
+<h1>My Warranty Claims</h1>
+<p class="note" style="margin-bottom:16px;">To raise a new warranty claim, go to <a href="/orders.html" style="color:#2874f0;font-weight:600;">My Orders</a> and click "Warranty Claim" on a delivered order.</p>
+
+<div class="claims-table">
+  <table style="width:100%;border-collapse:collapse;">
+    <thead><tr><th>Claim #</th><th>Date</th><th>Issue</th><th>Status</th><th>Resolution</th></tr></thead>
+    <tbody id="claimsBody"></tbody>
+  </table>
+  <div id="empty" class="empty" style="display:none;">No warranty claims yet.</div>
+</div>
+</div>
+
+<script src="/shop-api.js"></script>
+<script>
+async function load(){
+  if(!getToken()){
+    document.querySelector('.page').innerHTML='<div class="empty"><h2>Please login first</h2><p><a href="/login.html" style="color:#2874f0;font-weight:600;">Login</a> to view your warranty claims.</p></div>';
+    return;
+  }
+  try{
+    const data=await apiFetch('/orders/warranty/my');
+    if(!data.length){document.getElementById('empty').style.display='';return;}
+    document.getElementById('claimsBody').innerHTML=data.map(c=>{
+      const date=new Date(c.createdAt).toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'});
+      return `<tr><td>${c.claimNumber}</td><td>${date}</td><td>${esc(c.issue)}</td><td><span class="chip chip-${c.status}">${c.status.replace('_',' ')}</span></td><td>${c.resolution||'—'}</td></tr>`;
+    }).join('');
+  }catch(e){document.getElementById('empty').style.display='';document.getElementById('empty').textContent='Could not load claims.';}
+}
+function esc(s){const d=document.createElement('div');d.textContent=s;return d.innerHTML;}
+load();
+</script>
+</body>
+</html>

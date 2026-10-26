@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Warranty Claims — Admin</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="admin-extra.css">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'DM Sans',sans-serif;background:#f3f4f6;color:#111827;font-size:14px;}
+:root{--accent:#2563EB;--card-bg:#fff;--page-bg:#f3f4f6;--border:#E5E7EB;--text-primary:#111827;--text-secondary:#6B7280;--radius-sm:6px;--blue-bg:#DBEAFE;--green-bg:#D1FAE5;--red-bg:#FEE2E2;--gray-bg:#F3F4F6;}
+.page{max-width:1100px;margin:0 auto;padding:20px;}
+h1{font-size:22px;font-weight:700;margin-bottom:16px;}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin-bottom:20px;}
+.stat{background:var(--card-bg);border-radius:8px;padding:16px;text-align:center;box-shadow:0 1px 3px rgba(0,0,0,.06);}
+.stat .num{font-size:28px;font-weight:700;color:var(--accent);}
+.stat .label{font-size:12px;color:var(--text-secondary);margin-top:2px;}
+table{width:100%;background:var(--card-bg);border-radius:8px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,.06);}
+th,td{padding:10px 14px;text-align:left;border-bottom:1px solid var(--border);font-size:13px;}
+th{background:var(--page-bg);font-weight:600;color:var(--text-secondary);}
+.chip{display:inline-block;padding:3px 8px;border-radius:4px;font-size:11px;font-weight:700;text-transform:uppercase;}
+.chip-open{background:#FEF3C7;color:#92400E;}
+.chip-in_progress{background:var(--blue-bg);color:#1E40AF;}
+.chip-resolved{background:var(--green-bg);color:#065F46;}
+.chip-rejected{background:var(--red-bg);color:#991B1B;}
+.empty-row{text-align:center;color:var(--text-secondary);padding:24px!important;}
+select.inline{padding:4px 8px;border:1px solid var(--border);border-radius:4px;font-size:12px;font-family:inherit;}
+</style>
+</head>
+<body>
+<div class="page">
+<h1>Warranty Claims</h1>
+<div class="stats" id="stats"></div>
+<table>
+  <thead><tr><th>Claim #</th><th>Date</th><th>Customer</th><th>Issue</th><th>Status</th><th>Notes</th><th>Actions</th></tr></thead>
+  <tbody id="tbody"></tbody>
+</table>
+</div>
+
+<div class="modal-backdrop" id="noteModal" hidden>
+<div class="modal" style="max-width:500px;">
+  <div class="modal-head"><h3>Update Claim</h3><button class="modal-close" onclick="document.getElementById('noteModal').hidden=true">&times;</button></div>
+  <div class="modal-body">
+    <input type="hidden" id="noteId">
+    <div class="form-field"><label class="form-label">Status</label><select class="form-select" id="noteStatus"><option value="open">Open</option><option value="in_progress">In Progress</option><option value="resolved">Resolved</option><option value="rejected">Rejected</option></select></div>
+    <div class="form-field"><label class="form-label">Admin Notes</label><textarea class="form-textarea" id="noteText" placeholder="Internal notes..."></textarea></div>
+    <div class="form-field"><label class="form-label">Resolution (visible to customer)</label><textarea class="form-textarea" id="noteResolution" placeholder="What was done..."></textarea></div>
+  </div>
+  <div class="modal-foot"><button class="btn-xs" onclick="document.getElementById('noteModal').hidden=true">Cancel</button><button class="btn-xs" style="background:var(--accent);color:#fff;border-color:var(--accent);" onclick="saveClaim()">Save</button></div>
+</div>
+</div>
+
+<script src="/admin-api.js"></script>
+<script>
+function esc(s){const d=document.createElement('div');d.textContent=s||'';return d.innerHTML;}
+
+async function load(){
+  try{
+    const {data}=await apiFetch('/orders/admin/warranty');
+    const counts={open:0,in_progress:0,resolved:0,rejected:0};
+    (data||[]).forEach(c=>counts[c.status]=(counts[c.status]||0)+1);
+    document.getElementById('stats').innerHTML=Object.entries(counts).map(([k,v])=>`<div class="stat"><div class="num">${v}</div><div class="label">${k.replace('_',' ')}</div></div>`).join('');
+
+    const tbody=document.getElementById('tbody');
+    if(!data||!data.length){tbody.innerHTML='<tr><td colspan="7" class="empty-row">No warranty claims yet.</td></tr>';return;}
+    tbody.innerHTML=data.map(c=>{
+      const date=new Date(c.createdAt).toLocaleDateString('en-IN',{day:'2-digit',month:'short'});
+      return `<tr><td>${esc(c.claimNumber)}</td><td>${date}</td><td>${esc(c.userId).slice(0,8)}</td><td>${esc(c.issue)}</td><td><span class="chip chip-${c.status}">${c.status.replace('_',' ')}</span></td><td>${esc(c.adminNotes)||'—'}</td><td><button class="btn-xs" onclick="openNote('${c.id}','${c.status}','${esc(c.adminNotes||'')}','${esc(c.resolution||'')}')">Update</button></td></tr>`;
+    }).join('');
+  }catch(e){console.error(e);}
+}
+
+function openNote(id,status,notes,resolution){
+  document.getElementById('noteId').value=id;
+  document.getElementById('noteStatus').value=status;
+  document.getElementById('noteText').value=notes;
+  document.getElementById('noteResolution').value=resolution;
+  document.getElementById('noteModal').hidden=false;
+}
+
+async function saveClaim(){
+  const id=document.getElementById('noteId').value;
+  try{
+    await apiFetch('/orders/admin/warranty/'+id,{method:'PUT',body:{
+      status:document.getElementById('noteStatus').value,
+      adminNotes:document.getElementById('noteText').value,
+      resolution:document.getElementById('noteResolution').value,
+    }});
+    document.getElementById('noteModal').hidden=true;
+    load();
+  }catch(e){alert(e.message);}
+}
+load();
+</script>
+</body>
+</html>

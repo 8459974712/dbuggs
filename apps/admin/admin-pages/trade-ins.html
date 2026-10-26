@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Trade-Ins — Admin</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="admin-extra.css">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'DM Sans',sans-serif;background:#f3f4f6;color:#111827;font-size:14px;}
+:root{--accent:#2563EB;--card-bg:#fff;--page-bg:#f3f4f6;--border:#E5E7EB;--text-primary:#111827;--text-secondary:#6B7280;--radius-sm:6px;--blue-bg:#DBEAFE;--green-bg:#D1FAE5;--red-bg:#FEE2E2;--gray-bg:#F3F4F6;}
+.page{max-width:1100px;margin:0 auto;padding:20px;}
+h1{font-size:22px;font-weight:700;margin-bottom:16px;}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:12px;margin-bottom:20px;}
+.stat{background:var(--card-bg);border-radius:8px;padding:16px;text-align:center;box-shadow:0 1px 3px rgba(0,0,0,.06);}
+.stat .num{font-size:28px;font-weight:700;color:var(--accent);}
+.stat .label{font-size:12px;color:var(--text-secondary);margin-top:2px;}
+table{width:100%;background:var(--card-bg);border-radius:8px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,.06);}
+th,td{padding:10px 12px;text-align:left;border-bottom:1px solid var(--border);font-size:13px;}
+th{background:var(--page-bg);font-weight:600;color:var(--text-secondary);}
+.chip{display:inline-block;padding:3px 8px;border-radius:4px;font-size:11px;font-weight:700;text-transform:uppercase;}
+.chip-submitted{background:#FEF3C7;color:#92400E;}
+.chip-under_review{background:var(--blue-bg);color:#1E40AF;}
+.chip-quoted{background:#E0E7FF;color:#3730A3;}
+.chip-accepted{background:var(--green-bg);color:#065F46;}
+.chip-completed{background:var(--green-bg);color:#065F46;}
+.chip-rejected{background:var(--red-bg);color:#991B1B;}
+.empty-row{text-align:center;color:var(--text-secondary);padding:24px!important;}
+</style>
+</head>
+<body>
+<div class="page">
+<h1>Trade-In Requests</h1>
+<div class="stats" id="stats"></div>
+<table>
+  <thead><tr><th>Trade #</th><th>Date</th><th>Customer</th><th>Laptop</th><th>Condition</th><th>Estimate</th><th>Final</th><th>Status</th><th>Actions</th></tr></thead>
+  <tbody id="tbody"></tbody>
+</table>
+</div>
+
+<div class="modal-backdrop" id="editModal" hidden>
+<div class="modal" style="max-width:500px;">
+  <div class="modal-head"><h3>Update Trade-In</h3><button class="modal-close" onclick="document.getElementById('editModal').hidden=true">&times;</button></div>
+  <div class="modal-body">
+    <input type="hidden" id="editId">
+    <div class="form-field"><label class="form-label">Status</label><select class="form-select" id="editStatus"><option value="submitted">Submitted</option><option value="under_review">Under Review</option><option value="quoted">Quoted</option><option value="accepted">Accepted</option><option value="completed">Completed</option><option value="rejected">Rejected</option></select></div>
+    <div class="form-field"><label class="form-label">Final Value (₹)</label><input class="form-input" type="number" id="editValue" placeholder="Enter final assessed value"></div>
+    <div class="form-field"><label class="form-label">Admin Notes</label><textarea class="form-textarea" id="editNotes"></textarea></div>
+  </div>
+  <div class="modal-foot"><button class="btn-xs" onclick="document.getElementById('editModal').hidden=true">Cancel</button><button class="btn-xs" style="background:var(--accent);color:#fff;border-color:var(--accent);" onclick="saveTradeIn()">Save</button></div>
+</div>
+</div>
+
+<script src="/admin-api.js"></script>
+<script>
+function esc(s){const d=document.createElement('div');d.textContent=s||'';return d.innerHTML;}
+function money(n){return '₹'+Number(n||0).toLocaleString('en-IN');}
+
+async function load(){
+  try{
+    const {data}=await apiFetch('/orders/admin/trade-ins');
+    const counts={};
+    (data||[]).forEach(t=>counts[t.status]=(counts[t.status]||0)+1);
+    document.getElementById('stats').innerHTML=Object.entries(counts).map(([k,v])=>`<div class="stat"><div class="num">${v}</div><div class="label">${k.replace('_',' ')}</div></div>`).join('');
+
+    const tbody=document.getElementById('tbody');
+    if(!data||!data.length){tbody.innerHTML='<tr><td colspan="9" class="empty-row">No trade-in requests yet.</td></tr>';return;}
+    tbody.innerHTML=data.map(t=>{
+      const date=new Date(t.createdAt).toLocaleDateString('en-IN',{day:'2-digit',month:'short'});
+      return `<tr><td>${esc(t.tradeNumber)}</td><td>${date}</td><td>${esc(t.userId).slice(0,8)}</td><td>${esc(t.brand)} ${esc(t.model)}</td><td>${esc(t.condition)}</td><td>${money(t.estimatedValue)}</td><td>${t.finalValue?money(t.finalValue):'—'}</td><td><span class="chip chip-${t.status}">${t.status.replace('_',' ')}</span></td><td><button class="btn-xs" onclick="openEdit('${t.id}','${t.status}',${t.finalValue||0},'${esc(t.adminNotes||'')}')">Update</button></td></tr>`;
+    }).join('');
+  }catch(e){console.error(e);}
+}
+
+function openEdit(id,status,val,notes){
+  document.getElementById('editId').value=id;
+  document.getElementById('editStatus').value=status;
+  document.getElementById('editValue').value=val||'';
+  document.getElementById('editNotes').value=notes;
+  document.getElementById('editModal').hidden=false;
+}
+
+async function saveTradeIn(){
+  const id=document.getElementById('editId').value;
+  const body={status:document.getElementById('editStatus').value};
+  const val=document.getElementById('editValue').value;
+  if(val)body.finalValue=Number(val);
+  body.adminNotes=document.getElementById('editNotes').value;
+  try{
+    await apiFetch('/orders/admin/trade-in/'+id,{method:'PUT',body});
+    document.getElementById('editModal').hidden=true;
+    load();
+  }catch(e){alert(e.message);}
+}
+load();
+</script>
+</body>
+</html>

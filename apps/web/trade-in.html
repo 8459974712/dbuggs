@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Trade-In Your Laptop — dbuggs</title>
+<meta name="description" content="Trade in your old laptop and get instant value credited to your dbuggs wallet.">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Inter',sans-serif;background:#f1f3f6;color:#212121;font-size:14px;}
+a{text-decoration:none;color:inherit;}
+.header{background:#2874f0;padding:10px 20px;position:sticky;top:0;z-index:100;box-shadow:0 2px 4px rgba(0,0,0,.2);}
+.header-inner{max-width:1280px;margin:0 auto;display:flex;align-items:center;gap:16px;}
+.logo{font-size:20px;font-weight:700;color:#fff;}.logo span{color:#ffe500;}
+.header-actions{margin-left:auto;display:flex;gap:10px;}
+.hbtn{padding:8px 16px;border-radius:3px;font-size:13px;font-weight:600;cursor:pointer;border:none;font-family:inherit;background:rgba(255,255,255,.15);color:#fff;border:1px solid rgba(255,255,255,.4);}
+
+.page{max-width:800px;margin:20px auto;padding:0 20px;}
+h1{font-size:22px;font-weight:700;margin-bottom:6px;}
+.subtitle{color:#878787;font-size:14px;margin-bottom:24px;}
+
+.tabs{display:flex;gap:0;border-bottom:2px solid #e0e0e0;margin-bottom:20px;}
+.tab{padding:10px 20px;font-weight:600;font-size:14px;cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-2px;color:#878787;}
+.tab.active{color:#2874f0;border-bottom-color:#2874f0;}
+
+.card{background:#fff;border-radius:8px;padding:24px;box-shadow:0 1px 4px rgba(0,0,0,.08);margin-bottom:16px;}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px;}
+.form-group{display:flex;flex-direction:column;gap:4px;}
+.form-group label{font-size:12.5px;font-weight:600;color:#555;}
+.form-group input,.form-group select,.form-group textarea{padding:10px 12px;border:1px solid #ddd;border-radius:6px;font-size:14px;font-family:inherit;}
+.form-group textarea{resize:vertical;min-height:60px;}
+.submit-btn{width:100%;padding:12px;background:#ff9f00;color:#fff;border:none;border-radius:6px;font-weight:700;font-size:15px;cursor:pointer;margin-top:8px;}
+.submit-btn:hover{background:#e08900;}
+.submit-btn:disabled{opacity:.5;cursor:not-allowed;}
+
+.estimate-box{background:#e8f5e9;border-radius:8px;padding:16px;text-align:center;margin-top:16px;}
+.estimate-box .amt{font-size:28px;font-weight:700;color:#2e7d32;}
+.estimate-box .note{font-size:12.5px;color:#555;margin-top:4px;}
+
+.history-table{width:100%;border-collapse:collapse;}
+.history-table th,.history-table td{padding:10px 12px;text-align:left;border-bottom:1px solid #f0f0f0;font-size:13px;}
+.history-table th{background:#f8f9fb;font-weight:600;color:#878787;}
+.chip{display:inline-block;padding:3px 8px;border-radius:4px;font-size:11px;font-weight:700;text-transform:uppercase;}
+.chip-submitted{background:#fff3e0;color:#e65100;}
+.chip-quoted{background:#e3f2fd;color:#1565c0;}
+.chip-accepted{background:#e8f5e9;color:#2e7d32;}
+.chip-completed{background:#e8f5e9;color:#2e7d32;}
+.chip-rejected{background:#fce4ec;color:#c62828;}
+.empty{text-align:center;padding:40px;color:#878787;}
+
+@media(max-width:600px){.form-row{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+<div class="header"><div class="header-inner"><a href="/" class="logo">dbugg<span>s</span></a><div class="header-actions"><a href="/orders.html" class="hbtn">My Orders</a><a href="/cart.html" class="hbtn">Cart</a></div></div></div>
+
+<div class="page">
+<h1>Trade-In Your Old Laptop</h1>
+<p class="subtitle">Get an instant estimate and wallet credit after inspection.</p>
+
+<div class="tabs">
+  <div class="tab active" onclick="showTab('form')">Submit Trade-In</div>
+  <div class="tab" onclick="showTab('history')">My Trade-Ins</div>
+</div>
+
+<div id="tab-form">
+<div class="card">
+  <form id="tradeForm" onsubmit="submitTrade(event)">
+    <div class="form-row">
+      <div class="form-group"><label>Brand *</label><select id="ti-brand" required><option value="">Select</option><option>Apple</option><option>Dell</option><option>HP</option><option>Lenovo</option><option>Asus</option><option>Acer</option><option>Other</option></select></div>
+      <div class="form-group"><label>Model *</label><input id="ti-model" required placeholder="e.g. Latitude 5420"></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label>Processor</label><input id="ti-processor" placeholder="e.g. i5 11th Gen"></div>
+      <div class="form-group"><label>RAM</label><select id="ti-ram"><option value="">Select</option><option>4 GB</option><option>8 GB</option><option>16 GB</option><option>32 GB</option></select></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label>Storage</label><input id="ti-storage" placeholder="e.g. 256 GB SSD"></div>
+      <div class="form-group"><label>Age</label><select id="ti-age"><option value="">Select</option><option>Less than 1 year</option><option>1-2 years</option><option>3-4 years</option><option>5+ years</option></select></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label>Condition *</label><select id="ti-condition" required><option value="">Select</option><option value="excellent">Excellent — like new</option><option value="good">Good — minor scratches</option><option value="fair">Fair — visible wear</option><option value="poor">Poor — damaged/broken parts</option></select></div>
+      <div class="form-group"><label>Display Size</label><input id="ti-display" placeholder="e.g. 14 inch"></div>
+    </div>
+    <div class="form-group"><label>Known Defects</label><textarea id="ti-defects" placeholder="List any issues — dead pixels, battery drain, broken keys, etc."></textarea></div>
+    <button type="submit" class="submit-btn" id="submitBtn">Get Estimate & Submit</button>
+  </form>
+  <div id="estimate" style="display:none;"></div>
+</div>
+</div>
+
+<div id="tab-history" style="display:none;">
+<div class="card" style="padding:0;overflow:hidden;">
+  <table class="history-table"><thead><tr><th>Trade #</th><th>Laptop</th><th>Condition</th><th>Estimate</th><th>Final</th><th>Status</th></tr></thead><tbody id="historyBody"></tbody></table>
+  <div id="historyEmpty" class="empty" style="display:none;">No trade-in requests yet.</div>
+</div>
+</div>
+</div>
+
+<script src="/shop-api.js"></script>
+<script>
+function showTab(t){
+  document.querySelectorAll('.tab').forEach((el,i)=>el.classList.toggle('active',i===(t==='form'?0:1)));
+  document.getElementById('tab-form').style.display=t==='form'?'':'none';
+  document.getElementById('tab-history').style.display=t==='history'?'':'none';
+  if(t==='history')loadHistory();
+}
+
+async function submitTrade(e){
+  e.preventDefault();
+  const btn=document.getElementById('submitBtn');
+  btn.disabled=true;btn.textContent='Submitting...';
+  try{
+    const body={
+      brand:document.getElementById('ti-brand').value,
+      model:document.getElementById('ti-model').value,
+      processor:document.getElementById('ti-processor').value,
+      ram:document.getElementById('ti-ram').value,
+      storage:document.getElementById('ti-storage').value,
+      displaySize:document.getElementById('ti-display').value,
+      age:document.getElementById('ti-age').value,
+      condition:document.getElementById('ti-condition').value,
+      defects:document.getElementById('ti-defects').value,
+    };
+    const result=await apiFetch('/orders/trade-in',{method:'POST',body});
+    document.getElementById('estimate').style.display='';
+    document.getElementById('estimate').innerHTML=`<div class="estimate-box"><div>Estimated Trade-In Value</div><div class="amt">₹${Number(result.estimatedValue).toLocaleString('en-IN')}</div><div class="note">Trade #${result.tradeNumber} — Our team will inspect and confirm the final value within 2-3 business days.</div></div>`;
+    document.getElementById('tradeForm').reset();
+  }catch(err){alert(err.message);}
+  btn.disabled=false;btn.textContent='Get Estimate & Submit';
+}
+
+async function loadHistory(){
+  try{
+    const data=await apiFetch('/orders/trade-in/my');
+    const body=document.getElementById('historyBody');
+    if(!data.length){document.getElementById('historyEmpty').style.display='';body.innerHTML='';return;}
+    document.getElementById('historyEmpty').style.display='none';
+    body.innerHTML=data.map(t=>`<tr><td>${t.tradeNumber}</td><td>${t.brand} ${t.model}</td><td>${t.condition}</td><td>₹${Number(t.estimatedValue||0).toLocaleString('en-IN')}</td><td>${t.finalValue?'₹'+Number(t.finalValue).toLocaleString('en-IN'):'—'}</td><td><span class="chip chip-${t.status}">${t.status.replace('_',' ')}</span></td></tr>`).join('');
+  }catch(e){console.error(e);}
+}
+
+if(!getToken()){
+  document.querySelector('.page').innerHTML='<div class="empty"><h2>Please login first</h2><p><a href="/login.html" style="color:#2874f0;font-weight:600;">Login</a> to submit a trade-in request.</p></div>';
+}
+</script>
+</body>
+</html>

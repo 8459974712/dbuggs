@@ -25,21 +25,53 @@ export class AuthController {
 
   @Post('admin-login')
   @HttpCode(200)
-  @ApiOperation({ summary: 'Admin email/password login' })
+  @ApiOperation({ summary: 'Admin email/password login (may require 2FA)' })
   adminLogin(@Body() body: { email: string; password: string }) {
     return this.authService.adminLogin(body.email, body.password);
   }
 
+  @Post('verify-2fa')
+  @HttpCode(200)
+  @ApiOperation({ summary: 'Verify 2FA TOTP code after admin login' })
+  verify2fa(@Body() body: { tempToken: string; code: string }) {
+    return this.authService.verify2fa(body.tempToken, body.code);
+  }
+
+  @Post('2fa/setup')
+  @HttpCode(200)
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Generate 2FA secret for setup' })
+  setup2fa(@Request() req) {
+    return this.authService.setup2fa(req.user.id);
+  }
+
+  @Post('2fa/confirm')
+  @HttpCode(200)
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Confirm 2FA setup with TOTP code' })
+  confirm2fa(@Request() req, @Body() body: { secret: string; code: string }) {
+    return this.authService.confirm2fa(req.user.id, body.secret, body.code);
+  }
+
+  @Post('2fa/disable')
+  @HttpCode(200)
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Disable 2FA with current code' })
+  disable2fa(@Request() req, @Body('code') code: string) {
+    return this.authService.disable2fa(req.user.id, code);
+  }
+
   @Post('login')
   @HttpCode(200)
-  @ApiOperation({ summary: 'Email/password login — any role (B2C, B2B, dealer, admin)' })
   login(@Body() body: { email: string; password: string }) {
     return this.authService.login(body.email, body.password);
   }
 
   @Post('signup')
   @HttpCode(201)
-  @ApiOperation({ summary: 'Register new B2C/B2B customer with email/password' })
   signup(@Body() body: { name: string; email: string; phone: string; password: string; role?: string }) {
     return this.authService.signup(body);
   }
@@ -48,14 +80,12 @@ export class AuthController {
   @HttpCode(200)
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
-  @ApiOperation({ summary: 'Set/change password for logged-in user' })
   setPassword(@Request() req, @Body('password') password: string) {
     return this.authService.setPassword(req.user.id, password);
   }
 
   @Post('refresh')
   @HttpCode(200)
-  @ApiOperation({ summary: 'Refresh JWT token' })
   refresh(@Body('refreshToken') refreshToken: string) {
     return this.authService.refresh(refreshToken);
   }
