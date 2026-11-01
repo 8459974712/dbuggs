@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Integrations - Dbuggs Admin</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Inter',sans-serif;background:#f5f7fa;color:#1a1a2e;min-height:100vh}
+.topbar{background:#1a1a2e;color:#fff;padding:12px 24px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:100}
+.topbar h1{font-size:18px;font-weight:700}
+.topbar-right a{color:#94a3b8;text-decoration:none;font-size:13px;margin-left:16px}.topbar-right a:hover{color:#fff}
+.container{max-width:1100px;margin:0 auto;padding:24px}
+.grid-3{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:20px;margin-bottom:24px}
+.int-card{background:#fff;border-radius:12px;padding:24px;box-shadow:0 1px 3px rgba(0,0,0,.06);border-top:4px solid #7c3aed}
+.int-card.green{border-top-color:#22c55e}.int-card.blue{border-top-color:#3b82f6}.int-card.amber{border-top-color:#f59e0b}
+.int-card h3{font-size:16px;font-weight:600;margin-bottom:4px}
+.int-card .desc{font-size:12px;color:#64748b;margin-bottom:16px}
+.int-card .status{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:500;padding:2px 8px;border-radius:10px;background:#dcfce7;color:#166534;margin-bottom:12px}
+.int-card .status::before{content:'';width:6px;height:6px;border-radius:50%;background:#22c55e}
+.btn{padding:8px 16px;border-radius:8px;border:none;cursor:pointer;font-size:13px;font-weight:500;display:inline-flex;align-items:center;gap:6px}
+.btn-primary{background:#7c3aed;color:#fff}.btn-green{background:#22c55e;color:#fff}.btn-blue{background:#3b82f6;color:#fff}.btn-amber{background:#f59e0b;color:#000}
+.btn-outline{background:#fff;color:#7c3aed;border:1px solid #7c3aed}
+.form-group{margin-bottom:12px}
+.form-group label{display:block;font-size:12px;font-weight:500;color:#64748b;margin-bottom:4px}
+.form-group input,.form-group select{width:100%;padding:8px 12px;border:1px solid #e2e8f0;border-radius:8px;font-size:13px}
+.result{margin-top:12px;background:#f8fafc;border-radius:8px;padding:12px;font-size:12px;display:none}
+.card{background:#fff;border-radius:12px;padding:20px;box-shadow:0 1px 3px rgba(0,0,0,.06);margin-bottom:20px}
+.card h3{font-size:15px;font-weight:600;margin-bottom:12px}
+table{width:100%;border-collapse:collapse;font-size:12px}
+th{text-align:left;padding:6px 10px;background:#f8fafc;color:#64748b;font-weight:500;font-size:11px;text-transform:uppercase}
+td{padding:6px 10px;border-top:1px solid #f1f5f9}
+.badge-green{background:#dcfce7;color:#166534;padding:2px 8px;border-radius:10px;font-size:11px;display:inline-block}
+</style>
+</head>
+<body>
+<div class="topbar"><h1>Admin — Integrations</h1><div class="topbar-right"><a href="/admin/">← Admin</a><a href="admin-analytics.html">Analytics</a><a href="#" onclick="localStorage.removeItem('dbugg_admin_token');location='/admin/'">Logout</a></div></div>
+<div class="container">
+  <div class="grid-3">
+    <!-- Shiprocket -->
+    <div class="int-card green">
+      <h3>Shiprocket Shipping</h3>
+      <div class="desc">Create shipments, track deliveries, get shipping rates</div>
+      <div class="status">Connected</div>
+      <div class="form-group"><label>Track AWB</label><input id="trackAwb" placeholder="Enter AWB number"></div>
+      <button class="btn btn-green" onclick="trackShipment()">Track</button>
+      <button class="btn btn-outline" onclick="checkRates()" style="margin-left:8px">Check Rates</button>
+      <div class="result" id="shipResult"></div>
+    </div>
+
+    <!-- WhatsApp -->
+    <div class="int-card">
+      <h3>WhatsApp Business</h3>
+      <div class="desc">Send order updates, promotional messages</div>
+      <div class="status">Connected</div>
+      <div class="form-group"><label>Phone</label><input id="waPhone" placeholder="9876543210"></div>
+      <div class="form-group"><label>Message</label><input id="waMsg" placeholder="Your message..."></div>
+      <button class="btn btn-primary" onclick="sendWA()">Send WhatsApp</button>
+      <div class="result" id="waResult"></div>
+    </div>
+
+    <!-- SMS/Email -->
+    <div class="int-card blue">
+      <h3>SMS & Email</h3>
+      <div class="desc">Transactional SMS via MSG91, emails via SES</div>
+      <div class="status">Connected</div>
+      <div class="form-group"><label>Phone / Email</label><input id="alertTo" placeholder="Phone or email"></div>
+      <div class="form-group"><label>Message / Subject</label><input id="alertMsg" placeholder="Message content"></div>
+      <button class="btn btn-blue" onclick="sendSMS()">Send SMS</button>
+      <button class="btn btn-outline" onclick="sendEmailAlert()" style="margin-left:8px">Send Email</button>
+      <div class="result" id="alertResult"></div>
+    </div>
+
+    <!-- E-way Bill -->
+    <div class="int-card amber">
+      <h3>E-way Bill</h3>
+      <div class="desc">Generate e-way bills for orders above ₹50,000</div>
+      <div class="status">Connected</div>
+      <div class="form-group"><label>Order ID</label><input id="ewayOrderId" placeholder="Order UUID"></div>
+      <button class="btn btn-amber" onclick="generateEway()">Generate E-way Bill</button>
+      <div class="result" id="ewayResult"></div>
+    </div>
+
+    <!-- Razorpay Payouts -->
+    <div class="int-card">
+      <h3>Razorpay Payouts</h3>
+      <div class="desc">Process dealer commission payouts</div>
+      <div class="status">Connected</div>
+      <div class="form-group"><label>Amount (₹)</label><input id="payoutAmt" type="number" placeholder="5000"></div>
+      <button class="btn btn-primary" onclick="initPayout()">Initiate Payout</button>
+      <div class="result" id="payoutResult"></div>
+    </div>
+
+    <!-- Marketing Kit -->
+    <div class="int-card green">
+      <h3>Marketing Kit</h3>
+      <div class="desc">Brand assets, templates, dealer materials</div>
+      <div class="status">Available</div>
+      <button class="btn btn-green" onclick="loadKit()">View Kit</button>
+      <div class="result" id="kitResult"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+const API='http://200.234.39.146:4000';
+function getToken(){return localStorage.getItem('dbugg_admin_token')}
+async function apiGet(path){const r=await fetch(API+path,{headers:{'Authorization':'Bearer '+getToken()}});if(r.status===401){location='/admin/';return null}return r.json()}
+async function apiPost(path,data){const r=await fetch(API+path,{method:'POST',headers:{'Authorization':'Bearer '+getToken(),'Content-Type':'application/json'},body:JSON.stringify(data)});return r.json()}
+function showResult(id,data){const el=document.getElementById(id);el.style.display='block';el.innerHTML='<pre style="white-space:pre-wrap;word-break:break-all">'+JSON.stringify(data,null,2)+'</pre>'}
+
+async function trackShipment(){const awb=document.getElementById('trackAwb').value||'AWB123456';showResult('shipResult',await apiGet('/integrations/shipping/track/'+awb))}
+async function checkRates(){showResult('shipResult',await apiGet('/integrations/shipping/rates?pincode=110001&weight=2'))}
+async function sendWA(){showResult('waResult',await apiPost('/integrations/whatsapp/send',{phone:document.getElementById('waPhone').value,template:'custom',params:{message:document.getElementById('waMsg').value}}))}
+async function sendSMS(){showResult('alertResult',await apiPost('/integrations/sms/send',{phone:document.getElementById('alertTo').value,message:document.getElementById('alertMsg').value}))}
+async function sendEmailAlert(){showResult('alertResult',await apiPost('/integrations/email/send',{to:document.getElementById('alertTo').value,subject:document.getElementById('alertMsg').value,html:'<p>'+document.getElementById('alertMsg').value+'</p>'}))}
+async function generateEway(){showResult('ewayResult',await apiPost('/integrations/eway-bill/'+document.getElementById('ewayOrderId').value,{}))}
+async function initPayout(){showResult('payoutResult',await apiPost('/integrations/payout',{dealerId:'test',amount:Number(document.getElementById('payoutAmt').value),bankDetails:{accountNo:'1234567890'}}))}
+async function loadKit(){showResult('kitResult',await apiGet('/integrations/marketing-kit'))}
+
+if(!getToken()) location='/admin/';
+</script>
+</body>
+</html>

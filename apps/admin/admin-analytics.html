@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Analytics - Dbuggs Admin</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Inter',sans-serif;background:#f5f7fa;color:#1a1a2e;min-height:100vh}
+.topbar{background:#1a1a2e;color:#fff;padding:12px 24px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:100}
+.topbar h1{font-size:18px;font-weight:700}
+.topbar-right a{color:#94a3b8;text-decoration:none;font-size:13px;margin-left:16px}.topbar-right a:hover{color:#fff}
+.container{max-width:1100px;margin:0 auto;padding:24px}
+.filter-bar{background:#fff;border-radius:12px;padding:16px;display:flex;gap:12px;align-items:center;margin-bottom:24px;box-shadow:0 1px 3px rgba(0,0,0,.06);flex-wrap:wrap}
+.filter-bar label{font-size:12px;color:#64748b;font-weight:500}
+.filter-bar input{padding:6px 12px;border:1px solid #e2e8f0;border-radius:6px;font-size:13px}
+.filter-bar button{padding:8px 16px;background:#7c3aed;color:#fff;border:none;border-radius:8px;cursor:pointer;font-size:13px;font-weight:500}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:16px;margin-bottom:24px}
+.stat{background:#fff;border-radius:12px;padding:20px;box-shadow:0 1px 3px rgba(0,0,0,.06)}
+.stat .label{font-size:11px;color:#64748b;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px}
+.stat .value{font-size:26px;font-weight:700}
+.stat .sub{font-size:11px;color:#94a3b8;margin-top:2px}
+.stat.green .value{color:#166534}.stat.red .value{color:#dc2626}.stat.blue .value{color:#7c3aed}.stat.amber .value{color:#92400e}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+@media(max-width:768px){.grid-2{grid-template-columns:1fr}}
+.card{background:#fff;border-radius:12px;padding:20px;box-shadow:0 1px 3px rgba(0,0,0,.06);margin-bottom:20px}
+.card h3{font-size:14px;font-weight:600;margin-bottom:12px;color:#475569}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th{text-align:left;padding:8px 10px;background:#f8fafc;color:#64748b;font-weight:500;font-size:11px;text-transform:uppercase}
+td{padding:8px 10px;border-top:1px solid #f1f5f9}
+.bar{height:24px;background:#ede9fe;border-radius:4px;position:relative;margin:4px 0}
+.bar .fill{height:100%;background:#7c3aed;border-radius:4px;min-width:2px}
+.bar .bar-label{position:absolute;right:8px;top:4px;font-size:11px;font-weight:600;color:#5b21b6}
+.limits-card{border:2px solid #e2e8f0;border-radius:12px;padding:20px}
+.limits-card h3{color:#1a1a2e;margin-bottom:16px;font-size:15px;font-weight:600}
+.limit-row{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid #f1f5f9;font-size:13px}
+.limit-row:last-child{border:none}
+.limit-row .role{font-weight:600;text-transform:capitalize}
+</style>
+</head>
+<body>
+<div class="topbar"><h1>Admin — Analytics & Profit</h1><div class="topbar-right"><a href="/admin/">← Admin</a><a href="admin-dealers.html">Dealers</a><a href="#" onclick="localStorage.removeItem('dbugg_admin_token');location='/admin/'">Logout</a></div></div>
+<div class="container">
+  <div class="filter-bar">
+    <label>From</label><input type="date" id="startDate" value="2026-10-01">
+    <label>To</label><input type="date" id="endDate" value="2026-11-02">
+    <button onclick="load()">Apply</button>
+  </div>
+  <div class="stats" id="statsRow"></div>
+  <div class="grid-2">
+    <div class="card"><h3>Order Status Breakdown</h3><div id="statusChart"></div></div>
+    <div class="card"><h3>Tally Export</h3>
+      <p style="font-size:13px;color:#64748b;margin-bottom:12px">Export sales data for Tally accounting</p>
+      <div id="tallyInfo"></div>
+      <button onclick="exportTally()" style="margin-top:12px;padding:8px 16px;background:#7c3aed;color:#fff;border:none;border-radius:8px;cursor:pointer;font-size:13px">Export Tally Data</button>
+    </div>
+  </div>
+  <div class="grid-2">
+    <div class="limits-card"><h3>Role-Based Approval Limits</h3><div id="limitsTable"></div></div>
+    <div class="card"><h3>Shipping Rates (Sample: Delhi 110001)</h3><div id="shippingRates"></div></div>
+  </div>
+</div>
+<script>
+const API='http://200.234.39.146:4000';
+function getToken(){return localStorage.getItem('dbugg_admin_token')}
+async function api(path){const r=await fetch(API+path,{headers:{'Authorization':'Bearer '+getToken()}});if(r.status===401){location='/admin/';return null}return r.json()}
+async function apiPost(path,data){const r=await fetch(API+path,{method:'POST',headers:{'Authorization':'Bearer '+getToken(),'Content-Type':'application/json'},body:JSON.stringify(data)});return r.json()}
+
+async function load(){
+  if(!getToken()){location='/admin/';return}
+  const sd=document.getElementById('startDate').value;
+  const ed=document.getElementById('endDate').value;
+  const [profit,limits,rates]=await Promise.all([
+    api(`/integrations/analytics/profit?startDate=${sd}&endDate=${ed}`),
+    api('/integrations/analytics/approval-limits'),
+    api('/integrations/shipping/rates?pincode=110001&weight=2')
+  ]);
+
+  if(profit){
+    document.getElementById('statsRow').innerHTML=`
+      <div class="stat blue"><div class="label">Total Revenue</div><div class="value">₹${(profit.totalRevenue||0).toLocaleString('en-IN')}</div><div class="sub">${profit.totalOrders} orders</div></div>
+      <div class="stat green"><div class="label">Gross Profit</div><div class="value">₹${(profit.grossProfit||0).toLocaleString('en-IN')}</div><div class="sub">Margin: ${profit.profitMargin}%</div></div>
+      <div class="stat amber"><div class="label">GST Collected</div><div class="value">₹${(profit.totalGst||0).toLocaleString('en-IN')}</div><div class="sub">18% inclusive</div></div>
+      <div class="stat"><div class="label">Avg Order Value</div><div class="value">₹${(profit.avgOrderValue||0).toLocaleString('en-IN')}</div><div class="sub">Period: ${sd} to ${ed}</div></div>
+    `;
+    const statuses=profit.byStatus||{};
+    const maxCount=Math.max(...Object.values(statuses).map(Number),1);
+    document.getElementById('statusChart').innerHTML=Object.entries(statuses).map(([k,v])=>
+      `<div style="margin-bottom:8px"><div style="font-size:12px;color:#64748b;text-transform:capitalize">${k}</div><div class="bar"><div class="fill" style="width:${Math.round(Number(v)/maxCount*100)}%"></div><div class="bar-label">${v}</div></div></div>`
+    ).join('')||'<div style="color:#94a3b8;font-size:13px">No orders in period</div>';
+  }
+
+  if(limits){
+    document.getElementById('limitsTable').innerHTML=limits.roles.map(r=>
+      `<div class="limit-row"><span class="role">${r.role.replace('_',' ')}</span><span>Order: ₹${r.maxOrderApproval?r.maxOrderApproval.toLocaleString('en-IN'):'Unlimited'} | Refund: ₹${r.maxRefund?r.maxRefund.toLocaleString('en-IN'):'Unlimited'} | Discount: ${r.maxDiscount}%</span></div>`
+    ).join('');
+  }
+
+  if(rates&&rates.rates){
+    document.getElementById('shippingRates').innerHTML='<table><thead><tr><th>Courier</th><th>Rate</th><th>Days</th><th>COD</th></tr></thead><tbody>'+
+      rates.rates.map(r=>`<tr><td>${r.courier}</td><td>₹${r.rate}</td><td>${r.estimatedDays}</td><td>${r.cod?'Yes':'No'}</td></tr>`).join('')+
+      '</tbody></table>';
+  }
+}
+
+async function exportTally(){
+  const sd=document.getElementById('startDate').value;
+  const ed=document.getElementById('endDate').value;
+  const data=await api(`/integrations/tally-export?startDate=${sd}&endDate=${ed}`);
+  if(data){
+    document.getElementById('tallyInfo').innerHTML=`<div style="background:#f0fdf4;border-radius:8px;padding:12px;font-size:13px"><strong>${data.totalEntries} entries</strong> | Total: ₹${data.totalAmount?.toLocaleString('en-IN')||0}<br><small>Period: ${data.period?.startDate} to ${data.period?.endDate}</small></div>`;
+  }
+}
+load();
+</script>
+</body>
+</html>
