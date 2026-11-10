@@ -27,6 +27,7 @@
       <section class="panel"><h2>Account details</h2><div class="group-list">${row(M, 'map', 'Saved addresses', 'addresses', 'Saved on this device')}<button type="button" class="group-row" data-nav="kyc"><span class="row-icon">${icon(M, 'id')}</span><span>KYC verification<small class="chip">${esc(kyc)}</small></span><span class="row-arrow">${icon(M, 'chevron')}</span></button>${row(M, 'card', 'Payment preferences', 'payments')}</div></section>
       <section class="panel"><h2>Help & preferences</h2><div class="group-list">${row(M, 'help', 'Help & support', 'support')}${row(M, 'bell', 'Notifications', 'notifications')}${row(M, 'settings', 'Privacy & terms', 'privacy')}</div></section>
       <button type="button" class="switch-card" data-nav="dealer">${icon(M, 'store')}<span><b>Switch to Dealer</b><small>Open your dealer workspace</small></span>${icon(M, 'arrow')}</button>
+      <button type="button" class="switch-card business-switch" data-nav="b2b">${icon(M, 'work')}<span><b>Business / B2B</b><small>Bulk orders, quotes and credit</small></span>${icon(M, 'arrow')}</button>
       ${user ? `<button type="button" class="logout-link" data-action="logout">${icon(M, 'logout')} Log out</button>` : ''}`, { tab: 'profile' })}`;
   }
 
