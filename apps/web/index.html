@@ -431,7 +431,7 @@ footer a{color:var(--accent);text-decoration:underline;}
   </div>
 </div>
 
-<div id="reference-products"></div><script src="/reference-products.js"></script>
+<div id="reference-products"></div><script src="/reference-products.js?v=brands"></script>
 <footer>
   <strong>dbuggs</strong> — Certified Refurbished Laptops<br>
   Appz Global Tech Pvt. Ltd. · <a href="https://www.appzglobaltech.com">www.appzglobaltech.com</a><br>
@@ -520,6 +520,8 @@ function getFilters() {
 
 // ─── Apply filters & render ───
 function applyFilters() {
+  const reference = document.getElementById("reference-products");
+  if (reference) reference.innerHTML = window.dbuggReferenceProducts?.(getFilters()) || "";
   const f = getFilters();
   let products = [...allProducts];
 
