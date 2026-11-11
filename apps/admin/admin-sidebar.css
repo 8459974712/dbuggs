@@ -1,0 +1,21 @@
+.dbugg-sidebar{width:240px;min-width:220px;background:#1C2B6B;display:flex;flex-direction:column;position:fixed;top:0;left:0;height:100vh;overflow-y:auto;z-index:1000;flex-shrink:0;}
+.dbugg-sidebar::-webkit-scrollbar{width:4px;}
+.dbugg-sidebar::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.2);border-radius:4px;}
+.dbugg-sidebar .sb-logo{padding:20px 20px 14px;border-bottom:1px solid rgba(255,255,255,0.08);}
+.dbugg-sidebar .sb-brand{font-family:"Space Grotesk",sans-serif;font-size:20px;font-weight:700;color:#fff;}
+.dbugg-sidebar .sb-brand span{color:#F07830;}
+.dbugg-sidebar .sb-tagline{font-size:11px;color:rgba(255,255,255,0.5);margin-top:2px;}
+.sb-nav{flex:1;padding:8px 0 16px;}
+.sb-section-label{font-size:10px;font-weight:700;letter-spacing:0.1em;color:rgba(255,255,255,0.55);text-transform:uppercase;padding:14px 20px 5px;display:block!important;}
+.sb-item{display:flex!important;align-items:center;gap:10px;padding:9px 20px;color:rgba(255,255,255,0.72);text-decoration:none;font-size:13.5px;font-weight:500;transition:background 0.15s,color 0.15s;border:none;background:none;width:100%;cursor:pointer;font-family:inherit;white-space:nowrap;}
+.sb-item:hover{background:rgba(255,255,255,0.08);color:#fff;}
+.sb-item.sb-active{background:rgba(240,120,48,0.18);color:#fff;border-right:3px solid #F07830;}
+.sb-item svg{width:16px;height:16px;flex-shrink:0;opacity:0.8;}
+.sb-item.sb-active svg{opacity:1;}
+.sb-footer{padding:14px 20px;border-top:1px solid rgba(255,255,255,0.08);margin-top:auto;}
+.sb-footer .sb-user{display:flex;align-items:center;gap:10px;}
+.sb-footer .sb-avatar{width:34px;height:34px;border-radius:50%;background:#F07830;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;color:#fff;flex-shrink:0;}
+.sb-footer .sb-name{font-size:13px;font-weight:600;color:#fff;}
+.sb-footer .sb-role{font-size:11px;color:rgba(255,255,255,0.5);}
+body.admin-with-sidebar{padding-left:240px}.admin-sidebar-toggle{display:none}.admin-with-sidebar .dbugg-sidebar{height:100dvh;min-width:0}.admin-with-sidebar .dbugg-sidebar .sb-item[hidden]{display:none!important}
+@media(max-width:760px){body.admin-with-sidebar{padding-left:0;padding-top:44px}.admin-with-sidebar .dbugg-sidebar{top:44px;height:calc(100dvh - 44px);transform:translateX(-100%);visibility:hidden}.admin-with-sidebar .dbugg-sidebar.is-open{transform:none;visibility:visible}.admin-sidebar-toggle{display:block;position:fixed;top:0;left:0;width:100%;height:44px;text-align:left;padding:0 16px;border:0;background:#1c2b6b;color:white;z-index:1001;font:600 14px system-ui;cursor:pointer}.admin-with-sidebar .topbar{top:44px}}
