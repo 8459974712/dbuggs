@@ -100,10 +100,10 @@ else if(action==='purpose'){state.query=id==='Gaming'?'':id==='Study'?'':'i5';st
 else if(action==='wish'){const saved=toggleWish(id);el.classList.toggle('saved',saved);el.setAttribute('aria-pressed',String(saved));toast(saved?'Added to wishlist':'Removed from wishlist');}
 else if(action==='add-cart'){const p=state.products.find(p=>p.id===id);if(p&&!state.cart.some(c=>c.id===id)){state.cart.push({id:p.id,brand:p.brand,model:p.model,sellingPrice:p.sellingPrice});localStorage.setItem('dbugg_cart',JSON.stringify(state.cart));}go('cart');}
 else if(action==='remove-cart'){state.cart=state.cart.filter(p=>p.id!==id);localStorage.setItem('dbugg_cart',JSON.stringify(state.cart));await render();}
-else if(action==='checkout'){state.returnTo='checkout';go(token()?'checkout':'login');}
+else if(action==='checkout'){if(token())go('checkout');else{state.returnTo='checkout';go('login');}}
 else if(action==='tenure'){state.tenure=Number(id);await render();}
 else if(action==='apply-rental'){if(!token()){state.returnTo='rent/'+id;go('login');return;}if(await confirmAction('Start rental application?','This submits an application for review. It does not charge you or approve the rental.','Apply')){el.disabled=true;const p=state.products.find(p=>p.id===id);await api('/rental/apply',{method:'POST',body:JSON.stringify({laptopId:id,tenure:state.tenure,monthlyRent:Number(p.rentalPrice)})});go('rentals');toast('Rental application submitted for review');}}
-else if(action==='logout'){window.DbuggBusiness.clear();localStorage.removeItem('dbugg_shop_token');persistUser(null);state.cart=[];localStorage.removeItem('dbugg_cart');go('login');}
+else if(action==='logout'){state.returnTo=null;window.DbuggBusiness.clear();localStorage.removeItem('dbugg_shop_token');persistUser(null);state.cart=[];localStorage.removeItem('dbugg_cart');go('login');}
 else await window.DbuggAccount?.action(action,el,M);
 }catch(err){toast(err.message);el.disabled=false;}});
 app.addEventListener('submit',async e=>{const form=e.target.closest('[data-form]');if(!form)return;e.preventDefault();const name=form.dataset.form,values=Object.fromEntries(new FormData(form)),submit=form.querySelector('button[type="submit"],button:not([type])'),status=form.querySelector('.form-status');try{
