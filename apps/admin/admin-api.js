@@ -150,12 +150,19 @@ async function openDoc(path, filename) {
 document.addEventListener('DOMContentLoaded', () => {
   if (localStorage.getItem('dbugg_user_role') !== 'super_admin' || !getToken()) return;
   const sidebar = document.querySelector('.dbugg-sidebar');
-  if (!sidebar || sidebar.querySelector('a[href$="/customers.html"],a[href="customers.html"]')) return;
-  const orders = sidebar.querySelector('a[href$="b2c-orders.html"]');
-  if (!orders) return;
-  const link = document.createElement('a');
-  link.href = '/admin-pages/customers.html';
-  link.className = 'sb-item';
-  link.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><circle cx="9" cy="8" r="3"/><path d="M3 20v-2a6 6 0 0 1 12 0v2m1-15a3 3 0 0 1 0 6m2 3a5 5 0 0 1 3 4v2"/></svg>Customers';
-  orders.before(link);
+  if (!sidebar) return;
+  const add = (label, href, anchor, after, graphic) => {
+    if ([...sidebar.querySelectorAll('a')].some(link => new URL(link.href).pathname === new URL(href, location.origin).pathname)) return;
+    const link = document.createElement('a');
+    link.href = href;
+    link.className = 'sb-item';
+    link.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true">' + graphic + '</svg>' + label;
+    const target = sidebar.querySelector(anchor);
+    if (target) after ? target.after(link) : target.before(link);
+    else sidebar.append(link);
+  };
+  add('Customers', '/admin-pages/customers.html', 'a[href$="b2c-orders.html"]', false,
+    '<circle cx="9" cy="8" r="3"/><path d="M3 20v-2a6 6 0 0 1 12 0v2m1-15a3 3 0 0 1 0 6m2 3a5 5 0 0 1 3 4v2"/>');
+  add('Dealer Stock Orders', '/admin-dealers.html?tab=stock-orders', 'a[href$="dealers-tiers.html"]', true,
+    '<path d="m4 7 8-4 8 4-8 4zM4 7v10l8 4 8-4V7M12 11v10"/>');
 });

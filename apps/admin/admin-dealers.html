@@ -51,7 +51,7 @@ td{padding:8px 10px;border-top:1px solid #f1f5f9}
 <div class="tabs">
   <a class="active" onclick="showTab('all',this)">All Dealers</a>
   <a onclick="showTab('applications',this)">Applications</a>
-  <a onclick="showTab('stock-orders',this)">Stock Orders</a>
+  <a id="dealer-stock-tab" onclick="showTab('stock-orders',this)">Stock Orders</a>
   <a onclick="showTab('leads',this)">Leads</a>
   <a onclick="showTab('targets',this)">Targets</a>
   <a onclick="showTab('leaderboard',this)">Leaderboard</a>
@@ -260,6 +260,7 @@ async function submitTarget(){
   })});
   closeTarget();load();
 }
+if (new URLSearchParams(location.search).get('tab') === 'stock-orders') showTab('stock-orders',document.getElementById('dealer-stock-tab'));
 load();
 </script>
 </body>
