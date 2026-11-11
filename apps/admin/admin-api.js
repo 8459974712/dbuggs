@@ -145,3 +145,17 @@ async function openDoc(path, filename) {
     alert(e.message);
   }
 }
+
+
+document.addEventListener('DOMContentLoaded', () => {
+  if (localStorage.getItem('dbugg_user_role') !== 'super_admin' || !getToken()) return;
+  const sidebar = document.querySelector('.dbugg-sidebar');
+  if (!sidebar || sidebar.querySelector('a[href$="/customers.html"],a[href="customers.html"]')) return;
+  const orders = sidebar.querySelector('a[href$="b2c-orders.html"]');
+  if (!orders) return;
+  const link = document.createElement('a');
+  link.href = '/admin-pages/customers.html';
+  link.className = 'sb-item';
+  link.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><circle cx="9" cy="8" r="3"/><path d="M3 20v-2a6 6 0 0 1 12 0v2m1-15a3 3 0 0 1 0 6m2 3a5 5 0 0 1 3 4v2"/></svg>Customers';
+  orders.before(link);
+});
