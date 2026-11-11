@@ -1,0 +1,33 @@
+plugins { id 'com.android.application' }
+
+def configuredAppUrl = project.findProperty('appUrl') ?: 'http://200.234.39.146:5001/mobile/index.html'
+def isReleaseBuild = gradle.startParameter.taskNames.any { it.toLowerCase().contains('release') }
+if (isReleaseBuild && !project.hasProperty('appUrl')) {
+    throw new GradleException('Release builds require -PappUrl=https://your-domain.example')
+}
+if (isReleaseBuild && !configuredAppUrl.startsWith('https://')) {
+    throw new GradleException('Release builds require an HTTPS appUrl')
+}
+
+android {
+    namespace 'in.dbuggs.mobile'
+    compileSdk 36
+
+    defaultConfig {
+        applicationId 'in.dbuggs.mobile'
+        minSdk 26
+        targetSdk 36
+        versionCode 1
+        versionName '0.1.0'
+        buildConfigField 'String', 'APP_URL', '"' + configuredAppUrl.replace('"', '\\"') + '"'
+    }
+    buildFeatures { buildConfig true }
+    compileOptions { sourceCompatibility JavaVersion.VERSION_17; targetCompatibility JavaVersion.VERSION_17 }
+    lint {
+        abortOnError true
+        warningsAsErrors true
+        // The wrapper is deliberately pinned to the verified Gradle release.
+        disable 'AndroidGradlePluginVersion'
+    }
+    packaging { resources { excludes += ['/META-INF/{AL2.0,LGPL2.1}'] } }
+}

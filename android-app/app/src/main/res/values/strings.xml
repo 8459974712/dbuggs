@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">dbuggs</string>
+    <string name="offline_message">You’re offline\n\nCheck your connection and try again.\n\nTap to retry</string>
+</resources>
