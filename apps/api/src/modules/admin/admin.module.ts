@@ -1,3 +1,4 @@
+import { B2bBuyer } from '../../database/entities/b2b-buyer.entity';
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AdminController } from './admin.controller';
@@ -12,7 +13,7 @@ import { RolePermission } from '../../database/entities/role-permission.entity';
 import { User } from '../../database/entities/user.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([AuditLog, Order, Laptop, Rental, KycDocument, Dealer, RolePermission, User])],
+  imports: [TypeOrmModule.forFeature([AuditLog, Order, Laptop, Rental, KycDocument, Dealer, RolePermission, User, B2bBuyer])],
   controllers: [AdminController],
   providers: [AdminService],
   exports: [AdminService],

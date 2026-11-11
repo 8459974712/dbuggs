@@ -1,3 +1,4 @@
+import { B2bBuyer } from '../../database/entities/b2b-buyer.entity';
 import { Injectable, ForbiddenException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -44,7 +45,31 @@ export class AdminService {
     @InjectRepository(Dealer) private dealerRepo: Repository<Dealer>,
     @InjectRepository(RolePermission) private permRepo: Repository<RolePermission>,
     @InjectRepository(User) private userRepo: Repository<User>,
+    @InjectRepository(B2bBuyer) private buyerRepo: Repository<B2bBuyer>,
   ) {}
+
+  async getCustomers() {
+    const [b2c, b2b] = await Promise.all([
+      this.userRepo.find({
+        where: { role: 'b2c' as User['role'] },
+        select: ['id', 'name', 'email', 'phone', 'isActive', 'createdAt'],
+        order: { createdAt: 'DESC' },
+      }),
+      this.buyerRepo.createQueryBuilder('buyer')
+        .leftJoin(User, 'customer', 'CAST(customer.id AS text) = buyer.userId')
+        .select('buyer.id', 'id')
+        .addSelect('customer.name', 'name')
+        .addSelect('customer.email', 'email')
+        .addSelect('customer.phone', 'phone')
+        .addSelect('buyer.companyName', 'companyName')
+        .addSelect('buyer.gstin', 'gstin')
+        .addSelect('buyer.isApproved', 'isApproved')
+        .addSelect('buyer.createdAt', 'createdAt')
+        .orderBy('buyer.createdAt', 'DESC')
+        .getRawMany(),
+    ]);
+    return { b2c, b2b };
+  }
 
   async getAdminStaff(): Promise<Partial<User>[]> {
     const staff = await this.userRepo.find({ where: [{ role: 'admin' as any }, { role: 'super_admin' as any }], order: { createdAt: 'ASC' } });

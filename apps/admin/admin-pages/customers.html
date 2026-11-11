@@ -1,0 +1,18 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Customers | DBUGG Admin</title>
+<style>[hidden]{display:none!important}
+*{box-sizing:border-box}body{margin:0;background:#eff1f8;color:#1a2441;font:14px system-ui,sans-serif}main{max-width:1200px;margin:auto;padding:24px}h1{margin:0;font-size:28px;color:#1c2b6b}p{color:#55627d}.panel{background:white;border:1px solid #dfe4f0;border-radius:14px;padding:16px}.controls{display:flex;gap:12px;justify-content:space-between;flex-wrap:wrap;margin-bottom:16px}.tabs{display:flex;gap:4px;background:#eef1f8;padding:4px;border-radius:9px}button,input{font:inherit}button{border:0;border-radius:7px;padding:9px 13px;background:transparent;color:#1c2b6b;cursor:pointer;font-weight:600}button[aria-pressed=true]{background:#1c2b6b;color:white}button:disabled{opacity:.5;cursor:default}input{border:1px solid #d8deeb;border-radius:8px;padding:10px 12px;width:min(100%,300px)}:focus-visible{outline:2px solid #d36928;outline-offset:2px}.table-wrap{overflow:auto}table{width:100%;min-width:680px;border-collapse:collapse;text-align:left}th,td{padding:12px;border-bottom:1px solid #e8ebf2;overflow-wrap:anywhere}th{background:#f5f7fb;font-size:12px}td{font-size:13px}.footer{display:flex;gap:8px;justify-content:flex-end;align-items:center;margin-top:12px}.status{font-size:13px}.badge{display:inline-block;padding:4px 8px;border-radius:9px;background:#eff1f8;white-space:nowrap}.good{background:#e4f4e7;color:#235b2a}.pending{background:#fff0db;color:#784312}@media(max-width:500px){main{padding:14px}.panel{padding:12px}}
+</style>
+<script src="/admin-api.js" defer></script>
+<script src="./customers.js" defer></script>
+</head>
+<body><main><h1>Customers</h1><p>Customer accounts, including customers who have not placed an order.</p>
+<section class="panel">
+<div class="controls"><div class="tabs" role="group" aria-label="Customer type"><button type="button" data-type="b2c" aria-pressed="true">B2C Customers</button><button type="button" data-type="b2b" aria-pressed="false">B2B Customers</button></div><input id="customer-search" type="search" aria-label="Search customers" placeholder="Search name, email, phone or company"></div>
+<p class="status" id="status" role="status">Loading customers…</p>
+<div class="table-wrap" id="table-wrap" hidden><table><caption hidden>Customer directory</caption><thead><tr id="head"></tr></thead><tbody id="rows"></tbody></table></div>
+<div class="footer" id="pagination" hidden><button type="button" id="prev">Previous</button><span id="page"></span><button type="button" id="next">Next</button></div>
+</section></main></body></html>

@@ -32,6 +32,12 @@ export class AdminController {
     return this.adminService.writeAuditLog(req.user.id, body);
   }
 
+  @Get('customers')
+  @Roles('super_admin')
+  customers() {
+    return this.adminService.getCustomers();
+  }
+
   @Get('staff')
   @ApiOperation({ summary: 'List admin/super_admin users' })
   getStaff() {
