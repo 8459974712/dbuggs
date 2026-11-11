@@ -1,10 +1,7 @@
 (() => {
   'use strict';
-  const tabs = [['b2b','Overview'],['b2b-orders','Orders'],['b2b-rfq','Quotes'],['b2b-ledger','Credit']];
   const date = value => value ? new Date(value).toLocaleDateString('en-IN') : '—';
-  const wrap = (route, body, M) => M.layout('Business workspace',
-    '<nav class="business-tabs" aria-label="Business navigation">'+tabs.map(([id,label])=>
-      `<a href="#${id}" ${id===route?'aria-current="page"':''}>${label}</a>`).join('')+'</nav>'+body);
+  const wrap = (route, body, M) => M.layout(route==='b2b'?'':'Business workspace',body,{business:true,tab:route});
   const stat = (label,value,M) => `<div class="stat"><span>${label}</span><strong>${M.esc(value)}</strong></div>`;
   const post = (M,path,body) => M.api(path,{method:'POST',...(body?{body:JSON.stringify(body)}:{})});
 
@@ -23,7 +20,7 @@
     }
     const orders=(await M.api('/orders')).filter(o=>o.type==='b2b');
     if(route==='b2b-orders')return wrap(route,`<h2>Business orders</h2>${orders.length?orders.map(o=>`<article class="panel"><div class="row"><b>${M.esc(o.orderNumber)}</b><span class="tag">${M.esc(o.status)}</span></div><p class="small muted">${date(o.createdAt)}</p><div class="summary-row"><strong>${M.money(o.amount)}</strong><a class="text-link" href="#order/${encodeURIComponent(o.id)}">Track order</a></div></article>`).join(''):M.empty('No business orders','Your bulk purchases will appear here.')}`,M);
-    return wrap('b2b',`<section class="business-hero"><span class="dealer-badge">APPROVED BUSINESS</span><h1>${M.esc(buyer.companyName||'Business account')}</h1><p>Available credit</p><div class="balance">${M.money(Number(buyer.creditLimit||0)-Number(buyer.creditUsed||0))}</div></section><div class="stats business-stats">${stat('Credit limit',M.money(buyer.creditLimit),M)}${stat('Credit used',M.money(buyer.creditUsed),M)}${stat('Orders',orders.length,M)}</div><section class="panel"><h2>Buy in bulk</h2><p class="small muted business-detail">Match your laptop list to available stock and use purchase-order checkout if eligible.</p><a class="orange button-link full" href="/b2b-panel/bulk-order.html">Open bulk ordering</a></section><a class="outline button-link full" href="#b2b-rfq">Request a quote</a>`,M);
+    return wrap('b2b',`<section class="business-hero b2b-overview"><div class="row"><span class="logo">dbu<span>ggs</span></span><span class="dealer-badge">BUSINESS</span></div><h1>${M.esc(buyer.companyName||'Business account')}</h1><p>Available credit</p><div class="balance">${M.money(Number(buyer.creditLimit||0)-Number(buyer.creditUsed||0))}</div></section><div class="stats business-stats">${stat('Credit limit',M.money(buyer.creditLimit),M)}${stat('Credit used',M.money(buyer.creditUsed),M)}${stat('Orders',orders.length,M)}</div><section class="section"><h2>Quick actions</h2><div class="actions"><a class="quick-action" href="/b2b-panel/bulk-order.html">${M.icon('stock')}<span>Bulk order</span></a><a class="quick-action" href="#b2b-rfq">${M.icon('document')}<span>Quotes</span></a><a class="quick-action" href="#b2b-orders">${M.icon('orders')}<span>Orders</span></a><a class="quick-action" href="#b2b-ledger">${M.icon('wallet')}<span>Credit</span></a></div></section><section class="panel"><h2>Buy in bulk</h2><p class="small muted business-detail">Match your laptop list to available stock and use purchase-order checkout if eligible.</p><a class="orange button-link full" href="/b2b-panel/bulk-order.html">Open bulk ordering</a></section><a class="outline button-link full" href="#b2b-rfq">Request a quote</a>`,M);
   }
   async function submit(name,form,M) {
     if(name!=='business-rfq')return false;
